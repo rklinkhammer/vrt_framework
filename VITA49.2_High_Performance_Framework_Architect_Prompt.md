@@ -68,7 +68,7 @@ public:
 };
 ```
 
-Determine whether CRTP, C++20/23 concepts, compile-time descriptors, registration tables, customization-point objects, or a hybrid provides the best balance of performance, type safety, extensibility, readable application code, and low dispatch overhead. Avoid forcing applications to implement large virtual interfaces.
+Determine whether CRTP, C++23 concepts, compile-time descriptors, registration tables, customization-point objects, or a hybrid provides the best balance of performance, type safety, extensibility, readable application code, and low dispatch overhead. Avoid forcing applications to implement large virtual interfaces.
 
 Applications must not implement protocol loops that receive a packet, decode and classify it, process CAM fields, construct acknowledgements, acquire buffers, encode packets, submit I/O, or release buffers. Those responsibilities belong to the framework.
 
@@ -89,6 +89,18 @@ Exploit the symmetry between Command and Context fields. Evaluate a common compi
 
 Avoid unnecessary runtime polymorphism and duplicated definitions of the same VITA field.
 
+## Context-aware CIF representation and traversal
+
+Model the Context/Command Indicator Fields as a structured semantic object, not merely independent bit flags or a packed C++ struct overlaid on wire memory. Separate the CIF selection, associated field/attribute values, and the interpretation context. That context includes packet family/subtype, Control action mode where applicable, selected CIF words and attributes, and the registered Packet Class/profile. Reuse field descriptors while applying packet-specific layout rules.
+
+Provide typed operations to select, set, replace, and remove fields and attributes. Keep selectors, CIF enable bits, associated values, and calculated encoded lengths consistent. Define how edits that change CIF7 attributes affect all selected fields and handle missing or incompatible values explicitly. For query and cancellation packets, selection need not imply a value body. AckV/AckX diagnostic selections use their diagnostic layout, while Context and AckS use their applicable value layouts. Do not assume every set bit introduces a normal field value: some bits enable additional CIF words or express indicators.
+
+Received-buffer decoding is likewise context-sensitive. First establish the packet/subtype and applicable prologue, then decode the indicator sets required by that layout. Traverse selected fields in specification-defined wire order with a bounded cursor. Before advancing to the next field, resolve and validate the current field's extent using its descriptor, selected attributes, and any count/length/structure metadata. Check bounds and arithmetic before reading or advancing. An unknown extent is an unsupported layout, not permission to guess the next offset.
+
+Distinguish structural traversal from semantic materialization. A decoder may expose non-owning views or skip a structurally understood but unsupported field after validating its extent; it need not allocate or construct every value. Variable-length contents must be inspected as far as needed to establish safe boundaries. If random field access is offered, build a bounded offset index during validated traversal rather than assuming fixed offsets. Structural parsing must not execute device callbacks; dispatch follows the required packet/command validation.
+
+Use shared layout descriptors or an equivalent common traversal model for sizing, encoding, and decoding so edits and CIF7/array variations cannot cause their interpretations to diverge. Invalidate or rebuild derived sizes/offsets when semantic edits change layout. Encoded receive views remain immutable; editing requires a separate semantic representation and encoding into external output storage. Include representative sketches for typed field updates, selector-only queries, attribute changes, and cursor-based decoding, with tests for truncated variable-length fields and mode-dependent layouts.
+
 ## Accepted Decision 2: validation and hardware execution
 
 Use a virtual hardware model to validate supported controls, packet parameters, and protocol responses without physical hardware. The model shall support deterministic successful updates, invalid/unsupported requests, write failures, and partial completion. Validation and dry runs shall not commit changes to live device state; simulated changes shall use isolated model state.
@@ -96,6 +108,8 @@ Use a virtual hardware model to validate supported controls, packet parameters, 
 For real hardware, validate packet structure, profile support, and known parameter constraints before execution. Device adapters may perform additional checks available without significant signal analysis. An update succeeds when its required registers have been written according to the adapter's documented completion contract. Merely enqueueing asynchronous writes is not successful completion; mandatory register readback is not implied.
 
 Keep validation, execution, and completion distinct, with a backend contract usable by virtual registers and real device adapters. The real-hardware path need not run a full simulator. Report write failures and partial completion explicitly; do not assume hardware rollback. Define cross-field validation and revalidation of state-dependent constraints before delayed execution.
+
+Accepted clarification: support partial execution explicitly. When permitted by the command's CAM settings and applicable validation, dependency, and timing constraints, execute eligible controls even when other selected controls cannot execute. Track validation and execution outcomes per field, including successful, rejected, failed, and unexecuted controls, and translate them into the applicable acknowledgement diagnostics. Validate the whole command before side effects and define an execution plan that respects cross-field dependencies. Adapters shall report partial register-write failures within a semantic control without marking that control fully successful. Completed writes are not automatically rolled back. Continue independent controls only where the command settings and adapter contract permit it. Support for partial execution does not override commands that prohibit it; document admission and failure behavior for those requests. Include deterministic tests for mixed valid/invalid controls, dependent controls, and failures after earlier writes have completed.
 
 AckV shall represent available validation results. Successful AckX shall represent the defined register-write execution result, subject to CAM and timestamp requirements. AckS shall report available device/model state without presenting unmeasured signal behavior as measured fact. Distinguish requested, accepted, written, and measured values where applicable.
 
@@ -138,16 +152,46 @@ Accepted Decision 6: scope transaction correlation by Message ID, relevant Strea
 
 ## Packet objects and external storage
 
+A semantic VRT packet can be configured, updated, and encoded repeatedly into externally supplied storage. Keep packet fields and sample-format metadata independent of any particular encoded buffer. Updating the semantic object shall not alter an already encoded or in-flight transmission; encoding captures the values for that transmission. Define synchronization if configuration and encoding can occur concurrently.
+
 This is a strict requirement: a semantic VITA packet object shall not own or embed its transmit or receive buffer. Do not place a `std::vector<std::byte>`, network buffer, DMA handle, or transport handle inside a packet.
 
-A packet shall encode into externally supplied storage, and decoding shall operate on externally supplied immutable storage:
+Encoding and decoding shall have packet-family-specific storage contracts. Do not force every VRT packet through one contiguous-buffer API or treat receive decoding as simply the inverse of transmit encoding.
+
+| Packet family | Transmit encoding | Receive decoding |
+|---|---|---|
+| Command and Context, including their extensions | One externally supplied contiguous packet buffer | One externally supplied immutable contiguous packet buffer; traverse the applicable CIF/payload layout |
+| Signal Data | Header/prologue, IQ payload, and optional trailer segments | Separate header/prologue, IQ payload, and optional trailer views, with direct access to the IQ region |
+
+For Command and Context packets, the basic interface can resemble:
 
 ```cpp
 auto encoded = vita::encode(packet, mutable_buffer_view);
 auto decoded = vita::decode(const_buffer_view);
 ```
 
-Prefer non-owning decoded views for high-rate paths. The receive buffer lifetime must be at least as long as every view referencing it. Make this relationship explicit in the type design and documentation.
+For Signal Data, design distinct segmented transmit and receive interfaces. The transmit interface combines metadata encoding with existing or newly produced IQ storage. The receive interface validates packet structure and exposes the IQ region without re-encoding, coalescing, or walking individual samples. Extension Data may use the same segmented storage abstraction, but its payload interpretation depends on its registered class and must not automatically be treated as IQ.
+
+For Signal Data transmit and receive, support up to three externally backed segments:
+
+1. **Header/prologue buffer:** the packet header and all included Stream ID, Class ID, and timestamp fields preceding the IQ payload.
+2. **IQ data buffer:** the payload in the selected VITA wire packing, including any required payload padding.
+3. **Optional trailer buffer:** the trailer when enabled by the Packet Class; omit this segment when no trailer is present.
+
+These segments form one logical VRT packet in wire order, not three packets. Compute Packet Size from their actual encoded lengths, excluding unused pool capacity. Preserve word boundaries, payload packing/padding, and trailer placement. The accepted IQ profile omits the trailer by default; supporting a trailer segment does not change that default.
+
+Keep segment leases in a separate transport submission object or `BufferChain`, outside the semantic packet. The runtime binds the packet metadata to the externally supplied IQ payload, encodes the prologue and optional trailer into their buffers, and submits the segments as one packet. Use bounded, allocation-free segment descriptors for the steady-state path. The transport retains all referenced storage until it can no longer access it, and every lease is reclaimed exactly once.
+
+Permit an existing producer- or device-supplied IQ buffer to be attached without copying when its wire representation and transport capabilities allow it. Scatter/gather does not perform endian conversion or sample packing: native samples that do not match the wire format require an explicit conversion into external storage or supported device processing. Do not modify or reuse an in-flight IQ buffer, header, or trailer. Reusing a semantic packet is independent of reusing its encoded segments.
+
+Retain contiguous encoding for simple transports. Advertise transport scatter/gather capabilities and segment limits. A datagram adapter must send all segments as one datagram; a byte-stream adapter must preserve framing and track partial progress across segments without interleaving packets. If scatter/gather is unavailable, use an explicitly documented coalescing copy into a pooled contiguous buffer, or reject the configuration when a no-copy policy is required.
+
+On Signal Data receive, return a decoded view exposing header/prologue metadata, the bounded IQ payload view, and an optional trailer view. Locate the IQ region from the validated header, optional-field lengths, total packet length, and trailer presence. Distinguish payload bytes (including wire padding) from valid samples, using the applicable Packet Class/context and padding information. Locating the payload does not require decoding each sample or traversing a Context/Command CIF body. If sample interpretation is unavailable, expose a validated opaque payload with explicit unknown format rather than guessing a sample count.
+
+Support both transport-delivered separate header/data/trailer buffers and a contiguous received packet. For contiguous input, expose three logical subviews into the original allocation without copying IQ. For physically segmented input, validate segment boundaries and lengths rather than trusting the adapter's classification. Do not assume a generic scatter receive automatically splits variable-length prologues correctly; document adapter capabilities and any transport-fragment handling. If the payload itself spans physical fragments, expose a bounded payload chain or explicitly report the need for a contiguous conversion; never fabricate a contiguous span.
+
+Keep receive ownership in an external receive envelope/lease set. Header, IQ, and trailer views may share one backing allocation or use separate allocations. Retaining the IQ view must retain every backing lease it references; reclaim a shared allocation only after its last dependent view is released. The receive buffer lifetime must be at least as long as every view referencing it. Make this relationship explicit in the type design and documentation.
+
 
 Design the packet model by composition rather than assuming a deep inheritance hierarchy. Cover at least:
 
@@ -159,7 +203,7 @@ Design the packet model by composition rather than assuming a deep inheritance h
 - optional Stream ID, Class ID, timestamps, and trailer;
 - packet-specific prologues and payloads.
 
-Accepted Decision 9: the codec, semantic types, and generic runtime core shall be header-only. Optional transport/device adapters may be compiled and may use external dependencies; the generic core shall not require those adapters. Specify this dependency boundary and select the minimum C++ version (C++20 or C++23), supported compilers/OSes, exception/RTTI policy, and dependency policy.
+Accepted Decision 9: the codec, semantic types, and generic runtime core shall be header-only. Optional transport/device adapters may be compiled and may use external dependencies; the generic core shall not require those adapters. C++23 is the minimum language baseline. Specify the dependency boundary, supported compilers/OSes, exception/RTTI policy, and dependency policy. Evaluate optional C++26 facilities where they materially simplify typed packet updates, field metadata, or CIF modeling. Any such enhancement must identify its standardization and compiler support, be feature-gated, and retain a functionally equivalent C++23 path with identical wire semantics. Do not make a speculative language feature a requirement of the baseline.
 
 ## Buffer abstraction and lifecycle
 
@@ -175,9 +219,13 @@ Create a generic external-buffer model capable of supporting:
 - scatter/gather chains;
 - custom hardware memory.
 
-Begin with contiguous CPU-addressable `MutableBufferView` and `ConstBufferView`, but determine whether distinct concepts such as `BufferHandle`, `BufferView`, `BufferChain`, and `DeviceBuffer` are required. Do not pretend that all device memory is directly CPU-addressable.
+Provide contiguous CPU-addressable `MutableBufferView` and `ConstBufferView` plus external transmit `BufferChain`/submission and receive-envelope abstractions for segmented Signal Data. Define distinct ownership handles, borrowed views, and device-memory representations as needed. Do not pretend that all device memory is directly CPU-addressable.
 
-The framework obtains a transmit buffer from a provider, encodes directly into it, transfers ownership or a lease to the transport, and returns the buffer only after asynchronous completion. The completion/return function may be a lambda, move-only callback, or ownership-bearing handle:
+Buffer management shall support multiple configurable fixed-size buffer classes within one runtime. Allow separate pools for small header/prologue buffers, large IQ payload buffers, optional trailer buffers, contiguous Command/Context packets, and contiguous transport fallback packets, with multiple payload capacities where needed. Each class defines block capacity, alignment, memory domain, pool count, and return destination; each lease separately records its used length. Do not require a universal buffer size or allocate a payload-sized block for every header or trailer.
+
+Select compatible size classes using packet requirements and transport capabilities. Define exhaustion behavior per class, reserve control/completion resources, and reclaim already acquired segments if later acquisition, encoding, or submission fails. A chain may combine leases from different pools/providers; retain each provider's lifetime and return each segment to its originating pool. Fixed pool capacity shall not appear as padding or unused bytes on the wire.
+
+The framework obtains a transmit buffer or compatible segment leases from providers, encodes directly into the supplied storage, transfers the leases to the transport submission, and reclaims them only when no I/O can reference them. For accepted asynchronous sends, reclamation follows completion; synchronous rejection follows the documented ownership contract. A contiguous send can resemble:
 
 ```cpp
 transport.send(
@@ -198,9 +246,9 @@ Specify send acceptance versus synchronous rejection, partial sends on byte-stre
 
 ## Zero-copy and minimal-copy paths
 
-Transmit data directly into a pool-provided transport buffer wherever feasible. Do not require an intermediate serialized packet. On receive, decode or view the packet in the transport-owned buffer and release it only after dispatch and application consumption complete.
+Transmit data directly into a pool-provided transport buffer wherever feasible. Do not require an intermediate serialized packet. On receive, decode Command/Context from a single packet buffer and expose Signal Data header/IQ/trailer views directly from the transport-owned storage. Release backing storage only after dispatch and application consumption complete.
 
-For high-rate Signal Data, favor spans and views over materialization or sample copying. Identify unavoidable copies and explain why they are needed. Describe optional scatter/gather and hardware-offload paths without making them mandatory for the basic implementation.
+For high-rate Signal Data, favor spans and views over materialization or sample copying. Identify unavoidable copies and explain why they are needed. Provide the header/IQ/trailer scatter/gather abstraction described above, with contiguous fallback for transports that do not support it. Hardware offload remains optional. Document the copies and memory-domain transitions required by each path.
 
 ## Encoding, decoding, and wire correctness
 
@@ -274,13 +322,27 @@ register_status<Frequency>([this] { return radio_.frequency(); });
 register_status<Gain>([this] { return radio_.gain(); });
 ```
 
-Explain snapshot consistency when multiple status fields are read concurrently with command execution.
+Explain snapshot consistency when multiple status fields are read concurrently with command execution. Apply the configuration revision contract below to state shared by control execution, sample generation, and publication.
 
 Accepted Decision 7: implement a framework-owned receiver context cache with per-field validity/effective-time information and explicit unknown state. Scope entries to the applicable stream associations and local session. Associate Context with Signal Data by its applicable time and TSM semantics, not merely by packet arrival order. Respect paired-stream timestamp compatibility and field persistence rules in Sections 7.1.1–7.1.4 and 9.1.1. Over-Range Count is not persistent; user-defined State/Event fields use their documented persistence.
 
 Publish periodic full refreshes for recovery and expose effective-time information through state/event providers as well as current values. A refresh restores the state it describes; it does not reconstruct missed transitions or establish the interpretation of all earlier samples. Coalesce updates only where field semantics and timing mode permit it, preserving significant events and timing distinctions.
 
 Define bounded context history and explicit behavior for startup without context, late/reordered updates, lost deltas, uncertain metadata, reset, and rebinding. Specify when data waits, is delivered with unknown/stale metadata, or is dropped, including capacity and timeout behavior. Do not silently substitute the newest state for historical context. Document each field's persistence, update trigger, and maximum publication delay, plus refresh periods and cache retention limits. Add deterministic tests for startup, loss, reordering, refresh recovery, nonpersistent fields, and session reset.
+
+## Configuration revisions and effective boundaries
+
+Accepted approach: use framework-owned configuration revisions to connect control execution, sample generation, Context publication, and acknowledgements. Keep requested values, validated pending changes, and effective committed state distinct. Each effective revision records the state governing samples, its effective timestamp and sample position where applicable, and per-field validity and execution outcomes. Revisions are internal framework metadata; do not introduce a new VITA wire field for them. Receivers continue to associate Context and Data through the documented stream and time relationships.
+
+Validate the command and build an execution plan before side effects. Select an eligible packet boundary for generator configuration changes, satisfying the requested timing mode/window or rejecting the request. Account for generation ahead of the current timeline. Bind each generated packet to an immutable effective revision throughout generation and encoding; preserve the revision of already encoded or submitted data. For the baseline Sample Rate change, finish the current packet, commit the new configuration at the eligible boundary, submit updated Context, and generate subsequent packets at the new rate while preserving timestamp and oscillator-phase continuity.
+
+Collect execution results per field. With partial execution permitted, construct effective state from successful changes and confirmed unchanged fields. If a failed operation leaves a value indeterminate, mark it unknown rather than retaining an old value as confirmed. Distinguish register-write completion from the time a change becomes effective at the reference point, including preparation and hardware arming. When controls take effect at different times, record separate effective revisions/transitions rather than assigning one artificial timestamp to the entire command. Define handling when a device transition falls within a sample buffer, including splitting affected Data at the transition where supported or explicitly reporting unavailable/uncertain interpretation.
+
+Submit a full Context snapshot describing each applicable effective revision before submitting its first affected Data packet. If Context submission is blocked or rejected, hold affected Data under a bounded policy and specify timeout, drop, or stop behavior; do not silently bypass the required Context publication. Define how unknown fields are represented or withheld without presenting stale values as current. Submission ordering does not guarantee arrival ordering or delivery over UDP; retain the receiver context-cache recovery rules. Context submission failure does not roll back an already completed device effect.
+
+Generate acknowledgements from recorded outcomes. AckX becomes eligible only when the applicable execution-completion and reference-point timing requirements are met; it does not wait for Data delivery. A post-action AckS uses a coherent state observation after the relevant outcomes have been incorporated, with its own observation timestamp and the ordering required by CAM. Preserve the distinct meanings of requested state, effective state, and observed state, including intervening changes from other commands. Applications and adapters supply results and timing evidence; the framework owns revision management, publication, and acknowledgement construction.
+
+Specify bounded revision storage and lifetime management while packets, pending operations, or publication work reference a revision. Include a sequence diagram and deterministic fixtures for successful boundary changes, partial execution, indeterminate writes, distinct effective times, Context submission failure, and preservation of already submitted packets.
 
 ## Transport independence
 
@@ -328,6 +390,10 @@ Evaluate policies such as:
 Accepted Decision 10: use per-Controllee serialization as the default for control callbacks and control-state access. Define its interaction with status providers, data callbacks, scheduled operations, and asynchronous device completions; serialization of callback invocation alone does not order outstanding device effects. Applications should not require pervasive locking merely because the runtime has multiple workers. Support nonblocking Controller calls from callbacks. Prohibit or detect synchronous waits on the same execution domain that would deadlock progress. Define reentrancy and any opt-in concurrency policies.
 
 ## Scheduled commands and time
+
+Accepted profile clarification: runtime operation advances with elapsed wall-clock time, and the IQ generator is paced against it. Use monotonic elapsed time for timeouts and duration-based deadlines independently of sample production and packet-clock corrections. Packet timestamps are expected to be conditioned on GPS time through GPS-driven PPS, but their encoded epoch/TSI need not be GPS seconds. Specify the time-of-day/epoch source associated with PPS, the mapping to sample times, synchronization/holdover behavior, and clock corrections. Preserve injectable clocks for deterministic tests. The earlier simulated session-relative clock default is superseded; the accepted profile specifies the remaining clock configuration inputs.
+
+Sample-rate changes occur at packet boundaries and are expected to be highly uncommon. Favor a stable source rate; downstream applications may decimate as needed. Specify how a timed rate change selects an eligible boundary, handles already generated/submitted samples, and satisfies the requested timing mode/window or is rejected. Rare changes do not relax timing correctness, but do not require an architecture optimized for frequent source-rate transitions or a baseline generator decimator.
 
 Accepted Decision 3: use framework-owned scheduling with a device timing-capability contract and optional prepare/arm hooks. The framework shall interpret VITA timestamps, validate commands, and either execute immediately or admit them to a bounded scheduler. Schedule controls to become effective at the documented VITA reference point, accounting for preparation, register-write, and device/processing delays. Calling an application callback at the requested timestamp alone is not a sufficient timing guarantee.
 
@@ -418,6 +484,8 @@ Design for deterministic tests with a loopback/fake transport, virtual clock, de
 - separate real-hardware system tests for signal behavior and signal quality;
 - scheduled-command and cancellation race tests;
 - pool ownership and late-completion tests;
+- segmented versus contiguous wire equivalence, multiple size-class exhaustion, acquisition rollback, cross-pool reclamation, and partial byte-stream send tests;
+- Signal Data receive payload extraction from contiguous and segmented storage, variable prologues, absent/present trailers, padding, malformed boundaries, and IQ retention after other views are released;
 - overload/backpressure tests;
 - multi-stream routing tests;
 - interoperability tests with an independent VITA implementation;
@@ -436,12 +504,12 @@ Produce an architecture document, not a full implementation. It must include:
 1. Executive summary and explicit assumptions.
 2. Accepted IQ Generator Profile v1, completed Information Class/Packet Class documentation, support matrices, and intentionally unsupported features.
 3. Component/dependency diagram.
-4. Control-plane and Signal Data sequence diagrams.
+4. Control-plane and Signal Data sequence diagrams, including configuration revisions, effective boundaries, Context-before-Data submission, and acknowledgement timing under partial execution and publication failure.
 5. Buffer-ownership state diagram.
 6. Command/Acknowledge transaction state machine, CAM response matrix, and representative derived test fixtures.
 7. Thread/executor, queue, scheduling, and backpressure model.
 8. Packet representation and header-only encoding/decoding design.
-9. Proposed C++20/23 concepts, types, and representative API sketches.
+9. C++23 concepts, types, and representative API sketches, including context-aware CIF editing/decoding and any justified optional C++26 enhancements.
 10. Application examples for a Controller, Controllee, and combined endpoint.
 11. Transport and buffer-provider extension points.
 12. Error, shutdown, and lifecycle semantics.

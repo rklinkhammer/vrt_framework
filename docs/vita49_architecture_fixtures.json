@@ -1,0 +1,604 @@
+{
+  "status": "Architecture-derived fixtures; not independent peer captures or implemented conformance results",
+  "wire": [
+    {
+      "id": "W1",
+      "words": "60000007 00000001 a0040000 00000001 00000002 00000003 00200000",
+      "declared_words": 7,
+      "type": 6,
+      "valid": true,
+      "cam": {
+        "action": 0,
+        "v": 0,
+        "x": 0,
+        "s": 1
+      }
+    },
+    {
+      "id": "W2",
+      "words": "60000009 00000001 a90b0000 00000002 00000002 00000003 00200000 000000f4 24000000",
+      "declared_words": 9,
+      "type": 6,
+      "valid": true,
+      "cam": {
+        "action": 2,
+        "partial": 1,
+        "v": 0,
+        "x": 1,
+        "s": 0,
+        "warn": 1,
+        "error": 1
+      }
+    },
+    {
+      "id": "W3",
+      "words": "61000007 00000001 a9080000 00000002 00000002 00000003 00200000",
+      "declared_words": 7,
+      "type": 6,
+      "valid": true,
+      "cancel": 1,
+      "cam": {
+        "action": 2,
+        "partial": 1,
+        "v": 0,
+        "x": 1,
+        "s": 0
+      }
+    },
+    {
+      "id": "W4",
+      "words": "64000006 00000001 a9080400 00000002 00000002 00000003",
+      "declared_words": 6,
+      "type": 6,
+      "valid": true,
+      "ack": 1,
+      "cam": {
+        "action": 2,
+        "partial": 1,
+        "v": 0,
+        "x": 1,
+        "s": 0,
+        "warn": 0,
+        "error": 0,
+        "ackp": 0,
+        "schx": 1
+      }
+    },
+    {
+      "id": "W5",
+      "words": "10000004 00000001 40000000 3b21187e",
+      "declared_words": 4,
+      "type": 1,
+      "valid": true
+    },
+    {
+      "id": "W6",
+      "words": "60000009 00000001 a90b0000 00000002 00000002 00000003 00200000 000000f4",
+      "declared_words": 9,
+      "type": 6,
+      "valid": false,
+      "expected": "truncated"
+    },
+    {
+      "id": "W7",
+      "words": "60000009 00000001 a0040000 00000001 00000002 00000003 00200000 000000f4 24000000",
+      "declared_words": 9,
+      "type": 6,
+      "valid": false,
+      "expected": "surplus_query_body"
+    },
+    {
+      "id": "W8",
+      "words": "80000001",
+      "declared_words": 1,
+      "type": 8,
+      "valid": false,
+      "expected": "reserved_packet_type"
+    }
+  ],
+  "formats": [
+    {
+      "name": "IQ16",
+      "bits": 16,
+      "item_code": 0,
+      "words": "200003cf 00000000"
+    },
+    {
+      "name": "IQ32",
+      "bits": 32,
+      "item_code": 0,
+      "words": "200007df 00000000"
+    },
+    {
+      "name": "float32",
+      "bits": 32,
+      "item_code": 14,
+      "words": "2e0007df 00000000"
+    }
+  ],
+  "partial_modes": [
+    {
+      "bits": "000",
+      "clean_warning_error": [],
+      "with_unresolvable": []
+    },
+    {
+      "bits": "001",
+      "clean_warning_error": [],
+      "with_unresolvable": []
+    },
+    {
+      "bits": "010",
+      "clean_warning_error": [],
+      "with_unresolvable": []
+    },
+    {
+      "bits": "011",
+      "clean_warning_error": [
+        "C",
+        "W",
+        "E"
+      ],
+      "with_unresolvable": []
+    },
+    {
+      "bits": "100",
+      "clean_warning_error": [
+        "C"
+      ],
+      "with_unresolvable": [
+        "C"
+      ]
+    },
+    {
+      "bits": "101",
+      "clean_warning_error": [
+        "C",
+        "E"
+      ],
+      "with_unresolvable": [
+        "C",
+        "E"
+      ]
+    },
+    {
+      "bits": "110",
+      "clean_warning_error": [
+        "C",
+        "W"
+      ],
+      "with_unresolvable": [
+        "C",
+        "W"
+      ]
+    },
+    {
+      "bits": "111",
+      "clean_warning_error": [
+        "C",
+        "W",
+        "E"
+      ],
+      "with_unresolvable": [
+        "C",
+        "W",
+        "E"
+      ]
+    }
+  ],
+  "request_masks": [
+    {
+      "bits": "000",
+      "candidate_order": []
+    },
+    {
+      "bits": "001",
+      "candidate_order": [
+        "S"
+      ]
+    },
+    {
+      "bits": "010",
+      "candidate_order": [
+        "X"
+      ]
+    },
+    {
+      "bits": "011",
+      "candidate_order": [
+        "X",
+        "S"
+      ]
+    },
+    {
+      "bits": "100",
+      "candidate_order": [
+        "V"
+      ]
+    },
+    {
+      "bits": "101",
+      "candidate_order": [
+        "V",
+        "S"
+      ]
+    },
+    {
+      "bits": "110",
+      "candidate_order": [
+        "V",
+        "X"
+      ]
+    },
+    {
+      "bits": "111",
+      "candidate_order": [
+        "V",
+        "X",
+        "S"
+      ]
+    }
+  ],
+  "diagnostic_masks": [
+    {
+      "bits": "00",
+      "groups_if_both_conditions_present": []
+    },
+    {
+      "bits": "01",
+      "groups_if_both_conditions_present": [
+        "error_indicators",
+        "error_values"
+      ]
+    },
+    {
+      "bits": "10",
+      "groups_if_both_conditions_present": [
+        "warning_indicators",
+        "warning_values"
+      ]
+    },
+    {
+      "bits": "11",
+      "groups_if_both_conditions_present": [
+        "warning_indicators",
+        "error_indicators",
+        "warning_values",
+        "error_values"
+      ]
+    }
+  ],
+  "pools": [
+    {
+      "block_bytes": 128,
+      "blocks": 4096
+    },
+    {
+      "block_bytes": 64,
+      "blocks": 1024
+    },
+    {
+      "block_bytes": 2048,
+      "blocks": 8192
+    },
+    {
+      "block_bytes": 2048,
+      "blocks": 2048
+    },
+    {
+      "block_bytes": 2048,
+      "blocks": 4096
+    },
+    {
+      "block_bytes": 8192,
+      "blocks": 128
+    }
+  ],
+  "state_scenarios": [
+    {
+      "id": "S1",
+      "name": "partial_execute",
+      "initial": {
+        "A": 0,
+        "B": 0,
+        "C": 0
+      },
+      "cam": {
+        "action": 2,
+        "p": 1,
+        "w": 0,
+        "er": 0,
+        "requests": [
+          "V",
+          "X",
+          "S"
+        ]
+      },
+      "events": [
+        "validate A clean",
+        "validate B recoverable_warning",
+        "validate C unresolvable_error",
+        "execute A success"
+      ],
+      "expected": {
+        "effective": {
+          "A": 1,
+          "B": 0,
+          "C": 0
+        },
+        "executed": [
+          "A"
+        ],
+        "not_executed": [
+          "B",
+          "C"
+        ],
+        "ack_order": [
+          "V",
+          "X",
+          "S"
+        ],
+        "x_ackp": 1,
+        "x_schx": 0
+      }
+    },
+    {
+      "id": "S2",
+      "name": "dry_run",
+      "initial": {
+        "rate": 1000000
+      },
+      "cam": {
+        "action": 1,
+        "p": 1,
+        "w": 0,
+        "er": 0,
+        "requests": [
+          "V",
+          "X",
+          "S"
+        ]
+      },
+      "events": [
+        "request rate 2000000",
+        "validate clean",
+        "simulate success"
+      ],
+      "expected": {
+        "live_rate": 1000000,
+        "hypothetical_rate": 2000000,
+        "device_writes": 0,
+        "live_revision_changes": 0,
+        "ack_action": 1
+      }
+    },
+    {
+      "id": "S3",
+      "name": "cancel_before_commit",
+      "initial": {
+        "commit_monotonic_ns": 10000000
+      },
+      "events": [
+        "cancel accepted at 9000000 ns",
+        "attempt original commit at 10000000 ns"
+      ],
+      "expected": {
+        "cancelled": [
+          "rate"
+        ],
+        "device_writes": 0,
+        "cancel_header_l": 1,
+        "cancel_ackp": 0,
+        "cancel_schx": 1
+      }
+    },
+    {
+      "id": "S4",
+      "name": "cancel_after_commit",
+      "initial": {
+        "commit_monotonic_ns": 10000000
+      },
+      "events": [
+        "commit succeeds at 10000000 ns",
+        "cancel received at 11000000 ns"
+      ],
+      "expected": {
+        "cancelled": [],
+        "rollback_writes": 0,
+        "cancel_ackp": 1,
+        "cancel_schx": 0
+      }
+    },
+    {
+      "id": "S5",
+      "name": "clock_step_timeout",
+      "initial": {
+        "monotonic_deadline_ns": 50000000,
+        "protocol_seconds": 1000
+      },
+      "events": [
+        "protocol clock steps to 2000 seconds at monotonic 10000000 ns",
+        "monotonic clock reaches 50000000 ns"
+      ],
+      "expected": {
+        "timeout_at_monotonic_ns": 50000000,
+        "unarmed_timed_work": "revalidate"
+      }
+    },
+    {
+      "id": "S6",
+      "name": "context_gate_failure",
+      "initial": {
+        "revision": 1,
+        "rate": 1000000
+      },
+      "events": [
+        "rate 2000000 completes revision 2",
+        "Context submission repeatedly rejected",
+        "gate reaches 10 ms"
+      ],
+      "expected": {
+        "effective_rate": 2000000,
+        "affected_data_submitted": 0,
+        "stream": "stopped_context_unavailable",
+        "x_result": "executed",
+        "rollback_writes": 0
+      }
+    },
+    {
+      "id": "S7",
+      "name": "unknown_register_state",
+      "initial": {
+        "rate": 1000000
+      },
+      "events": [
+        "first rate register write succeeds",
+        "second rate register write fails without known resultant rate"
+      ],
+      "expected": {
+        "rate_validity": "unknown",
+        "data": "stopped",
+        "x_result": "failed_partial_register_update",
+        "s_selected_rate_returned": false
+      }
+    },
+    {
+      "id": "S8",
+      "name": "old_packet_revision",
+      "initial": {
+        "encoded_packet_revision": 1,
+        "new_effective_revision": 2
+      },
+      "events": [
+        "commit revision 2",
+        "complete old TX packet"
+      ],
+      "expected": {
+        "old_packet_revision": 1,
+        "new_packets_revision": 2
+      }
+    },
+    {
+      "id": "S9",
+      "name": "two_effect_times",
+      "initial": {
+        "revision": 1
+      },
+      "events": [
+        "A effective at 10 ms",
+        "B effective at 12 ms"
+      ],
+      "expected": {
+        "effective_transitions_ms": [
+          10,
+          12
+        ],
+        "context_snapshots": 2,
+        "x_actual_time_ms": 12
+      }
+    },
+    {
+      "id": "S10",
+      "name": "partial_cancellation",
+      "initial": {
+        "A": "executed",
+        "B": "pending"
+      },
+      "events": [
+        "cancel A and B"
+      ],
+      "expected": {
+        "A": "executed",
+        "B": "cancelled",
+        "cancel_ackp": 1,
+        "cancel_schx": 1
+      }
+    }
+  ],
+  "timing_cases": [
+    {
+      "id": "T1",
+      "mode": 1,
+      "request_ns": 10000000,
+      "device_early_ns": 1000,
+      "device_late_ns": 1000,
+      "app_early_ns": 1000000,
+      "app_late_ns": 1000000,
+      "effect_interval_ns": [
+        9999500,
+        10000500
+      ],
+      "allowed": true
+    },
+    {
+      "id": "T2",
+      "mode": 1,
+      "request_ns": 10000000,
+      "device_early_ns": 1000,
+      "device_late_ns": 1000,
+      "app_early_ns": 1000000,
+      "app_late_ns": 1000000,
+      "effect_interval_ns": [
+        10000000,
+        10002000
+      ],
+      "allowed": false
+    },
+    {
+      "id": "T3",
+      "mode": 2,
+      "request_ns": 10000000,
+      "device_early_ns": 1000,
+      "device_late_ns": 1000,
+      "app_early_ns": 1000000,
+      "app_late_ns": 1000000,
+      "effect_interval_ns": [
+        10500000,
+        10501000
+      ],
+      "allowed": true
+    },
+    {
+      "id": "T4",
+      "mode": 3,
+      "request_ns": 10000000,
+      "device_early_ns": 1000,
+      "device_late_ns": 1000,
+      "app_early_ns": 1000000,
+      "app_late_ns": 1000000,
+      "effect_interval_ns": [
+        10500000,
+        10501000
+      ],
+      "allowed": false
+    },
+    {
+      "id": "T5",
+      "mode": 3,
+      "request_ns": 10000000,
+      "device_early_ns": 1000,
+      "device_late_ns": 1000,
+      "app_early_ns": 1000000,
+      "app_late_ns": 1000000,
+      "effect_interval_ns": [
+        9500000,
+        9501000
+      ],
+      "allowed": true
+    },
+    {
+      "id": "T6",
+      "mode": 4,
+      "request_ns": 10000000,
+      "device_early_ns": 1000,
+      "device_late_ns": 1000,
+      "app_early_ns": 1000000,
+      "app_late_ns": 1000000,
+      "effect_interval_ns": [
+        9000000,
+        11000000
+      ],
+      "allowed": true
+    }
+  ]
+}

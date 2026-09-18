@@ -39,7 +39,9 @@ Register-write success does not establish that the device produced the intended 
 
 **Architectural consequences:** use a backend contract that can be implemented by both virtual registers and a real device adapter. Keep validation, execution, and completion distinct; do not require the real-hardware path to run a full simulator. Record per-control write failures and partial completion. A later failure does not undo earlier writes automatically. Requested, accepted, written, and measured values should remain distinguishable where they differ.
 
-**Remaining details, not a reopening of this decision:** specify cross-field validation, handling of stale validation before scheduled execution, multi-register partial failures, and each adapter's completion mechanism. The accepted Decision 3 requires reconciliation of the register-write completion point with the chosen VITA reference point and timing claims; writing a staging register early does not establish that a future signal change has already taken effect.
+**Accepted clarification:** explicitly support partial execution when allowed by the command's CAM settings, field dependencies, and timing constraints. Validate the whole command before side effects, execute eligible controls under a defined execution plan, and retain per-field results for acknowledgement generation. Report partial writes within a semantic control as an incomplete/failed update, preserving completed effects without assuming rollback. Requests that prohibit partial execution retain their applicable restrictions. Whether to support partial execution is settled.
+
+**Remaining details, not a reopening of this decision:** specify cross-field validation, execution ordering and dependencies, continuation after failure, handling of stale validation before scheduled execution, multi-register partial failures, and each adapter's completion mechanism, with deterministic fixtures. The accepted Decision 3 requires reconciliation of the register-write completion point with the chosen VITA reference point and timing claims; writing a staging register early does not establish that a future signal change has already taken effect.
 
 Protocol basis: Table 8.3.1.2-1 and Documentation Rule 8.3.1.2-1 govern partial execution and adjusted values; Table 8.3.1.3-1 governs dry run. Sections 8.3.1.7 and 8.4.1.5 govern reference-point and acknowledgement timing. The virtual model and register-write success criterion are project architecture choices, not universal VITA requirements.
 
@@ -56,6 +58,10 @@ The device timing-capability contract shall declare clock domains and supported 
 **Relationship to Decision 2:** successful register writes remain the hardware update success criterion. Document whether the VITA reference point is the register/control bank or a downstream signal point. An early staging write is preparation, not proof of a later timed effect. If the reference point is downstream, the adapter must establish the applicable timing through its documented device timing model or completion evidence; it need not perform signal analysis for every command. Verification of physical signal behavior remains system testing.
 
 **Remaining configuration:** concrete clock bindings, timing-window values, lead times, rounding rules, and clock-discontinuity policies must be specified for each deployment. Acceptance of this architecture does not assign numerical timing guarantees.
+
+**Accepted clarification, 2026-09-17:** operation advances with elapsed wall-clock time, with monotonic timeout/deadline processing independent of sample production. Packet timestamps are expected to be GPS-conditioned through GPS-driven PPS; the encoded timestamp need not use GPS seconds. The profile's former simulated session-relative epoch default is superseded. The architecture must document PPS/time-of-day association, sample-clock mapping, timestamp representation, and synchronization/holdover behavior. Virtual clocks remain available for deterministic tests.
+
+Sample-rate changes remain packet-boundary operations and are expected to be highly uncommon. Downstream code may decimate instead of changing the source rate. The design should favor stable-rate operation while still specifying eligible boundaries, queued-sample handling, and rejection when a timed change cannot satisfy its requested window. This does not add a baseline generator decimation requirement.
 
 ### 4. Make CAM and acknowledgement behavior an explicit matrix
 
@@ -119,13 +125,15 @@ For samples, enumerate numeric representation, scaling/fraction bits, real/compl
 
 **Required detail:** maintain separate wire, semantic-control, and optimized-sample support matrices with explicit bounds and unsupported-feature outcomes. Preserve external-buffer ownership and immutable receive storage through conversion APIs. Native typed views require valid representation, alignment, and C++ object-lifetime/aliasing conditions; zero-copy byte access alone does not establish those conditions. Concrete CIF/array limits and optimized format coverage remain architecture/profile deliverables. Test variable-size attributes, malformed lengths, endian conversion, packing, and padding independently of hardware behavior.
 
+**Additional CIF requirement accepted following user direction:** use a context-aware CIF structure coupling selectors, values/attributes, and packet/subtype interpretation. Typed edits maintain selector and layout consistency. Decode using bounded traversal in wire order, resolving each field's extent before advancing; semantic materialization is optional when a validated view or skip suffices. Query/cancellation selections and Ack diagnostics must not be interpreted as ordinary Context value bodies. Share layout knowledge across sizing, encoding, and decoding.
+
 ### 9. Resolve the header-only requirement
 
 **Status: accepted following user direction. Prompt locations: Objective; Packet objects and external storage. Software choice, not a VITA requirement.**
 
 **Accepted approach:** require a header-only codec, semantic types, and generic runtime core; allow optional compiled transport/device adapters and their external dependencies. The Objective and packet-model requirements now use this boundary consistently. Compiled adapters remain optional dependencies of the core.
 
-**Remaining detail:** the architecture shall select C++20 or C++23 as the minimum and specify supported compilers/OSes, exception/RTTI policy, and dependency policy. Acceptance of the packaging boundary does not select those toolchain settings.
+**Language baseline accepted following user direction:** C++23 minimum. Evaluate optional, feature-gated C++26 enhancements for typed packet updates and CIF modeling, with a functionally equivalent C++23 path. Verify standardization/compiler support before selecting specific features. Supported compilers/OSes, exception/RTTI policy, and dependency policy remain architecture deliverables.
 
 ### 10. Put numbers and ownership contracts behind performance requirements
 
@@ -176,3 +184,7 @@ Decision 9 has resolved the packaging contradiction in the Objective and packet-
 6. Require the architecture document to close these decisions before implementing the framework.
 
 CRTP versus concepts, queue implementations, coroutine convenience APIs, SIMD optimizations, and advanced DMA/GPU adapters can then be evaluated within these constraints. They need not all be decided by the project owner before the architect begins.
+
+## Packet storage clarification
+
+Command and Context packets use one contiguous external buffer for encoding and decoding. Signal Data uses header/prologue, IQ data, and optional trailer segments for transmit and receive. Receive decoding exposes the IQ payload directly without sample-by-sample decoding or mandatory copying. A contiguous received packet yields logical segment views into its original allocation; adapters supporting physically separated buffers may supply those directly. External leases preserve each view's backing storage, including when only IQ is retained. Buffer providers support multiple fixed-size classes for these roles. See the architecture prompt for bounds, padding, format interpretation, and transport-fragment handling requirements.
