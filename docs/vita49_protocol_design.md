@@ -31,6 +31,8 @@ Section 10.1 allows at most one Data Stream in an Information Stream, and Sectio
 
 ## 2. Packet Class option tables
 
+Untimed Control mode 0 does not relax the Data timestamp options below. Baseline Data requires a qualified locked clock at start and only the documented bounded holdover thereafter. Required-metadata recovery follows architecture §7.1, not an implicit same-SID reset.
+
 ### 2.1 IQ Data classes
 
 These choices address Table 10.2.5.1-1, Sections 5–6, and Section 9.13.3.
@@ -83,7 +85,7 @@ Name: `IQ Generator Context`. Purpose: identify reference point, sample format/r
 | Inclusion | Every full snapshot includes Reference Point, Sample Rate, State/Event, DPF when known |
 | Full snapshot size | 14 words with those fields and the 7-word prologue |
 | Update delay | Submission attempted at the effective boundary; reference maximum 10 ms, then fault publication/stop Data rather than claim a missed guarantee |
-| Unknown required format/rate | Stop affected Data; Valid Data=false if reportable; explicit reset and known full snapshot required before restart |
+| Unknown required format/rate | Stop affected Data; Valid Data=false if reportable; application-initiated `recover_stream` with fresh paired SID, peer readiness, and known full snapshot required before restart (architecture §7.1) |
 | Association lists | Absent; pairing is through SID |
 | Other fields | Not published by this generator; unsupported semantics are not fabricated |
 
@@ -396,6 +398,8 @@ W5 uses the canonical rounded 16-entry oscillator; exact bytes validate packing/
 
 ## 7. Verification record and limits
 
-The delivered checker verifies wire-fixture word counts/header types, CAM bit masks, selector-only versus Sample Rate body lengths, 20-bit fixed-point rate encoding, three payload-format constants, all eight P/W/Er eligibility rows, request-mask/NACK/detail factor tables, timing uncertainty intervals, and packet/pool arithmetic. It also checks that ten machine-readable state scenarios include setup, events, and expected outcomes; it does not execute a transaction engine. Run `python3 docs/fixtures/check_architecture_fixtures.py` from the repository root. It checks architecture fixture consistency independently of any future framework implementation. These checks cannot validate every clause of the standard or substitute for a peer implementation.
+The delivered checker verifies wire-fixture word counts/header types, CAM bit masks, selector-only versus Sample Rate body lengths, 20-bit fixed-point rate encoding, three payload-format constants, all eight P/W/Er eligibility rows, request-mask/NACK/detail factor tables, timing uncertainty intervals, and packet/pool arithmetic including the complete projected 64 MiB arena partition and its agreement with the architecture table. It also checks that sixteen machine-readable state scenarios include setup, events, and expected outcomes; it does not execute a transaction engine. Run `python3 docs/fixtures/check_architecture_fixtures.py` from the repository root. It checks architecture fixture consistency independently of any future framework implementation. These checks cannot validate every clause of the standard or substitute for a peer implementation.
 
 Pending implementation evidence includes compile-tested public APIs, complete standard-field codecs, all attribute/array variants, fuzz/sanitizer results, deterministic race tests, packet capture interoperability, and measured performance/timing. The deliverable is the requested architecture and implementation plan; deployment identifiers, timing qualification, and interpretation agreement remain explicitly tracked inputs.
+
+Review closure, 2026-09-18: scenarios S11–S16 specify clock-loss mode-0 behavior, completion publication and stale generations, fresh-SID recovery, same-SID rejection, and synthetic failure without quiescence. The checker verifies scenario structure and budget arithmetic; memory ordering, runtime recovery, and actual object-size feasibility still require implementation tests.

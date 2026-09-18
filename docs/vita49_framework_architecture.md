@@ -1,6 +1,6 @@
 # VITA 49.2 framework architecture
 
-Status: architecture baseline for implementation; not an implementation or conformance certification. Prepared 2026-09-17.
+Status: architecture baseline for implementation; not an implementation or conformance certification. Prepared 2026-09-17; review contracts clarified 2026-09-18.
 
 This document executes [the architect prompt](../VITA49.2_High_Performance_Framework_Architect_Prompt.md). It preserves the accepted [IQ Generator Profile v1](iq_generator_profile_proposal.md) and Decisions 1–10, including wall-clock operation, GPS/PPS conditioning, uncommon packet-boundary rate changes, partial execution, and configuration revisions. The companion [protocol design](vita49_protocol_design.md) supplies class documentation, codec coverage, CAM tables, interpretation decisions, and fixtures.
 
@@ -31,7 +31,7 @@ These values make the design and benchmarks reproducible. They are proposed engi
 | Control capacity | 256 active transactions/runtime, at most 32 per Controllee; 128 scheduled, at most 16 per Controllee |
 | Horizon | 10 s maximum future scheduling; pending work counts against active capacity |
 | Transport | One VRT packet/UDP datagram, IPv4/IPv6, no IP fragmentation in reference configuration |
-| Timing | Untimed mode available; timed modes enabled only after clock/timing capability qualification (§8) |
+| Timing | Untimed Control mode 0 available independently of Data start; Data still requires the qualified protocol-clock policy. Control modes 1–4 require device timing qualification (§8) |
 
 No licensed OUI, actual peer, GPS receiver, NIC model, precise timing bounds, or measured throughput was supplied. Section 16 records the required deployment inputs. Missing numerical guarantees do not prevent development against deterministic fixtures.
 
@@ -71,7 +71,7 @@ flowchart TB
 | `adapters/posix_udp` | Optional compiled sockets/event-loop integration; kernel dependencies stay here |
 | Future adapters | DMA/GPU/DPDK/RDMA and framed streams implement the same capability/lifetime contracts |
 
-Use `inline` functions/variables and templates for header-only definitions. No mandatory global constructors, hidden singleton runtime, modules, third-party allocator, networking library, or coroutine runtime. CMake exports an INTERFACE core target and separate optional adapter targets. Multiple translation units must pass ODR/link tests; configuration macros affecting public layouts must be identical within a program.
+Use `inline` functions/variables and templates for header-only definitions. No mandatory global constructors, hidden singleton runtime, modules, third-party allocator, networking library, or coroutine runtime. CMake exports an INTERFACE core target and separate optional adapter targets. Public layouts and inline definitions shall not depend on per-translation-unit configuration macros. Express capacity and policy variation through explicit template parameters (distinct types) or runtime configuration values. Optional adapters use separate targets/namespaces and cannot redefine core types. Multiple translation units must pass ODR/link tests, including different legal policy instantiations in the same program. Do not rely on a linker diagnosing inconsistent inline definitions.
 
 ### 2.1 API and language decision
 
@@ -79,7 +79,7 @@ Use concepts plus `constexpr` descriptor tuples for the static field schema. End
 
 C++23 facilities used: `std::expected`, `std::span`, `std::bit_cast`, `std::endian`, `std::byteswap`, concepts, and constexpr tables. Require feature probes for the needed library as well as language facilities. Default core builds with RTTI disabled and supports exceptions disabled. Exception-enabled application thunks catch exceptions and translate them to callback failures; an exception-disabled binding requires `noexcept`. No exception crosses an executor or transport boundary. Optional coroutine awaitables wrap the transaction observer API; futures that block are not the primary API.
 
-C++26 reflection was evaluated as an optional means of generating descriptors from annotated structs. The [GCC status table](https://gcc.gnu.org/projects/cxx-status.html) lists P2996R13 reflection under C++26, GCC 16 with `-freflection` and `__cpp_impl_reflection >= 202506L`; [Clang status](https://clang.llvm.org/cxx_status.html) and [libc++ status](https://libcxx.llvm.org/Status/Cxx23.html) must be checked separately for language/library qualification. Decision: do not use reflection in the baseline. A later experimental `VITA_ENABLE_REFLECTION` path requires a compiler probe and must generate exactly the same descriptors as C++23 tuples. Reflection cannot infer CIF locations, units, field extents, or packet-specific semantics. No wire format or public baseline type depends on it. Compiler qualification is planned, not claimed from those status pages.
+C++26 reflection was evaluated as an optional means of generating descriptors from annotated structs. The [GCC status table](https://gcc.gnu.org/projects/cxx-status.html) lists P2996R13 reflection under C++26, GCC 16 with `-freflection` and `__cpp_impl_reflection >= 202506L`; [Clang status](https://clang.llvm.org/cxx_status.html) and [libc++ status](https://libcxx.llvm.org/Status/Cxx23.html) must be checked separately for language/library qualification. Decision: do not use reflection in the baseline. A later experimental reflection target requires a compiler probe and must generate exactly the same descriptors as C++23 tuples. Put its helpers in a separate opt-in header/namespace; do not use `VITA_ENABLE_REFLECTION` or another macro to change shared public definitions. Reflection cannot infer CIF locations, units, field extents, or packet-specific semantics. No wire format or public baseline type depends on it. Compiler qualification is planned, not claimed from those status pages.
 
 ## 3. Semantic packets, layouts, and codecs
 
@@ -190,7 +190,21 @@ Cancellation has a separate 64-entry inbox and 64 response credits so a full ord
 
 I/O arbitration services completions first, then up to 32 control/Context sends, then up to 64 Data sends, and repeats. Independent socket receive budgets prevent an IQ flood from consuming an entire tick. Control receives retain reserved RX buffers. No scheduler can guarantee progress if an application callback blocks indefinitely; nonblocking callback duration budgets are part of endpoint registration, and violations are measured and faulted.
 
-### 5.1 Reference capacities and overload rules
+### 5.1 Completion-ticket publication contract
+
+The following is required of every adapter, including synthetic failure producers. Each stable slot has one atomic tagged word containing a 56-bit generation and an 8-bit state. A token carries the exact generation. States are `free -> reserved -> writing -> ready -> reading -> free(next generation)`. The tagged word is indivisible; do not independently compare a generation and then claim a state. A slot whose generation would wrap is retired until the ticket arena is destroyed after quiescence.
+
+1. The admission owner acquires a free slot, initializes ownership/operation metadata, and release-publishes `reserved(g)`. The adapter receives the token through a synchronized handoff only after that initialization.
+2. A completion producer must win a compare-exchange from `reserved(g)` to `writing(g)` with acquire-release success ordering before touching the result payload. A failed claim does not read or write the payload. Concurrent duplicate callbacks, stale-generation callbacks, cancellation failure producers, and abandoned-token reporting all use this same claim operation.
+3. The winning producer writes the complete non-atomic result payload and release-stores `ready(g)`. Construction is bounded and nonthrowing; adapters must translate errors before claiming. The wakeup is only a hint. A worker must acquire the ready state even if it was awakened by another mechanism.
+4. The owning worker claims `ready(g) -> reading(g)` with acquire success ordering before reading payload. Only the winner consumes the result. It incorporates/copies the result into already reserved transaction storage; application callbacks never reference the slot payload after consumption.
+5. After payload destruction and confirmation that the operation no longer needs this slot, the owner release-stores `free(g+1)`. A next allocator acquires that state before reuse. Slot storage and the atomic tagged word remain alive through a provider/arena lifetime handle held by every outstanding callback token; generation checking alone does not prevent use-after-free of an arena.
+
+Failed compare-exchanges may use relaxed ordering because the failure path accesses no payload. A duplicate or stale result is counted and ignored. A synthetic timeout/cancellation/token-abandonment result does not prove I/O quiescence: device-accessible buffers remain retained or quarantined until separate adapter quiescence evidence is available. If a producer stalls in `writing`, shutdown must not steal its slot or reclaim its memory. Fault and retain it until the producer/adapter is quiescent. Scanning and draining do not allocate queue nodes.
+
+Required implementation tests: delayed payload writes cannot be observed before `ready`; competing producers yield one result; competing consumers cannot double-consume; stale callbacks fail after reuse; no generation wrap; arena lifetime survives late callbacks; a synthetic failure cannot prematurely reclaim DMA storage. These are future deterministic/TSan tests, not properties proven by the architecture arithmetic checker.
+
+### 5.2 Reference capacities and overload rules
 
 | Resource | Default bound / action |
 |---|---|
@@ -280,11 +294,27 @@ sequenceDiagram
   R-->>C: AckS after requested earlier Acks
 ```
 
-Relative Context/Ack transmission order is not promised beyond Context-before-affected-Data and CAM acknowledgement ordering. Ack processing must continue even when Context publication fails. A full snapshot includes all known applicable profile fields. Omitting an unknown persistent value does not invalidate a receiver's old value: for unknown Sample Rate or payload format, stop Data, publish Valid Data=false where possible, and require an explicit reset/rebind and a known full snapshot before restart. Do not invent an unknown numeric sentinel. Local query results expose missing/unknown selected fields; AckS indicates a partial response according to the selected interpretation.
+Relative Context/Ack transmission order is not promised beyond Context-before-affected-Data and CAM acknowledgement ordering. Ack processing must continue even when Context publication fails. A full snapshot includes all known applicable profile fields. Omitting an unknown persistent value does not invalidate a receiver's old value: for unknown Sample Rate or payload format, stop Data, publish Valid Data=false where possible, and require the explicit `recover_stream` operation below and a known full snapshot before restart. Do not invent an unknown numeric sentinel. Local query results expose missing/unknown selected fields; AckS indicates a partial response according to the selected interpretation.
 
 For multiple effective times, publish separate timed revisions in order. They cannot be coalesced if intervening samples or events depend on them. AckX is generated once terminal results for the requested fields are known; use the final actual effect time for multi-effect aggregation, retain individual timing diagnostics, and record this project interpretation in the protocol register. AckS observes the coherent current state at its own timestamp; it may include later intervening changes and is not an archival copy of requested values.
 
+### 7.1 Recovery from unknown required metadata
+
+The application owning the stream initiates the asynchronous runtime API `recover_stream(stream, RecoveryConfig, completion)`. `RecoveryConfig` supplies a newly allocated SID, confirmed source/device configuration, the existing or replacement qualified clock binding, and evidence that the application has provisioned the peer's new static association. This is a local lifecycle API, not a new wire Control field or an automatic retry of the failed command. Ordinary start/resume cannot bypass it when required rate/format is unknown.
+
+Recovery runs on the Controllee strand: `paused_context/faulted -> recovering -> starting -> running`. It closes admission for the old association, stops generation, cancels/disarms pending effects where possible, and waits for in-progress effects to resolve or the adapter to be reinitialized with established quiescence. If the adapter cannot establish known state and stop old effects, recovery fails and the stream remains stopped. Completed effects are not rolled back by this API.
+
+Once safe, discard unsent old Data, pending revisions/publication gates, RX waiting Data, and the association's Context history; detach them without revoking app-held immutable leases. Increment local routing/association generation. Keep old transaction outcomes, duplicate entries, and callbacks under their old keys until their normal retention/quiescence conditions are satisfied. Old late completions can finish old accounting but cannot mutate the recovered stream. Restore required state from explicit model reinitialization or adapter-confirmed state, never from the last requested values.
+
+The default recovery requires a fresh, deployment-allocated SID for all paired Data/Context/Command streams. Controller/Controllee IDs may remain unchanged because the SID changes the wire transaction/association key. The application provisions the peer's static routing and obtains peer readiness before the runtime enables the new association; no discovery or reset packet is invented. The peer creates a fresh cache for the new SID and rejects old-SID data for that association. The runtime installs a new counter domain, commits a known initial revision, and submits a full Context snapshot before affected Data. Context loss still follows normal receiver waiting/recovery policy. The source clock epoch is not reset merely because the SID changed.
+
+Same-SID recovery is unsupported by the reference binding. A future deployment variant must document an out-of-band peer reset barrier, cache invalidation, and a quarantine justified by the maximum network packet lifetime before wire identity reuse. Merely incrementing a local generation is insufficient. Pool- or publication-only failures with known state may use ordinary stop/start, but only after the runtime verifies that no required metadata is unknown.
+
 ## 8. Clocks, pacing, and scheduled execution
+
+“Untimed” means Control mode 0 only. It imposes no requested execution timestamp; it does not permit unclocked or timestamp-free Data in the baseline classes. The runtime can serve mode-0 queries/validation and monotonic timeouts while the Data stream is stopped for clock loss. An effectful mode-0 command must still satisfy its backend and boundary requirements: a running generator uses its next eligible boundary; a stopped generator may update its known pre-start configuration without producing Data. Recovery from unknown required state still requires §7.1. Control modes 1–4 need additional qualified execution-window capabilities even when the Data clock itself is qualified.
+
+Data start requires `locked` with a qualified mapping; continuation in bounded `holdover` uses the policy below. There is no implicit production fallback to an arbitrary free-running epoch. Deterministic tests and the named software benchmark may use an explicitly identified injected clock binding, without claiming GPS qualification.
 
 Three interfaces prevent accidental conflation:
 
@@ -400,7 +430,7 @@ Combined endpoint: register both bindings in the same runtime; local command rou
 
 Errors carry category, stage, field ID if known, byte offset if relevant, local diagnostic, retryability, and known/unknown remote-effect state. Local errors are not automatically mapped to invented VITA fields. Wire diagnostics use the class mappings in the protocol appendix. Malformed framing/layout is dropped without executing callbacks; a response is generated only after safely identifying a supported peer and response contract. Exceptions translate to device/callback failure with state uncertainty if effects may have occurred.
 
-Lifecycle: runtime `configured -> running -> quiescing -> stopped` or `faulted`; endpoint/stream adds `registered`, `starting`, and `paused_context`. Start validates pools, class options, identity collision, clock binding, and capacity. Stop first closes admission, freezes new generation, cancels/disarms cancellable future operations, drains accepted I/O and responses, then tears down callbacks. At 2 s graceful budget exhaustion, report outstanding work and enter faulted/quarantined state. Immediate stop skips optional draining but cannot reuse memory still reachable by devices. A stuck transport cannot satisfy both bounded shutdown and safe reclamation; its provider control blocks remain alive until quiescence or process termination. App-retained leases outlive the stopped runtime safely and prevent pool destruction.
+Lifecycle: runtime `configured -> running -> quiescing -> stopped` or `faulted`; endpoint/stream adds `registered`, `starting`, `paused_context`, and `recovering` (§7.1). Start validates pools, class options, identity collision, clock binding, and capacity. Stop first closes admission, freezes new generation, cancels/disarms cancellable future operations, drains accepted I/O and responses, then tears down callbacks. At 2 s graceful budget exhaustion, report outstanding work and enter faulted/quarantined state. Immediate stop skips optional draining but cannot reuse memory still reachable by devices. A stuck transport cannot satisfy both bounded shutdown and safe reclamation; its provider control blocks remain alive until quiescence or process termination. App-retained leases outlive the stopped runtime safely and prevent pool destruction.
 
 Security baseline is a statically configured isolated network. Per-peer authorization allows only configured endpoint/field combinations before admission; source filtering is not authentication. External untrusted deployment requires an authenticated transport/tunnel or authenticated adapter binding with replay/session identity; that choice is a deployment input. Bounds, rate quotas, reserved completion capacity, and parser budgets remain enabled for all sources. No arbitrary extension loading from packet data: class handlers are registered locally during configuration.
 
@@ -423,11 +453,36 @@ Reference pools, all 64-byte aligned CPU memory:
 | 2,048 bytes | 4,096 | RX datagrams and explicit fallback; at least 512 reserved for control reception |
 | 8,192 bytes | 128 | Large loopback/control structural tests; not baseline UDP emission |
 
-Raw blocks total 30,998,528 bytes. Remaining arena space holds pool control blocks, rings, metadata, transaction/duplicate arenas and histories. Startup charges each object, rejects oversized configurations, and prints the budget. Larger generic packets require caller-configured size classes; no runtime heap fallback. CPU/device pools cannot substitute for each other without advertised compatibility.
+Raw blocks total 30,998,528 bytes. The complete projected arena partition is below. Byte counts are reservation ceilings including alignment/padding for each category, not measured C++ object sizes. Queue entries reference externally pooled data rather than embedding packet bytes. The projection covers the 16-stream reference limit; the four-stream benchmark uses the same arena.
+
+| Arena category | Reserved bytes | Sizing basis |
+|---|---:|---|
+| Raw packet blocks | 30,998,528 | Six size classes above |
+| Provider/block metadata | 2,621,440 | 19,584 blocks at <=128 bytes each plus provider/free-list overhead |
+| Duplicate canonical/result arena | 8,388,608 | Bounded variable records; no live eviction |
+| Duplicate index | 524,288 | 4,096 entries at <=128 bytes |
+| Active semantic/plan arenas | 2,097,152 | 256 transactions at 8 KiB |
+| Transaction/controller records | 1,048,576 | 256 records per role at <=2 KiB; includes observers and field-result bookkeeping |
+| Effective/pending revisions | 1,048,576 | 16 streams x 128 revisions x <=512 bytes, baseline four-field state |
+| RX Context histories | 1,048,576 | 16 streams x 128 history entries x <=512 bytes |
+| Queue and submission descriptors | 3,145,728 | TX/RX/control/cancel/executor entries and segment/lease descriptors; global partition enforced at configuration |
+| Completion tickets | 524,288 | 1,024 slots at <=512 bytes including result/ownership metadata |
+| Scheduler / clock / routes | 1,048,576 | Timers, 128 scheduled plans' indices, 8 bindings and endpoint/stream registries |
+| Retention bookkeeping | 262,144 | 1,024 retained handles and shared-allocation metadata; sample bytes charged to pools |
+| Metrics / trace / bounded logs | 1,048,576 | Fixed rings and histogram arrays |
+| Adapter state / parser scratch / worker stacks | 4,194,304 | Default four workers with 512 KiB stacks, adapter and scratch partition in remainder |
+| Unassigned implementation headroom | 9,109,504 | Padding or category growth requires an explicit budget transfer, not allocation beyond cap |
+| **Total** | **67,108,864** | **64 MiB** |
+
+The non-headroom reservations sum to 57,999,360 bytes. This is projected feasibility, not proof that the eventual implementation fits. Each implementation type must fit its assigned ceiling or move an explicitly budgeted amount from headroom. A generated startup/build budget report must reconcile actual sizes, stacks, aligned allocations, and counts against this table. Arbitrary larger semantic classes or adapters need a different validated partition. OS socket buffers, process executable/shared-library memory, allocator/OS thread infrastructure outside the explicit worker-stack reservations, and application-owned buffers are outside this framework-arena cap and must be reported separately in process-memory benchmarks. Startup charges each object, rejects oversized configurations, and prints the budget. Larger generic packets require caller-configured size classes; no runtime heap fallback. CPU/device pools cannot substitute for each other without advertised compatibility.
 
 Sizing rule: `inflight_blocks >= ceil(packet_rate * completion_budget) + burst + held_revision_data`, separately by class and lane. For 100 MS/s IQ16 and a proposed 5 ms completion budget, 1,954 packets plus 256 burst and 64 Context-held packets require 2,274 TX headers/payloads; 4,096 reserved blocks cover that arithmetic. It does not prove a NIC or worker sustains the rate. Retained RX has a separate budget so consumers cannot steal control capacity.
 
-Proposed measured acceptance targets on the named qualification machine: 30 minutes at normal four-stream load without framework-induced Data drops; p99 immediate control local receive-to-completion <=2 ms and p99 validation <=1 ms under that load; no critical-path allocation after start; 64 MiB framework cap; finite and observable overload at 120% offered load. Stress 100 MS/s is a separate capability qualification, not a gate for claiming the normal envelope. Timed execution acceptance uses the deployed device window and calibrated clock uncertainty rather than the generic latency target.
+Proposed measured acceptance targets on the named qualification machine: 30 minutes at normal four-stream load without framework-induced Data drops; p99 immediate control local receive-to-completion <=2 ms and p99 validation <=1 ms under that load, using the benchmark backend defined below; no critical-path allocation after start; 64 MiB framework cap; finite and observable overload at 120% offered load. Stress 100 MS/s is a separate capability qualification, not a gate for claiming the normal envelope. Timed execution acceptance uses the deployed device window and calibrated clock uncertainty rather than the generic latency target.
+
+The 2 ms/1 ms control targets use a named software virtual-register backend: an independent synthetic Controllee with four fixed-size fields, no device I/O, no deliberate delay, no requested execution timestamp, and an inline completion publication after its bounded model update. It runs beside the four IQ streams; its own control reference point is the model register bank. It does not bypass runtime decode, admission, strand dispatch, completion-ticket consumption, or result recording. Thus the target does not impose a 2 ms bound on generator packet-boundary waits or arbitrary hardware.
+
+Measure `t_rx` when the adapter hands the complete packet envelope to the runtime, `t_validated` after validation/admission, `t_dispatch` just before calling the backend, `t_device_done` when the backend publishes ready, and `t_recorded` after the strand incorporates the result. Targets use `t_validated-t_rx` and `t_recorded-t_rx`; transport/kernel queueing before `t_rx` and Ack delivery are excluded and reported separately. For real adapters also report backend interval `t_device_done-t_dispatch`, framework pre-dispatch interval `t_dispatch-t_rx`, and completion-consumption interval `t_recorded-t_device_done`. Preserve raw per-command observations; do not subtract independently calculated percentiles. End-to-end hardware targets are deployment-specific and include intentional scheduling/boundary delays explicitly. Virtual-clock tests check semantics, while these latency measurements use the actual monotonic host clock under real load.
 
 Benchmark report must record CPU/NIC/firmware, OS/kernel, compiler/library flags, affinity, packet sizes, socket buffers, copy path, clock source, warm-up, duration, per-stream loss methodology, latency percentiles/max, and profiling overhead. Measure codec, memory/transport, generator conversion, and end-to-end separately. A wire capture and peer report are needed for network delivery claims; modulo-16 Packet Count alone is insufficient.
 

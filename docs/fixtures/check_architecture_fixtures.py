@@ -86,6 +86,21 @@ for row in f['state_scenarios']:
 
 pool_bytes = sum(x['block_bytes']*x['blocks'] for x in f['pools'])
 check(pool_bytes == 30_998_528, 'pool byte arithmetic')
+budget = f['arena_budget']
+check(sum(x['reserved_bytes'] for x in budget['categories']) == budget['cap_bytes'],
+      'complete projected arena fits 64 MiB')
+check(budget['categories'][0]['reserved_bytes'] == pool_bytes, 'arena raw blocks match pools')
+check(all(x['reserved_bytes'] > 0 for x in budget['categories']), 'positive category reservations')
+check(budget['cap_bytes'] == 64 * 1024 * 1024, 'arena cap units')
+# Ensure the reviewed human-readable table and machine fixture cannot drift.
+import re
+architecture = (ROOT / 'vita49_framework_architecture.md').read_text()
+table = architecture.split('| Arena category |')[1].split('The non-headroom')[0]
+documented = [(name.strip(), int(size.replace(',', '')))
+              for name, size in re.findall(r'^\| ([^|]+) \| ([\d,]+) \|', table, re.M)]
+check(documented == [(x['category'],x['reserved_bytes']) for x in budget['categories']],
+      'documented arena partition matches fixture')
+
 check(4*1_000_000/256 == 15_625, 'normal aggregate packet rate')
 check(15_625*(28+256*4) == 16_437_500, 'normal VRT byte rate')
 check(100_000_000/256*(28+256*4) == 410_937_500, 'stress VRT byte rate')

@@ -513,6 +513,110 @@
         "cancel_ackp": 1,
         "cancel_schx": 1
       }
+    },
+    {
+      "id": "S11",
+      "name": "untimed_control_during_clock_loss",
+      "initial": {
+        "clock": "faulted",
+        "data": "stopped"
+      },
+      "events": [
+        "receive mode-0 state query",
+        "request Data start without qualified clock"
+      ],
+      "expected": {
+        "query": "current known state or partial response",
+        "data_start": "rejected",
+        "monotonic_timeouts": "continue"
+      }
+    },
+    {
+      "id": "S12",
+      "name": "completion_publication",
+      "initial": {
+        "ticket": "reserved",
+        "generation": 7
+      },
+      "events": [
+        "producer claims writing(7)",
+        "worker scans while payload incomplete",
+        "producer completes payload and release-publishes ready(7)",
+        "worker acquire-claims reading(7)"
+      ],
+      "expected": {
+        "payload_reads_before_ready": 0,
+        "consumption_count": 1
+      }
+    },
+    {
+      "id": "S13",
+      "name": "stale_duplicate_completion",
+      "initial": {
+        "ticket": "reserved",
+        "generation": 8
+      },
+      "events": [
+        "late producer tries reserved(7) to writing(7)",
+        "current producer claims reserved(8) to writing(8)"
+      ],
+      "expected": {
+        "stale_payload_writes": 0,
+        "current_claim": "succeeds"
+      }
+    },
+    {
+      "id": "S14",
+      "name": "fresh_sid_recovery",
+      "initial": {
+        "rate": "unknown",
+        "sid": 1,
+        "history": "old"
+      },
+      "events": [
+        "application supplies confirmed rate and fresh SID 4",
+        "old effects quiesce",
+        "peer signals provisioned association ready",
+        "runtime submits known full Context for SID 4"
+      ],
+      "expected": {
+        "sid": 4,
+        "old_history": "detached",
+        "old_outcomes": "retained under old keys",
+        "old_late_effects_on_new_state": 0,
+        "data_gate": "requires new Context submission"
+      }
+    },
+    {
+      "id": "S15",
+      "name": "same_sid_recovery_rejected",
+      "initial": {
+        "rate": "unknown",
+        "sid": 1
+      },
+      "events": [
+        "reference recovery requested with SID 1"
+      ],
+      "expected": {
+        "recovery": "rejected",
+        "data": "stopped"
+      }
+    },
+    {
+      "id": "S16",
+      "name": "synthetic_failure_not_quiescence",
+      "initial": {
+        "ticket": "reserved",
+        "dma": "active"
+      },
+      "events": [
+        "abandoned-token failure producer claims ticket",
+        "worker consumes synthetic failure"
+      ],
+      "expected": {
+        "buffer_returned": false,
+        "dma_storage": "retained until independent quiescence evidence"
+      }
     }
   ],
   "timing_cases": [
@@ -600,5 +704,70 @@
       ],
       "allowed": true
     }
-  ]
+  ],
+  "arena_budget": {
+    "cap_bytes": 67108864,
+    "categories": [
+      {
+        "category": "Raw packet blocks",
+        "reserved_bytes": 30998528
+      },
+      {
+        "category": "Provider/block metadata",
+        "reserved_bytes": 2621440
+      },
+      {
+        "category": "Duplicate canonical/result arena",
+        "reserved_bytes": 8388608
+      },
+      {
+        "category": "Duplicate index",
+        "reserved_bytes": 524288
+      },
+      {
+        "category": "Active semantic/plan arenas",
+        "reserved_bytes": 2097152
+      },
+      {
+        "category": "Transaction/controller records",
+        "reserved_bytes": 1048576
+      },
+      {
+        "category": "Effective/pending revisions",
+        "reserved_bytes": 1048576
+      },
+      {
+        "category": "RX Context histories",
+        "reserved_bytes": 1048576
+      },
+      {
+        "category": "Queue and submission descriptors",
+        "reserved_bytes": 3145728
+      },
+      {
+        "category": "Completion tickets",
+        "reserved_bytes": 524288
+      },
+      {
+        "category": "Scheduler / clock / routes",
+        "reserved_bytes": 1048576
+      },
+      {
+        "category": "Retention bookkeeping",
+        "reserved_bytes": 262144
+      },
+      {
+        "category": "Metrics / trace / bounded logs",
+        "reserved_bytes": 1048576
+      },
+      {
+        "category": "Adapter state / parser scratch / worker stacks",
+        "reserved_bytes": 4194304
+      },
+      {
+        "category": "Unassigned implementation headroom",
+        "reserved_bytes": 9109504
+      }
+    ]
+  }
 }
