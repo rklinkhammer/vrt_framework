@@ -1,5 +1,7 @@
 # V-P15 / M6 readiness verification
 
+Current scope notice: the accepted operational M5 scope excludes Array-of-CIFs from production support and has passed the independent local software acceptance review. Its optional structural utility and missing peer semantic agreement do not block that scope. The P15/M6 hardware-input blocker below remains unchanged and independent of M5 acceptance. See [M5 operational scope](M5-operational-scope.md) and [operational verification](M5-operational-verification.md).
+
 Status: BLOCKED on required inputs, independently consistent with [coordinator readiness](P15-readiness.md).
 
 The plan scopes P15 to selected adapters/backends and requires actual device visibility, completion, cancellation/disarm, quiescence/reclamation and timing evidence. Authorization to proceed through M6 does not select a DMA/GPU/DPDK/RDMA implementation, target device, SDK/driver or accessible hardware. None is supplied in the current task. Existing CPU/virtual/UDP evidence cannot establish device fence or hardware timing correctness.

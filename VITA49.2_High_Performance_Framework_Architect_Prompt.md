@@ -8,6 +8,8 @@ Use the attached **ANSI/VITA 49.2-2017 (R2024)** specification as the normative 
 
 ## Accepted review decisions
 
+Release-scope update D-M5-1 (user accepted2026-09-19): M5 acceptance follows the documented IQ operational profile and published bounded codec capabilities, with Array-of-CIFs excluded from production requirements. Retain its optional explicit structural inspection utility and I9 engineering notes without requiring Array native/emission/peer integration for this release. This overrides any complete-registry M5 objective below. See [current scope and acceptance](docs/implementation/M5-operational-scope.md); device and deployment qualification remain separate.
+
 All ten decisions in [the architecture review](docs/architecture_prompt_review.md) are accepted and incorporated below. Treat these as project requirements, including the accepted defaults in [IQ Generator Profile v1](docs/iq_generator_profile_proposal.md), rather than alternatives to reconsider. The profile filename retains its original `proposal` suffix, but its status is accepted.
 
 Complete the detailed architecture within those decisions. Explicitly distinguish accepted requirements, implementation choices still delegated to the architect, unresolved specification interpretations, and deployment inputs such as OUI values, timing windows, capacity limits, and performance targets. Acceptance of a decision does not imply that its design, tests, or measurements already exist.

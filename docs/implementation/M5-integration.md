@@ -1,6 +1,6 @@
 # M5 integration progress
 
-Status: final local continuation gate passes198/198 Release and195/195 ASan/UBSan checks, including69 standalone headers. All96 nonrecursive named fields, all13 attribute shapes, raw/numeric sample adapters and registered extensions are locally integrated. An explicit structural-only I9 Array-of-CIF API is separately tested. P14/M5 remains partial: native Array/peer semantic integration and full qualification are stopped on missing I9 agreement/evidence. P15/M6 separately remains blocked on selected hardware inputs. Earlier checkpoints below are historical.
+Status: **M5 local software gate COMPLETE / PASS under user-accepted D-M5-1.** Acceptance covers the documented IQ operational profile and retained bounded codec capabilities; Array-of-CIFs production support is excluded. The separate structural inspection utility remains optional. [Independent acceptance](M5-operational-verification.md) confirms the unchanged198/198 Release,195/195 ASan/UBSan and69-header evidence, plus new targeted checks. Earlier partial-status checkpoints below document the superseded complete-registry objective. This is not deployment, Linux or universal VITA qualification; M6 remains blocked on hardware inputs.
 
 ## CIF0 scalar batch
 
@@ -99,3 +99,13 @@ Baseline sizes remain SemanticValue16, LayoutContext48, FieldView32, scalar snap
 ### Required-input stop
 
 There is no supplied I9 peer agreement or independent/authoritative layout evidence. Under the protocol interpretation register this prevents peer semantic/native integration and unqualified full-registry qualification; local round trips cannot close it. P14/M5 therefore remains partial. P15/M6 has no selected adapter/backend, device/OS/SDK contract or device access and remains blocked. Linux production-toolchain, independent-peer and actual device qualification are not established by these local macOS tests. P13 receiver characterization remains non-blocking and no new performance/deployment claim is made.
+
+## M5 operational-scope closure — D-M5-1
+
+The user approved release acceptance against the documented operational profile, excluding Array-of-CIFs from production requirements. [D-M5-1](M5-operational-scope.md) records the supported Data/Context/control behavior, retained96-field generic library, limits and exclusions. Sample Rate remains the only writable standard IQ control; this scope revision does not add arbitrary SDR operations.
+
+**Coordinator gate: COMPLETE / PASS for the revised local software scope.** [Independent review](M5-operational-verification.md) found no remaining in-scope implementation gap. All149 source/test/fuzz entries still match the final aggregate manifest, so the198/198 Release,195/195 ASan/UBSan and69-header results remain applicable. Nine relevant existing runtime/profile tests were rerun successfully. An independent sanitizer probe additionally confirmed ordinary Context/Control/query rejection of CIF1/bit11 at both decoder capacities, with zero callbacks and no native insertion. A separate reviewer corroborated normal rejection and optional structural inspection. [Targeted results](artifacts/M5-operational/targeted-release.log), [sanitizer probe](artifacts/M5-operational/exclusion.log), [manifest check](artifacts/M5-operational/manifest-check.txt), [second check](artifacts/M5-operational-scope/commands-and-results.txt).
+
+Only scope/acceptance documents and verification artifacts changed. The original prompt, architecture, protocol matrix/I9 register, implementation plan, coverage and current status now agree. Existing field/sample/control behavior and runtime pools are unchanged. The optional Array utility is neither registered nor enabled through the production packet path. Historical I9 contradictions and pre-revision incomplete status remain documented; no external agreement or missing implementation is fabricated.
+
+M5 completion is bounded to this supported scope. I9 evidence is a condition for future optional Array interoperability, not a blocker for this release. Linux/deployment peer/OUI/class/clock qualification and broader receiver measurements remain separately recorded. P15/M6 remains blocked on a selected hardware adapter/backend, device/OS/SDK contracts and access to actual hardware.

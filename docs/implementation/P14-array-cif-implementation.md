@@ -1,5 +1,7 @@
 # P14 Array-of-CIF structural subset
 
+Current scope notice: the user accepted M5 completion against the operational profile with Array-of-CIFs excluded from production support. The independent operational review now passes and the coordinator has closed the M5 local software gate for that scope. The explicit I9 structural utility remains optional, with no peer semantic, emission or universal VITA conformance claim. Missing Array peer agreement therefore does not block this M5 scope. P15/M6 remains separately blocked on required hardware inputs. See [M5 operational scope](M5-operational-scope.md) and [operational verification](M5-operational-verification.md).
+
 Status: independently reviewed structural component promoted; final aggregate gate passed198/195. This is the explicit accepted I9 capability, not unqualified Array-of-CIF interoperability.
 
 `codec/array_cif.hpp` requires explicit `Options{Dialect::i9_five_cifs_header7,timestamps}` and exposes transactional `validate(Bytes,Options,Budget&)`, a privately constructed borrowed View, checked record spans and structural visitation. The five fixed CIF words follow the three base words; encoded HeaderSize7 and total8+record_words*records implement accepted I9. No alternate size or padding convention is guessed.
@@ -12,9 +14,9 @@ Budget defaults are128 aggregate field occurrences,1664 views,4096 work units,25
 
 The reviewed implementation and independent oracle/mutation tests were promoted unchanged. The live layout change applies only the additive resolver patch, preserving the newer CIF1 provider and native-view repair. Independent evidence covers24,000 nested length/mask/work/depth mutations against a separately authored restricted-schema parser, plus timestamp, limits, callback and literal cases. See [independent report](P14-array-cif-verification.md). Generic packet fuzzing separately covers both16/64 and128/1664 paths; it does not enter this standalone recursion API.
 
-## Required-input stop
+## Excluded production scope and separate required inputs
 
-No peer agreement, independently interoperating implementation or authoritative clarification for I9 was supplied. No typed native Array setter/materialization, Array emission, peer semantic dispatch or application relationship semantics has been added. These remain incomplete under the protocol interpretation register's semantic-use gate. Structural test vectors cannot substitute for that evidence. P14/M5 is therefore partial, and full generic-registry/interoperability qualification is not claimed.
+No peer agreement, independently interoperating implementation or authoritative clarification for I9 was supplied. No typed native Array setter/materialization, Array emission, peer semantic dispatch or application relationship semantics has been added. These capabilities remain unavailable under the protocol interpretation register's semantic-use gate and are now excluded from the accepted operational M5 production scope. Structural test vectors cannot substitute for peer evidence. The earlier partial-M5 assessment applied to the broader full-registry scope; it is not a blocker for the newly accepted operational scope. Full generic-registry/interoperability qualification is still not claimed.
 
 P15/M6 separately requires selection of an adapter/backend, device/OS/SDK contracts and actual device access. None is inferred from I9 or the virtual benchmark. Existing baseline functionality remains usable while these inputs are pending.
 

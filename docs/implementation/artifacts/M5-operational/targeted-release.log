@@ -1,0 +1,29 @@
+Test project /Users/rklinkhammer/workspace/vrt_framework/build/udp-release
+    Start  46: p06_verify_scenarios
+1/9 Test  #46: p06_verify_scenarios .................   Passed    0.00 sec
+    Start  85: p10_verify_source
+2/9 Test  #85: p10_verify_source ....................   Passed    0.00 sec
+    Start  86: p10_verify_packetization
+3/9 Test  #86: p10_verify_packetization .............   Passed    0.00 sec
+    Start  92: p10_verify_rate
+4/9 Test  #92: p10_verify_rate ......................   Passed    0.00 sec
+    Start  96: p10_verify_wait
+5/9 Test  #96: p10_verify_wait ......................   Passed    0.00 sec
+    Start 102: p11_verify_scenarios
+6/9 Test #102: p11_verify_scenarios .................   Passed    0.00 sec
+    Start 113: p12_runtime_binding
+7/9 Test #113: p12_runtime_binding ..................   Passed    0.00 sec
+    Start 186: p14_verify_cif7_profile
+8/9 Test #186: p14_verify_cif7_profile ..............   Passed    0.00 sec
+    Start 194: p14_verify_cif1_structures_profile
+9/9 Test #194: p14_verify_cif1_structures_profile ...   Passed    0.00 sec
+
+100% tests passed out of 9
+
+Label Time Summary:
+integration    =   0.01 sec*proc (2 tests)
+transaction    =   0.00 sec*proc (1 test)
+transport      =   0.00 sec*proc (1 test)
+udp            =   0.00 sec*proc (1 test)
+
+Total Test time (real) =   0.04 sec

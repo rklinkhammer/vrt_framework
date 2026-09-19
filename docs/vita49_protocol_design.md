@@ -1,6 +1,9 @@
 # VITA 49.2 protocol design and verification appendix
 
-Companion to [the framework architecture](vita49_framework_architecture.md), dated 2026-09-17. All codec support below is a design commitment/milestone assignment; no codec implementation is claimed. Normative references are to the supplied ANSI/VITA 49.2-2017 (R2024), printed page numbering. Software/profile selections are identified as such. The [existing review](architecture_prompt_review.md) remains historical rationale.
+Companion to [the framework architecture](vita49_framework_architecture.md), dated 2026-09-17. The original milestone tables record design commitments, not evidence by themselves; current implementation evidence and accepted scope revisions are linked below. Normative references are to the supplied ANSI/VITA 49.2-2017 (R2024), printed page numbering. Software/profile selections are identified as such. The [existing review](architecture_prompt_review.md) remains historical rationale.
+
+
+Current M5 scope (D-M5-1, user accepted2026-09-19): the IQ operational profile and advertised bounded codecs define software acceptance. Array-of-CIFs is excluded from production support; its separate I9 structural utility is optional. Earlier milestone assignments below are design history where superseded. Implementation evidence and limitations are in the [coverage matrix](implementation/P14-coverage.md) and [operational scope](implementation/M5-operational-scope.md). No universal standard-field support is claimed.
 
 ## 1. Information Class documentation
 
@@ -151,7 +154,7 @@ Wire diagnostics (Table 8.4.1.2.1-1): bit31 not executed, bit30 device failure, 
 
 ### 3.1 Packet family wire coverage
 
-`M1` means planned envelope support in milestone M1; `M2` adds transactions; `M5` completes the bounded standard-field registry. All are encode/decode/validate commitments, not passing tests today.
+`M1` means planned envelope support in milestone M1; `M2` adds transactions; `M5` closes the advertised bounded codec scope under D-M5-1, excluding Array-of-CIFs. All are encode/decode/validate commitments, not passing tests today.
 
 | Code | Envelope encode/decode | Payload / dispatch | Generator use |
 |---|---|---|---|
@@ -181,7 +184,8 @@ All named standard fields in Table 9.1-1 are assigned a wire-codec milestone bel
 | 0 | 14 Formatted GPS; 13 Formatted INS; 12 ECEF Ephemeris; 11 Relative Ephemeris; 10 Ephemeris Reference ID; 9 GPS ASCII; 8 Context Association Lists | M5 | Unsupported |
 | 1 | 31 Phase Offset; 30 Polarization; 29 3D Pointing Vector; 28 3D Pointing Vector Structure; 27 Spatial Scan Type; 26 Spatial Reference Type; 25 Beam Width; 24 Range | M5 | Unsupported |
 | 1 | 20 Eb/No BER; 19 Threshold; 18 Compression Point; 17 Second/Third-order Intercept Points; 16 SNR/Noise Figure; 15 Auxiliary Frequency; 14 Auxiliary Gain; 13 Auxiliary Bandwidth | M5 | Unsupported |
-| 1 | 11 Array of CIFs; 10 Spectrum; 9 Sector Scan/Step; 7 Index List | M5, Array of CIF interpretation I9 | Unsupported |
+| 1 | 11 Array of CIFs | Excluded from production/M5; optional separate I9 structural inspection only | Unsupported |
+| 1 | 10 Spectrum; 9 Sector Scan/Step; 7 Index List | M5 bounded generic codecs | Unsupported |
 | 1 | 6 Discrete I/O 32; 5 Discrete I/O 64; 4 Health Status; 3 V49 Spec Compliance; 2 Version/Build; 1 Buffer Size | M5 | Unsupported |
 | 2 | 31 Bind; 30 Cited SID; 29 Sibling SIDs; 28 Parent SIDs; 27 Child SIDs; 26 Cited Message ID | M5 | Unsupported |
 | 2 | 25 Controllee ID; 24 Controllee UUID; 23 Controller ID; 22 Controller UUID; 21 Information Source; 20 Track ID; 19 Country Code; 18 Operator | M5 | Unsupported as CIF controls; prologue identities are M1 |
@@ -192,7 +196,7 @@ All named standard fields in Table 9.1-1 are assigned a wire-codec milestone bel
 | 7 | 31 current; 30 average; 29 median; 28 standard deviation; 27 max; 26 min; 25 precision; 24 accuracy; 23 first derivative; 22 second; 21 third; 20 probability; 19 belief | M5 general; current/min/max scalar fixture M1 | No generator attribute setters/publication |
 | 4,5,6 | No standard field layouts selected in this version | Unsupported layout when interpretation requires unknown fields | None |
 
-The profile may structurally reject unsupported M5 layouts before M5 is delivered; the release matrix must advertise that limitation. It must not call an M1/M2 release complete standard-field support. A complete M5 registry still has the explicit resource limits below; it does not promise every wire-maximum array can be materialized in the reference arena.
+The profile may structurally reject unsupported M5 layouts before M5 is delivered; the release matrix must advertise that limitation. It must not call an M1/M2 release complete standard-field support. The supported M5 registry retains the explicit resource limits below; it does not promise every wire-maximum array can be materialized in the reference arena.
 
 ### 3.3 Bounds and semantic distinction
 
@@ -352,12 +356,12 @@ Each entry is a chosen project implementation basis with unresolved peer/authori
 | I6 | Dry-run observation p116 mentions action00 in Ack; Rule 8.4.1-2 requires bits31–21 match | Preserve action01 in dry-run Acks; use request correlation to retain simulation semantics |
 | I7 | Dry run prohibits live effects; §8.4.2-2 includes mode1 in post-action state wording | Dry-run S reports isolated predicted post-state, action01; never changes live state |
 | I8 | §8.3.1.5 permits any request combination; Rule 8.3.1.5-7 requires X with post-action S | Controller emits X+S for modes1/2; profile receiver rejects execute-mode S without X as unsupported profile combination; generic codec retains it structurally |
-| I9 | Array of CIFs §9.13.1 pp222–223 mandates five CIFs plus 3-word header but HeaderSize=7 conflicts with generic extra-header-size formula | Decode registered standard variant as exactly five CIF words after three base words, require mandated HeaderSize=7, validate total as 8+record_words*count; no two invented padding words. Mark peer-dependent; disable semantic use until agreed; unknown alternate layout errors rather than guessed offsets |
+| I9 | Array of CIFs §9.13.1 pp222–223 mandates five CIFs plus 3-word header but HeaderSize=7 conflicts with generic extra-header-size formula | The optional explicit I9 utility uses exactly five CIF words after three base words, requires encoded HeaderSize=7, validates total as 8+record_words*count; no two invented padding words. Optional structural utility only under D-M5-1; production Array support excluded, no native/emission/semantic integration. Preserve peer-dependent interpretation for future optional work; reject unknown alternate layouts |
 | I10 | §8.4.1.5 defines an actual execution timestamp but not aggregation of distinct per-field effective times | X timestamp is final actual effect time; retain per-field timing issues and revisions. If no effect happened, omit actual-effect timestamp instead of inventing one. Peer agreement required for multi-effect hardware |
 | I11 | Summary W/Er flags remain set even when detail omitted, while diagnostic body indicator presence depends on original detail requests | Decode with correlated request's detail mask. If unavailable and group identity is ambiguous, return opaque diagnostic body plus `requires_request_context`; never infer value bodies from flags alone |
 | I12 | Mode3 text Table 8.3.1.7-1 refers to late window despite early-mode name/figure | Use early application interval plus device late tolerance; confirm with peer and include boundary tests |
 
-Printed pages 110, 116, 222, and 223 were rendered and inspected to verify the AckV/AckS/dry-run and Array of CIFs issues are present in the pages, not solely text-extraction artifacts. I9 is a conservative explicit dialect selection, not a claim to have resolved the standard for all peers. M5 full-registry qualification must include an independent implementation or authoritative clarification for that layout.
+Printed pages 110, 116, 222, and 223 were rendered and inspected to verify the AckV/AckS/dry-run and Array of CIFs issues are present in the pages, not solely text-extraction artifacts. I9 is a conservative explicit dialect selection, not a claim to have resolved the standard for all peers. Any future Array interoperability claim requires independent implementation evidence or authoritative clarification. Under D-M5-1, Array is excluded and this condition does not block M5 acceptance.
 
 ## 6. Representative fixtures
 
@@ -402,6 +406,6 @@ W5 uses the canonical rounded 16-entry oscillator; exact bytes validate packing/
 
 The delivered checker verifies wire-fixture word counts/header types, CAM bit masks, selector-only versus Sample Rate body lengths, 20-bit fixed-point rate encoding, three payload-format constants, all eight P/W/Er eligibility rows, request-mask/NACK/detail factor tables, timing uncertainty intervals, and packet/pool arithmetic including the complete projected 64 MiB arena partition and its agreement with the architecture table. It also checks that sixteen machine-readable state scenarios include setup, events, and expected outcomes; it does not execute a transaction engine. Run `python3 docs/fixtures/check_architecture_fixtures.py` from the repository root. It checks architecture fixture consistency independently of any future framework implementation. These checks cannot validate every clause of the standard or substitute for a peer implementation.
 
-Pending implementation evidence includes compile-tested public APIs, complete standard-field codecs, all attribute/array variants, fuzz/sanitizer results, deterministic race tests, packet capture interoperability, and measured performance/timing. The deliverable is the requested architecture and implementation plan; deployment identifiers, timing qualification, and interpretation agreement remain explicitly tracked inputs.
+At the architecture baseline, planned evidence included public API compilation, field/attribute codecs, fuzz/sanitizer and race tests, peer captures and performance/timing. Current implementation evidence is recorded in the M5 integration report; D-M5-1 excludes Array production support, while peer/deployment qualification remains separate. The deliverable is the requested architecture and implementation plan; deployment identifiers, timing qualification, and interpretation agreement remain explicitly tracked inputs.
 
 Review closure, 2026-09-18: scenarios S11–S16 specify clock-loss mode-0 behavior, completion publication and stale generations, fresh-SID recovery, same-SID rejection, and synthetic failure without quiescence. The checker verifies scenario structure and budget arithmetic; memory ordering, runtime recovery, and actual object-size feasibility still require implementation tests.

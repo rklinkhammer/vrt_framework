@@ -1,5 +1,7 @@
 # V-P14 independent verification
 
+Current scope notice: the user accepted M5 completion against the operational profile with Array-of-CIFs excluded from production support. The independent operational review now passes and the coordinator has closed the M5 local software gate for that scope. The explicit I9 structural utility remains optional, with no peer semantic, emission or universal VITA conformance claim. Missing Array peer agreement therefore does not block this M5 scope. P15/M6 remains separately blocked on required hardware inputs. See [M5 operational scope](M5-operational-scope.md) and [operational verification](M5-operational-verification.md).
+
 Status: first CIF0 scalar batch PASS. This is not an M5 completion verdict.
 
 Readiness authority: implementation plan P14/M5, protocol design §3.2 and interpretation register I9, current P02 traversal/P03 storage APIs, and user-provided ANSI/VITA-49.2-2017 (R2024). Normative references below use printed page numbers. The PDF text was read directly; temperature bit layout and the conflicting Array-of-CIFs figures on pp222–223 were also rendered and visually inspected.

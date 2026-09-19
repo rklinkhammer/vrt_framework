@@ -1,0 +1,21 @@
+#include <vita/codec/array_cif.hpp>
+#include <array>
+#include <cassert>
+#include <cstdio>
+using namespace vita;
+int main(){
+ // Literal Context SID1, ReferencePoint9 then CIF1/11 array. No production encoder.
+ constexpr std::array<std::uint32_t,15> words{0x4000000f,1,0x40000002,0x00000800,9,
+     10,0x07002001,0,0x40000000,0,0,0,0,17,0x12345678};
+ std::array<std::byte,60> bytes{};
+ for(std::size_t i=0;i<words.size();++i)for(unsigned j=0;j<4;++j)bytes[i*4+j]=std::byte(words[i]>>(24-j*8));
+ auto decoded=codec::decode_packet(bytes);assert(!decoded&&decoded.error().code==ErrorCode::unsupported_layout);
+ unsigned callbacks=0;auto callback=[&](const codec::FieldView&) noexcept->Result<void>{++callbacks;return {};};
+ auto visited=codec::decode_and_visit(bytes,{},callback);assert(!visited&&visited.error().code==ErrorCode::unsupported_layout&&callbacks==0);
+ auto wide=codec::decode_packet_bounded<128,1664>(bytes);assert(!wide&&wide.error().code==ErrorCode::unsupported_layout);
+ auto widevisit=codec::decode_and_visit_bounded<128,1664>(bytes,{},callback);assert(!widevisit&&widevisit.error().code==ErrorCode::unsupported_layout&&callbacks==0);
+ namespace ac=codec::array_cif;ac::Budget budget;
+ auto structural=ac::validate(Bytes(bytes).subspan(20),{ac::Dialect::i9_five_cifs_header7,{}},budget);assert(structural&&structural->record_count()==1);
+ unsigned observations=0;assert(structural->visit([&](const ac::Element&e)noexcept->Result<void>{assert(e.field.id==ReferencePoint::id&&e.path.steps[0].index==17);++observations;return {};}));assert(observations==1);
+ std::puts("PASS: default and128/1664 normal decoders/visitors reject CIF1/11 unsupported_layout, zero callbacks (including preceding ReferencePoint). Explicit structural I9 utility accepts same array extent and observes one field; no semantic/emission API exercised.");
+}

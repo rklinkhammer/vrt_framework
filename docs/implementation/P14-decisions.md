@@ -1,6 +1,8 @@
 # P14 interpretation decisions
 
-Status: D-P14-1/2 accepted by the user on 2026-09-19; D-P14-3 and the general raw-code policy below are also accepted by the user. Resume remaining P14 batches with lossless raw-code coverage for Beam Width and Barometric Pressure. Engineering-unit conversion remains unsupported pending authoritative correction or an explicitly agreed peer dialect. M5 remains incomplete.
+Current scope notice: the user accepted M5 completion against the operational profile with Array-of-CIFs excluded from production support. The independent operational review now passes and the coordinator has closed the M5 local software gate for that scope. The explicit I9 structural utility remains optional, with no peer semantic, emission or universal VITA conformance claim. Missing Array peer agreement therefore does not block this M5 scope. P15/M6 remains separately blocked on required hardware inputs. See [M5 operational scope](M5-operational-scope.md) and [operational verification](M5-operational-verification.md).
+
+Status: D-P14-1/2 accepted by the user on 2026-09-19; D-P14-3 and the general raw-code policy below are also accepted by the user. Resume remaining P14 batches with lossless raw-code coverage for Beam Width and Barometric Pressure. Engineering-unit conversion remains unsupported pending authoritative correction or an explicitly agreed peer dialect. The current M5 acceptance scope and final-review status are stated above; earlier batch evidence below is retained.
 
 ## D-P14-1: Beam Width
 

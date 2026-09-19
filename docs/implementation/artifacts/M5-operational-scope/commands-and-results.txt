@@ -1,0 +1,14 @@
+clang++ -std=c++23 -O2 -Wall -Wextra -Werror -fno-exceptions -fno-rtti -Iinclude /tmp/m5-operational-scope.cpp -o /tmp/m5-operational-scope
+exit0
+/tmp/m5-operational-scope
+PASS: default and128/1664 normal decoders/visitors reject CIF1/11 unsupported_layout, zero callbacks (including preceding ReferencePoint). Explicit structural I9 utility accepts same array extent and observes one field; no semantic/emission API exercised.
+exit0
+
+Manifest checked with Python hashlib.sha256 against every entry.
+{
+  "manifest": "docs/implementation/artifacts/P14-final-local/manifest-udp-release.json",
+  "manifest_sha256": "a51ab41e36b09d0a1362de5e57b5725df676842f81c85d0f96c570aad6bf803c",
+  "checked_files": 149,
+  "changed_or_missing": [],
+  "unchanged": true
+}
