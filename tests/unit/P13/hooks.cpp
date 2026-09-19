@@ -36,8 +36,8 @@ struct Sink {
 };
 StateSnapshot state() {
   StateSnapshot s;
-  for (auto &field : s.fields)
-    field.validity = Validity::known;
+  for (auto id : baseline_fields)
+    s.fields[field_index(id)].validity = Validity::known;
   s.fields[0].value = std::uint32_t{1};
   s.fields[1].value = *Hertz::from_integer(1'000'000);
   s.fields[2].value = std::uint32_t{0};

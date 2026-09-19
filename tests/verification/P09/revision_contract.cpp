@@ -1,7 +1,7 @@
 #include <vita/runtime/context/revisions.hpp>
 #include <thread>
 using namespace vita;using namespace vita::runtime;using namespace vita::runtime::context;
-static EffectiveEvent event(unsigned rate,unsigned generation=1){EffectiveEvent e;e.association_generation=generation;e.actual_time={100,rate};e.time_known=e.ordinal_known=true;e.sample_ordinal=rate;for(auto& f:e.state.fields)f.validity=Validity::known;e.state.fields[1].value=*Hertz::from_integer(rate);e.state.fields[3].value=PayloadFormat{0x200003cf00000000ULL};return e;}
+static EffectiveEvent event(unsigned rate,unsigned generation=1){EffectiveEvent e;e.association_generation=generation;e.actual_time={100,rate};e.time_known=e.ordinal_known=true;e.sample_ordinal=rate;for(auto id:baseline_fields)e.state.fields[field_index(id)].validity=Validity::known;e.state.fields[1].value=*Hertz::from_integer(rate);e.state.fields[3].value=PayloadFormat{0x200003cf00000000ULL};return e;}
 static AdmissionBundle credits(AdmissionPool& p){return std::move(*p.acquire(AdmissionRequest{}.need(Resource::revision).need(Resource::context_publication)));}
 int main(){
     AdmissionPool pool(AdmissionPool::reference_capacities());

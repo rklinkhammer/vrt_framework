@@ -14,4 +14,4 @@ Wire make(bool cancel=false,bool multi=false,std::uint32_t rate=2,std::uint32_t 
     else{ControlPacket p;assert(p.set<SampleRate>(*Hertz::from_integer(rate)));if(multi)assert(p.set<ReferencePoint>(9));n=codec::encode_packet(e,p.freeze(),wire.bytes);}
     assert(n);wire.size=*n;return wire;
 }
-StateSnapshot initial(){StateSnapshot s;for(auto& f:s.fields)f.validity=Validity::known;s.fields[0].value=std::uint32_t{1};s.fields[1].value=*Hertz::from_integer(1);s.fields[2].value=std::uint32_t{0};s.fields[3].value=PayloadFormat{0x200003cf00000000ull};return s;}
+StateSnapshot initial(){StateSnapshot s;for(auto id:baseline_fields)s.fields[field_index(id)].validity=Validity::known;s.fields[0].value=std::uint32_t{1};s.fields[1].value=*Hertz::from_integer(1);s.fields[2].value=std::uint32_t{0};s.fields[3].value=PayloadFormat{0x200003cf00000000ull};return s;}

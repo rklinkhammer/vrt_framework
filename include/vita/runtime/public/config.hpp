@@ -20,6 +20,22 @@ struct RuntimeConfig {
   std::size_t worker_stack_bytes=0;
   runtime::transport::TransportFactory transport{};
 };
+enum class EndpointRole { combined, controller_only, controllee_only };
+struct DeviceBackendBinding {
+  runtime::transaction::Backend backend{};
+  std::shared_ptr<void> owner{};
+  std::size_t storage_bytes=0;
+  void (*progress)(void*, const runtime::transaction::OperationContext&) noexcept=nullptr;
+  bool enabled() const noexcept{return backend.context||backend.validate||backend.validate_plan||backend.begin||backend.simulate||backend.disarm||backend.quiescence||bool(owner)||storage_bytes||progress;}
+  bool valid() const noexcept{return !enabled() || (owner&&storage_bytes&&backend.context&&backend.validate&&backend.begin&&backend.quiescence);}
+};
+enum class QueryField : std::uint8_t { reference_point, sample_rate, state_event, payload_format, center_frequency };
+class QuerySelection {
+  std::uint8_t mask_=0;
+public:
+  QuerySelection(std::initializer_list<QueryField> fields) noexcept {for(auto field:fields){auto index=static_cast<unsigned>(field);if(index<5)mask_|=1u<<index;else mask_|=0x80;}}
+  std::uint8_t mask() const noexcept{return mask_;}
+};
 enum class ControlleeKind { iq_source, virtual_register };
 struct StreamConfig {
   std::uint32_t sid = 0, controller_id = 0, controllee_id = 0;
@@ -33,6 +49,20 @@ struct StreamConfig {
   runtime::context::ReceiverBinding receiver{};
   ControlleeKind kind=ControlleeKind::iq_source;
   runtime::transaction::TraceBinding trace{};
+  profiles::iq::Profile profile=profiles::iq::Profile::generator_v1;
+  std::uint64_t center_frequency=100'000'000;
+  EndpointRole role=EndpointRole::combined;
+  DeviceBackendBinding device{};
+  std::uint64_t association_generation=1;
+};
+struct RemoteTargetConfig {
+  std::uint32_t sid=0,controller_id=0,controllee_id=0;
+  std::uint64_t controller_peer=1,controllee_peer=2;
+  profiles::iq::Profile profile=profiles::iq::Profile::generator_v1;
+  profiles::iq::SampleFormat format=profiles::iq::SampleFormat::iq16;
+  runtime::context::ReceiverBinding receiver{};
+  std::uint64_t sample_rate=100'000;
+  std::uint64_t association_generation=1;
 };
 struct CommandOptions {
   bool partial = true, allow_warning = false, allow_error = false,

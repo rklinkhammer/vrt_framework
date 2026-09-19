@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include "../P07/packets.hpp"
 using namespace vita;using namespace vita::runtime;using namespace vita::runtime::context;using namespace vita::runtime::transaction;
-static StateSnapshot initial(){StateSnapshot s;for(auto& f:s.fields)f.validity=Validity::known;s.fields[0].value=std::uint32_t{1};s.fields[1].value=*Hertz::from_integer(1000000);s.fields[2].value=std::uint32_t{valid_data_enable|valid_data_indicator};s.fields[3].value=PayloadFormat{0x200003cf00000000ULL};return s;}
+static StateSnapshot initial(){StateSnapshot s;for(auto id:baseline_fields)s.fields[field_index(id)].validity=Validity::known;s.fields[0].value=std::uint32_t{1};s.fields[1].value=*Hertz::from_integer(1000000);s.fields[2].value=std::uint32_t{valid_data_enable|valid_data_indicator};s.fields[3].value=PayloadFormat{0x200003cf00000000ULL};return s;}
 static EffectiveEvent beginning(){EffectiveEvent e;e.state=initial();e.actual_time={100,0};e.time_known=e.ordinal_known=true;e.association_generation=1;return e;}
 static AdmissionBundle credit(AdmissionPool& pool){return std::move(*pool.acquire(AdmissionRequest{}.need(Resource::revision).need(Resource::context_publication)));}
 static Result<Handle> submit(Engine<2>& engine,const ControlPacket& packet,OperationContext now){codec::Envelope e;e.type=codec::PacketType::command;e.stream_id=1;e.command=codec::Command{0xa91c0000,1,codec::Identifier::short_id(2),codec::Identifier::short_id(3)};std::array<std::byte,256> bytes;auto size=codec::encode_packet(e,packet.freeze(),bytes);if(!size)return std::unexpected(size.error());auto decoded=codec::decode_packet(Bytes{bytes}.first(*size));if(!decoded)return std::unexpected(decoded.error());return engine.accept(*decoded,now);}

@@ -2,7 +2,7 @@
 using namespace vita;using namespace vita::runtime;using namespace vita::runtime::context;
 static std::uint32_t word(Bytes b,unsigned offset){return (std::uint32_t(b[offset])<<24)|(std::uint32_t(b[offset+1])<<16)|(std::uint32_t(b[offset+2])<<8)|std::uint32_t(b[offset+3]);}
 int main(){
- ContextFrame f;f.time={100,123};f.time_known=true;f.epoch=codec::Tsi::gps;f.valid=true;f.change=true;for(auto&field:f.state.fields)field.validity=Validity::known;f.state.fields[0].value=std::uint32_t{7};f.state.fields[1].value=*Hertz::from_integer(1000000);f.state.fields[2].value=std::uint32_t{valid_data_enable|valid_data_indicator|sample_loss_enable|sample_loss_indicator};f.state.fields[3].value=PayloadFormat{0x200003cf00000000ULL};
+ ContextFrame f;f.time={100,123};f.time_known=true;f.epoch=codec::Tsi::gps;f.valid=true;f.change=true;for(auto id:baseline_fields)f.state.fields[field_index(id)].validity=Validity::known;f.state.fields[0].value=std::uint32_t{7};f.state.fields[1].value=*Hertz::from_integer(1000000);f.state.fields[2].value=std::uint32_t{valid_data_enable|valid_data_indicator|sample_loss_enable|sample_loss_indicator};f.state.fields[3].value=PayloadFormat{0x200003cf00000000ULL};
  codec::Envelope envelope;envelope.type=codec::PacketType::context;envelope.stream_id=1;std::array<std::byte,256> bytes;
  auto n=encode_context(f,envelope,bytes);if(!n||*n!=48)return 1;
  if(word(bytes,0)!=0x40a0000c||word(bytes,4)!=1||word(bytes,8)!=100||word(bytes,12)!=0||word(bytes,16)!=123)return 2;

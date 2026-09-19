@@ -1,0 +1,20 @@
+[0/1] Re-running CMake...
+-- Configuring done (0.3s)
+-- Generating done (0.1s)
+-- Build files have been written to: /Users/rklinkhammer/workspace/vrt_framework/build/p16-tsan
+[1/9] Building CXX object tests/verification/P07/CMakeFiles/p07_verify_guard_race.dir/guard_race.cpp.o
+[2/9] Building CXX object tests/verification/P11/CMakeFiles/p11_verify_late.dir/late_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/late_contract.cpp:1:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/../P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/late_contract.cpp:6:42: warning: missing field 'clock' initializer [-Wmissing-field-initializers]
+    6 |  RecoveryConfig recovery{4,confirmed,true};recovery.confirmed_state.fields[0].value=std::uint32_t{4};if(!device->recover(recovery))return 6;
+      |                                          ^
+2 warnings generated.
+[3/9] Building CXX object tests/verification/P16/CMakeFiles/p16_verify_public.dir/public_contract.cpp.o
+[4/9] Linking CXX executable tests/verification/P07/p07_verify_guard_race
+[5/9] Linking CXX executable tests/verification/P11/p11_verify_late
+[6/9] Linking CXX executable tests/verification/P16/p16_verify_public
+[7/9] Building CXX object tests/verification/P16/CMakeFiles/p16_verify_counters.dir/counter_contract.cpp.o
+[8/9] Linking CXX executable tests/verification/P16/p16_verify_counters

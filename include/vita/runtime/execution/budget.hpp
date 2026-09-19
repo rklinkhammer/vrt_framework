@@ -31,6 +31,13 @@ public:
         if(bytes>head.reserved-head.charged) return std::unexpected(Error{ErrorCode::capacity_exhausted});
         head.reserved-=bytes; rows_[index].reserved+=bytes; return {};
     }
+    Result<void> transfer_unused(BudgetCategory from,BudgetCategory to,std::size_t bytes) noexcept {
+        const auto source=static_cast<std::size_t>(from),target=static_cast<std::size_t>(to);
+        if(source>=rows_.size()||target>=rows_.size()||source==target)return std::unexpected(Error{ErrorCode::invalid_argument});
+        if(bytes>rows_[source].reserved-rows_[source].charged)return std::unexpected(Error{ErrorCode::capacity_exhausted});
+        if(bytes>std::numeric_limits<std::size_t>::max()-rows_[target].reserved)return std::unexpected(Error{ErrorCode::overflow});
+        rows_[source].reserved-=bytes;rows_[target].reserved+=bytes;return {};
+    }
     BudgetRow row(BudgetCategory category) const noexcept { auto index=static_cast<std::size_t>(category); return index<rows_.size() ? rows_[index] : BudgetRow{}; }
     std::size_t charged_bytes() const noexcept { std::size_t n=0; for(auto r:rows_) n+=r.charged; return n; }
     std::size_t reserved_bytes() const noexcept { std::size_t n=0; for(auto r:rows_) n+=r.reserved; return n; }

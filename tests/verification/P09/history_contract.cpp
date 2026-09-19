@@ -1,6 +1,6 @@
 #include <vita/runtime/context/receiver.hpp>
 using namespace vita;using namespace vita::runtime;using namespace vita::runtime::context;
-static StateSnapshot state(unsigned rate){StateSnapshot s;for(auto& f:s.fields)f.validity=Validity::known;s.fields[0].value=std::uint32_t{7};s.fields[1].value=*Hertz::from_integer(rate);s.fields[2].value=std::uint32_t{valid_data_enable|valid_data_indicator};s.fields[3].value=PayloadFormat{0x200003cf00000000ULL};return s;}
+static StateSnapshot state(unsigned rate){StateSnapshot s;for(auto id:baseline_fields)s.fields[field_index(id)].validity=Validity::known;s.fields[0].value=std::uint32_t{7};s.fields[1].value=*Hertz::from_integer(rate);s.fields[2].value=std::uint32_t{valid_data_enable|valid_data_indicator};s.fields[3].value=PayloadFormat{0x200003cf00000000ULL};return s;}
 static bool rate(const MetadataSnapshot& s,unsigned expected){auto value=std::get_if<Hertz>(&s.state.fields[1].value);return value&&value->q20==std::int64_t(expected)*(1<<20);}
 int main(){
     {

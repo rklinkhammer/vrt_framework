@@ -1,0 +1,29 @@
+{
+  "plain": [
+    "core",
+    "binding",
+    "remote",
+    "budget"
+  ],
+  "asan_ubsan": [
+    "core",
+    "binding",
+    "remote",
+    "budget"
+  ],
+  "status": "PASS",
+  "compiler": "Apple clang C++23 -Wall -Wextra -Werror",
+  "sizes": {
+    "StateSnapshot": 176,
+    "EffectiveEvent": 304,
+    "Revision": 472,
+    "AckRecord": 400,
+    "VitaRuntime_default": 232448
+  },
+  "sixteen_stream_reference": {
+    "charged": 52208928,
+    "cap": 67108864,
+    "unused_plans_reservation_transfer": 317456
+  },
+  "scope": "isolated developer probes, independent and aggregate gates separate"
+}

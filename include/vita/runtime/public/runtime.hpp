@@ -1,6 +1,7 @@
 #pragma once
 #include <vita/adapters/loopback/loopback.hpp>
 #include <vita/codec/prologue.hpp>
+#include <vita/runtime/transport/framing.hpp>
 #include <vita/runtime/public/config.hpp>
 #include <vita/runtime/transaction/controller.hpp>
 #include <vita/runtime/transaction/manager.hpp>
@@ -82,9 +83,19 @@ public:
                                               CommandOptions options = {}) {
       return runtime_->command(index_, rate, 1u << 1, options, false);
     }
+    Result<TransactionHandle> set_center_frequency(Hertz frequency,CommandOptions options={}) {
+      return runtime_->command(index_,frequency,1u<<4,options,false);
+    }
+    Result<TransactionHandle> query(QuerySelection fields,CommandOptions options={}) {
+      return query(fields.mask(),options);
+    }
     Result<TransactionHandle> query(std::uint8_t fields = 1u << 1,
                                     CommandOptions options = {}) {
       return runtime_->command(index_, {}, fields, options, true);
+    }
+    Result<void> cancel(TransactionHandle handle, QuerySelection fields,
+                        CommandOptions options = {}) {
+      return cancel(handle, fields.mask(), options);
     }
     Result<void> cancel(TransactionHandle handle, std::uint8_t fields = 1u << 1,
                         CommandOptions options = {}) {
@@ -219,7 +230,7 @@ private:
     runtime::transaction::RelationshipHandle relationship;
     std::array<std::optional<Reply>, Transactions * 2 + 64> replies{};
     struct PacketStamp {
-      const std::byte *header = nullptr;
+      std::byte *header = nullptr;
       ProtocolTime last_sample;
     };
     std::array<PacketStamp, 64> stamps{};
@@ -229,26 +240,36 @@ private:
     std::array<runtime::timing::Boundary, Transactions * 2 + 3> boundaries{};
     std::size_t boundary_count = 0;
     Stream(VitaRuntime *r, std::size_t i, StreamConfig c)
-        : owner(r), index(i), config(c),
+        : owner(r), index(i), config(c),generation(c.association_generation),
           timeline(*runtime::timing::SampleTimeline::create({}, c.sample_rate)),
-          pacing(timeline),
-          engine(r->admission_, backend.binding(), initial(c),
+          pacing(timeline),revisions(c.association_generation),
+          engine(r->admission_, c.device.enabled()?c.device.backend:backend.binding(), initial(c),
                  runtime::transaction::EngineOptions{
-                     c.kind==ControlleeKind::virtual_register?runtime::transaction::Profile::generic_virtual_test:runtime::transaction::Profile::iq_generator_v1,
-                     c.kind==ControlleeKind::virtual_register?runtime::EffectSink{}:revisions.binding(), &timeline, true, this,
-                     c.kind==ControlleeKind::virtual_register?nullptr:project_observation,c.trace}),
+                     c.kind==ControlleeKind::virtual_register?runtime::transaction::Profile::generic_virtual_test:c.profile==profiles::iq::Profile::frequency_tunable?runtime::transaction::Profile::iq_frequency_tunable:runtime::transaction::Profile::iq_generator_v1,
+                     c.kind==ControlleeKind::virtual_register?runtime::EffectSink{}:effect_binding(), &timeline, true, this,
+                     c.kind==ControlleeKind::virtual_register?nullptr:project_observation,c.trace,c.device.owner}),
           manager(engine, r->retention_, r->admission_),
           publisher(revisions, {this, send_context, send_data}),
-          receiver(r->receive_quota_, {this, deliver, drop}, 1, r->epoch(),
-                   false, c.sid) {if(c.kind==ControlleeKind::virtual_register)backend.set_inline_completion(true);}
+          receiver(r->receive_quota_, {this, deliver, drop}, c.association_generation, r->epoch(),
+                   false, c.sid,{},c.profile) {if(c.kind==ControlleeKind::virtual_register)backend.set_inline_completion(true);}
+    runtime::EffectSink effect_binding() noexcept {
+      auto sink=revisions.binding();sink.context=this;
+      sink.reserve=[](void* context,std::size_t count) noexcept ->Result<runtime::RevisionReservation>{auto& stream=*static_cast<Stream*>(context);auto binding=stream.revisions.binding();return binding.reserve(binding.context,count);};
+      sink.record=[](void* context,const runtime::EffectiveEvent& event,runtime::RevisionReservation& reservation,runtime::AdmissionBundle credits) noexcept {
+        auto& stream=*static_cast<Stream*>(context);auto binding=stream.revisions.binding();binding.record(binding.context,event,reservation,std::move(credits));
+        if(stream.config.source.effective&&stream.status==SourceStatus::running){auto observed=stream.config.source.effective(stream.config.source.context,event);if(!observed){stream.status=SourceStatus::faulted;stream.publisher.backend_fault(event.state);}}
+      };return sink;
+    }
     static runtime::StateSnapshot initial(const StreamConfig &c) {
       runtime::StateSnapshot state;
-      for (auto &field : state.fields)
-        field.validity = runtime::Validity::known;
+      state.profile=c.profile;
+      for (std::size_t i=0;i<runtime::active_state_fields(c.profile);++i)
+        state.fields[i].validity = runtime::Validity::known;
       state.fields[0].value = c.sid;
       state.fields[1].value = *Hertz::from_integer(c.sample_rate);
       state.fields[2].value = std::uint32_t{0};
       state.fields[3].value = profiles::iq::payload_format(c.format);
+      if(c.profile==profiles::iq::Profile::frequency_tunable)state.fields[4].value=*Hertz::from_integer(c.center_frequency);
       return state;
     }
     static runtime::StateSnapshot project_observation(
@@ -307,8 +328,8 @@ private:
       if (!appended)
         return appended;
       auto sent = r.send(storage, s, codec::PacketType::context, false, {}, {});
-      if (sent && frame.observation)
-        s.coverage_floor = frame.time;
+      // A refresh does not invalidate the preceding metadata interval. Start
+      // and clock reanchoring establish the earliest usable sample separately.
       return sent;
     }
     static Result<void> send_data(void *p, memory::TxStorage &storage,
@@ -325,6 +346,23 @@ private:
         }
       if (!stamp)
         return std::unexpected(Error{ErrorCode::invalid_state});
+      // Only this tracked, unaccepted header remains writable. Finalize its
+      // count at handoff, since earlier held packets may have been accepted
+      // since construction. An accepted storage is moved away and its stamp
+      // cleared; neither payload nor accepted/retained headers are rewritten.
+      auto framing = runtime::transport::inspect(storage);
+      if (!framing)
+        return std::unexpected(framing.error());
+      auto count = s.owner->counters_.next(
+          s.owner->counter(s, codec::PacketType::signal));
+      if (!count)
+        return std::unexpected(count.error());
+      framing->envelope.packet_count = *count;
+      auto finalized = codec::encode_prologue(
+          framing->envelope, framing->payload_bytes,
+          MutableBytes{stamp->header, header->size()});
+      if (!finalized)
+        return std::unexpected(finalized.error());
       auto sent = s.owner->send(storage, s, codec::PacketType::signal, false,
                                 {}, revision);
       if (sent) {
@@ -485,14 +523,14 @@ private:
     e.type = type;
     e.stream_id = s.config.sid;
     e.class_id = codec::ClassId{
-        *config_.oui, 1,
+        *config_.oui, profiles::iq::information_class(s.config.profile),
         static_cast<std::uint16_t>(
             type == codec::PacketType::signal
                 ? (s.config.trailer
                        ? *s.config.trailer_packet_class
-                       : profiles::iq::baseline_packet_class(s.config.format))
-            : type == codec::PacketType::context ? 0x10
-                                                 : 0x20)};
+                       : profiles::iq::data_class(s.config.profile,profiles::iq::baseline_packet_class(s.config.format)))
+            : type == codec::PacketType::context ? profiles::iq::context_class(s.config.profile)
+                                                 : profiles::iq::command_class(s.config.profile))};
     if (auto next = counters_.next(counter(s, type, controller)))
       e.packet_count = *next;
     if (type == codec::PacketType::command)
@@ -505,6 +543,14 @@ private:
                       std::size_t bytes) noexcept {
     auto row = budget_.row(category);
     if (bytes > row.reserved - row.charged) {
+      const auto deficit=bytes-(row.reserved-row.charged);
+      const auto head=budget_.row(runtime::BudgetCategory::headroom);
+      if(category==runtime::BudgetCategory::scheduling&&deficit>head.reserved-head.charged){
+        // Runtime embeds real Engine plans in Stream; it does not instantiate
+        // the separate plan arena reserved by the generic reference projection.
+        auto reclaimed=budget_.transfer_unused(runtime::BudgetCategory::plans,runtime::BudgetCategory::headroom,deficit-(head.reserved-head.charged));
+        if(!reclaimed)return reclaimed;
+      }
       auto transferred = budget_.transfer_headroom(
           category, bytes - (row.reserved - row.charged));
       if (!transferred)
@@ -597,7 +643,7 @@ private:
                                 : runtime::transaction::resource_exhausted;
     for (std::size_t i = 0; i < packet.fields.size(); ++i) {
       auto index = runtime::field_index(packet.fields[i].id);
-      if (index < 4)
+      if (index < runtime::state_field_capacity)
         ack.diagnostics[index].errors =
             diagnostic | runtime::transaction::not_executed;
     }
@@ -708,6 +754,10 @@ private:
                ? SourceStatus::temporal_association
                : SourceStatus::context_unavailable;
   }
+  static bool pending_effect_gate(const Stream& stream) noexcept {
+    const auto pending=stream.engine.pending_effect_boundary();
+    return pending&&(!pending->ordinal_known||stream.timeline.ordinal()>=pending->boundary.sample_ordinal);
+  }
   Result<void> generate(Stream &s) noexcept {
     if (!clock_snapshot_ || s.status != SourceStatus::running)
       return {};
@@ -725,6 +775,11 @@ private:
       if (future.time() < *s.coverage_floor)
         ++*obsolete;
     }
+    if(const auto pending=s.engine.pending_effect_boundary()){
+      if(!pending->ordinal_known||s.timeline.ordinal()>=pending->boundary.sample_ordinal)return {};
+      const auto available=(pending->boundary.sample_ordinal-s.timeline.ordinal())/ *pairs;
+      *obsolete=std::min<std::uint64_t>(*obsolete,available);
+    }
     if (*obsolete) {
       auto skipped = *obsolete * *pairs;
       auto moved = s.timeline.advance(skipped);
@@ -739,6 +794,7 @@ private:
     }
     if (s.pacing.time() > mono_protocol(now_))
       return {};
+    if(pending_effect_gate(s))return {};
     if (s.pending_loss) {
       runtime::AdmissionRequest need;
       need.need(runtime::Resource::revision)
@@ -765,6 +821,7 @@ private:
       // The revision is recorded exactly once even if transport acceptance
       // must retry. The publisher retains the Context-before-Data gate.
       s.pending_loss = false;
+      if(pending_effect_gate(s))return {};
       auto published = s.publisher.progress(now_, *clock_snapshot_);
       if (!published)
         return std::unexpected(resource_backpressure(published.error()));
@@ -874,12 +931,14 @@ private:
     return {};
   }
   Result<void> service(Stream &s) noexcept {
+    if(s.config.role==EndpointRole::controller_only){s.receiver.progress(now_);return {};}
     auto context = operation_context(s);
+    if(!s.retired&&s.config.device.enabled()&&s.config.device.progress)s.config.device.progress(s.config.device.backend.context,context);
     for (std::size_t work = 0; work < Transactions * 4 + 1; ++work) {
       auto progressed = s.manager.progress(context);
       if (!progressed)
         return progressed;
-      if (!s.backend.pending() || !s.auto_complete) {
+      if (s.config.device.enabled() || !s.backend.pending() || !s.auto_complete) {
         // Inline model completions are already READY. Drain them under the same
         // bounded turn budget instead of adding one host cycle per queued field.
         if (s.config.kind == ControlleeKind::virtual_register &&
@@ -979,6 +1038,33 @@ private:
         s.publisher.pause();
         return {};
       }
+      if(pending_effect_gate(s))return {};
+      // Flush eligible Context and earlier held Data before assigning the next
+      // packet count. Counts commit only on transport acceptance, so two queued
+      // packets must not both capture the same uncommitted counter value.
+      const auto pending = s.engine.pending_effect_boundary();
+      // A coarse clock advance can pass an effect while the sample cursor is
+      // still earlier. Do not publish a refresh beyond that unresolved time.
+      bool catch_up = s.pending_loss ||
+          (s.coverage_floor && s.timeline.time() < *s.coverage_floor);
+      if (pending && !catch_up) {
+        auto pairs = packet_samples(s.config);
+        if (!pairs)
+          return std::unexpected(pairs.error());
+        auto obsolete = intervals_on(s.pacing, mono_protocol(now_), *pairs);
+        if (!obsolete)
+          return std::unexpected(obsolete.error());
+        catch_up = *obsolete != 0;
+      }
+      if (pending && pending->ordinal_known && !catch_up &&
+          clock_snapshot_->time < pending->boundary.time) {
+        auto before_generation = s.publisher.progress(now_, *clock_snapshot_);
+        if (!before_generation) {
+          if (s.publisher.status() != runtime::context::StreamStatus::active)
+            s.status = publication_status(s);
+          return std::unexpected(resource_backpressure(before_generation.error()));
+        }
+      }
       auto generated = generate(s);
       if (!generated) {
         if (s.publisher.status() != runtime::context::StreamStatus::active) {
@@ -989,6 +1075,7 @@ private:
         }
         return generated;
       }
+      if(pending_effect_gate(s))return {};
       auto published = s.publisher.progress(now_, *clock_snapshot_);
       if (!published) {
         if (s.publisher.status() != runtime::context::StreamStatus::active)
@@ -1001,11 +1088,12 @@ private:
   Result<TransactionHandle> command(std::size_t index, Hertz rate,
                                     std::uint8_t fields, CommandOptions options,
                                     bool query) {
-    if (index >= count_ || !fields || (fields & 0xf0) ||
+    if (index >= count_ || !fields || (fields & 0xe0) ||
         options.timing_mode > 4)
       return std::unexpected(Error{ErrorCode::invalid_argument});
     freeze();
     auto &s = *streams_[index];
+    if(s.config.role==EndpointRole::controllee_only||std::popcount(fields)>4)return std::unexpected(Error{ErrorCode::unsupported_capability});
     if (shutdown_requested_ || lifecycle_[index].active || s.retired)
       return std::unexpected(Error{ErrorCode::invalid_state});
     auto e = envelope(s, codec::PacketType::command, true);
@@ -1035,19 +1123,19 @@ private:
     Result<std::size_t> encoded;
     if (query) {
       QueryPacket packet;
-      for (std::size_t i = 0; i < 4; ++i)
+      for (std::size_t i = 0; i < runtime::state_field_capacity; ++i)
         if (fields & (1u << i)) {
-          auto selected = packet.select(runtime::baseline_fields[i]);
+          auto selected = packet.select(runtime::state_fields[i]);
           if (!selected)
             return std::unexpected(selected.error());
         }
       encoded = codec::encode_packet(e, packet.freeze(), *bytes);
     } else {
-      if (fields != (1u << 1))
+      if (fields != (1u << 1) && fields != (1u << 4))
         return std::unexpected(Error{ErrorCode::unsupported_capability});
       ControlPacket packet;
-      packet.configure(0x20, action);
-      auto set = packet.set<SampleRate>(rate);
+      packet.configure(profiles::iq::command_class(s.config.profile), action);
+      auto set = packet.set_value(fields==(1u<<4)?RFReferenceFrequency::id:SampleRate::id,rate);
       if (!set)
         return std::unexpected(set.error());
       encoded = codec::encode_packet(e, packet.freeze(), *bytes);
@@ -1066,14 +1154,14 @@ private:
     e = tracked->envelope;
     if (query) {
       QueryPacket packet;
-      for (std::size_t i = 0; i < 4; ++i)
+      for (std::size_t i = 0; i < runtime::state_field_capacity; ++i)
         if (fields & (1u << i))
-          packet.select(runtime::baseline_fields[i]);
+          packet.select(runtime::state_fields[i]);
       encoded = codec::encode_packet(e, packet.freeze(), *bytes);
     } else {
       ControlPacket packet;
-      packet.configure(0x20, action);
-      packet.set<SampleRate>(rate);
+      packet.configure(profiles::iq::command_class(s.config.profile), action);
+      packet.set_value(fields==(1u<<4)?RFReferenceFrequency::id:SampleRate::id,rate);
       encoded = codec::encode_packet(e, packet.freeze(), *bytes);
     }
     if (!encoded)
@@ -1099,7 +1187,7 @@ private:
   Result<void> cancel(TransactionHandle handle, std::uint8_t fields,
                       CommandOptions options) {
     if (handle.runtime_id != runtime_id_ || handle.stream >= count_ ||
-        handle.controller.slot >= books_.size() || !fields || (fields & 0xf0))
+        handle.controller.slot >= books_.size() || !fields || (fields & 0xe0))
       return std::unexpected(Error{ErrorCode::invalid_argument});
     auto &book = books_[handle.controller.slot];
     if (book.generation != handle.controller.generation)
@@ -1134,9 +1222,9 @@ private:
     if (!bytes)
       return std::unexpected(bytes.error());
     CancelPacket packet;
-    for (std::size_t i = 0; i < 4; ++i)
+    for (std::size_t i = 0; i < runtime::state_field_capacity; ++i)
       if (fields & (1u << i))
-        packet.select(runtime::baseline_fields[i]);
+        packet.select(runtime::state_fields[i]);
     auto encoded = codec::encode_packet(e, packet.freeze(), *bytes);
     if (!encoded)
       return std::unexpected(encoded.error());
@@ -1197,20 +1285,17 @@ private:
     auto can = controllers_.can_register_relationship(key);
     if (!can)
       return can;
-    const std::array<runtime::transport::Association, 2> associations{
-        {{{s.config.controller_peer, s.generation},
-          {s.config.controllee_peer, s.generation},
-          s.config.sid},
-         {{s.config.controllee_peer, s.generation},
-          {s.config.controller_peer, s.generation},
-          s.config.sid}}};
+    std::array<runtime::transport::Association,2> association_storage{};std::size_t association_count=0;
+    if(s.config.role!=EndpointRole::controllee_only)association_storage[association_count++]={{s.config.controller_peer,s.generation},{s.config.controllee_peer,s.generation},s.config.sid};
+    if(s.config.role!=EndpointRole::controller_only)association_storage[association_count++]={{s.config.controllee_peer,s.generation},{s.config.controller_peer,s.generation},s.config.sid};
+    const auto associations=std::span<const runtime::transport::Association>{association_storage}.first(association_count);
     if (transport_.associate) {
       auto preflight =
           transport_.associate(transport_.context, associations, false);
       if (!preflight)
         return preflight;
     }
-    std::array<runtime::Route, 4> batch;
+    std::array<runtime::Route, 4> batch;std::size_t route_count=0;
     const std::array types{
         codec::PacketType::command, codec::PacketType::command,
         codec::PacketType::context, codec::PacketType::signal};
@@ -1219,7 +1304,8 @@ private:
     std::array<runtime::CounterKey, 4> keys;
     for (std::size_t i = 0; i < 4; ++i) {
       auto e = envelope(s, types[i], i == 0);
-      auto &route = batch[i];
+      const bool receive=(i==0?s.config.role!=EndpointRole::controller_only:s.config.role!=EndpointRole::controllee_only);
+      auto &route = batch[route_count];
       route.key = {
           {i == 0 ? s.config.controller_peer : s.config.controllee_peer,
            s.generation},
@@ -1235,6 +1321,7 @@ private:
       if(i==0)route.before_decode=Stream::before_decode;
       if (i == 1)
         route.request_context = Stream::request_context;
+      if(receive)++route_count;
       keys[i] = counter(s, types[i], i == 0);
     }
     // Fresh SID and fixed four-role shapes make both capacity-preflighted
@@ -1245,7 +1332,7 @@ private:
       if (!commit)
         return commit;
     }
-    auto installed = routes_.install(batch);
+    auto installed = routes_.install(std::span<const runtime::Route>{batch}.first(route_count));
     if (!installed)
       return installed;
     installed = counters_.install(keys);
@@ -1264,6 +1351,9 @@ private:
     const auto *bank = streams_[index].get();
     if (bank->config.sid != sid)
       bank = retired_[index].get();
+    if (bank->config.sid == sid && bank->config.role==EndpointRole::controller_only){
+      status.effects=status.capabilities=0;status.io=outstanding_io(*bank);status.backend_quiescent=false;return status;
+    }
     if (bank->config.sid == sid) {
       const auto drained = bank->engine.drain_status();
       status.effects = drained.active;
@@ -1293,6 +1383,8 @@ private:
     if (!op.active)
       return {};
     auto &old = *streams_[index];
+    if(old.config.role==EndpointRole::controller_only){op.status.io=outstanding_io(old);op.status.effects=op.status.capabilities=0;op.status.backend_quiescent=false;if(!op.status.io){old.status=SourceStatus::stopped;finish_lifecycle(index,LifecyclePhase::stopped);}else if(op.immediate||now_>=op.deadline){old.status=SourceStatus::faulted;finish_lifecycle(index,LifecyclePhase::quarantined);}return {};}
+
     if (op.status.phase == LifecyclePhase::starting) {
       if (old.publisher.published_highwater())
         finish_lifecycle(index, LifecyclePhase::running);
@@ -1321,10 +1413,9 @@ private:
       }
       // Callback true is the explicit adapter reinitialization/quiescence
       // contract.
-      old.backend.set_quiescence_available(true);
+      if(!old.config.device.enabled()){old.backend.set_quiescence_available(true);
       auto reset_backend = old.backend.reinitialize();
-      if (!reset_backend)
-        return reset_backend;
+      if (!reset_backend)return reset_backend;}
       op.reinitialized = true;
       auto accounted = old.manager.progress(operation_context(old));
       if (!accounted)
@@ -1376,6 +1467,8 @@ private:
         &next); // old keys stay reserved but cannot dispatch to a reused bank.
     next.config = old.config;
     next.config.sid = op.recovery.new_sid;
+    next.config.association_generation=generation;
+    if(next.config.profile==profiles::iq::Profile::frequency_tunable)next.config.center_frequency=static_cast<std::uint64_t>(std::get<Hertz>(op.recovery.confirmed_state.fields[4].value).q20>>20);
     next.config.sample_rate = static_cast<std::uint64_t>(
         std::get<Hertz>(op.recovery.confirmed_state.fields[1].value).q20 >> 20);
     for (auto format :
@@ -1476,7 +1569,7 @@ private:
     if (index >= count_)
       return std::unexpected(Error{ErrorCode::invalid_argument});
     auto &s = *streams_[index];
-    if(s.config.kind!=ControlleeKind::iq_source)return std::unexpected(Error{ErrorCode::unsupported_capability});
+    if(s.config.kind!=ControlleeKind::iq_source||s.config.role==EndpointRole::controller_only)return std::unexpected(Error{ErrorCode::unsupported_capability});
     freeze();
     if (shutdown_requested_ ||
         (!lifecycle_[index].active &&
@@ -1509,6 +1602,16 @@ private:
         return std::unexpected(credits.error());
       runtime::EffectiveEvent event;
       event.state = s.engine.state();
+      // Recovery may skip samples before this fresh association starts. Report
+      // that event in its first immutable snapshot, before any Context escapes.
+      // A second event at the same already-published boundary is ambiguous.
+      if (s.pending_loss) {
+        auto& indicators = event.state.fields[2];
+        auto bits = std::get<std::uint32_t>(indicators.value);
+        bits |= runtime::context::sample_loss_enable |
+                runtime::context::sample_loss_indicator;
+        indicators.value = bits;
+      }
       event.actual_time = snapshot->time;
       event.sample_ordinal = s.timeline.ordinal();
       event.association_generation = s.generation;
@@ -1516,7 +1619,10 @@ private:
       auto initial = s.revisions.initial(event, std::move(*credits));
       if (!initial)
         return std::unexpected(initial.error());
+      s.pending_loss = false;
     }
+    if(s.config.source.effective){runtime::EffectiveEvent observation;observation.state=s.engine.state();observation.sample_ordinal=s.timeline.ordinal();observation.association_generation=s.generation;observation.actual_time=snapshot->time;observation.time_known=observation.ordinal_known=true;
+      auto observed=s.config.source.effective(s.config.source.context,observation);if(!observed){s.status=SourceStatus::faulted;s.publisher.backend_fault(observation.state);return observed;}}
     s.coverage_floor = snapshot->time;
     auto started = s.publisher.start(now_);
     if (!started)
@@ -1741,6 +1847,9 @@ public:
         !config.source.callback ||
         config.controller_peer == config.controllee_peer)
       return std::unexpected(Error{ErrorCode::invalid_argument});
+    if((config.role!=EndpointRole::combined&&config.role!=EndpointRole::controller_only&&config.role!=EndpointRole::controllee_only)||!config.association_generation||!config.device.valid()||(config.kind==ControlleeKind::virtual_register&&config.profile!=profiles::iq::Profile::generator_v1)||
+       (config.profile!=profiles::iq::Profile::generator_v1&&config.profile!=profiles::iq::Profile::frequency_tunable)||
+       (config.profile==profiles::iq::Profile::frequency_tunable&&(config.center_frequency<profiles::iq::minimum_center_hz||config.center_frequency>profiles::iq::maximum_center_hz)))return std::unexpected(Error{ErrorCode::invalid_argument});
     if (config.trailer &&
         (!config.trailer_packet_class || *config.trailer_packet_class <= 3 ||
          *config.trailer_packet_class == 0x10 ||
@@ -1772,6 +1881,10 @@ public:
     if (!charged) {
       budget_ = old;
       return std::unexpected(charged.error());
+    }
+    if(config.device.enabled()){
+      bool seen=false;for(std::size_t i=0;i<count_;++i){const auto& prior=streams_[i]->config.device;if(prior.enabled()&&prior.backend.context==config.device.backend.context){budget_=old;return std::unexpected(Error{ErrorCode::identity_conflict});}if(prior.enabled()&&!prior.owner.owner_before(config.device.owner)&&!config.device.owner.owner_before(prior.owner)){if(prior.storage_bytes!=config.device.storage_bytes){budget_=old;return std::unexpected(Error{ErrorCode::invalid_argument});}seen=true;}}
+      if(!seen){if(config.device.storage_bytes>runtime::framework_budget-128){budget_=old;return std::unexpected(Error{ErrorCode::capacity_exhausted});}auto measured=charge(runtime::BudgetCategory::adapters_stacks,config.device.storage_bytes+128);if(!measured){budget_=old;return std::unexpected(measured.error());}}
     }
     if(config.trace.enabled()){
       bool seen=false;
@@ -1808,12 +1921,14 @@ public:
     if (sid_count_ == sid_history_.size() || routes_.available() < 4 ||
         counters_.available() < 4 || !reusable(*retired_[index]))
       return std::unexpected(Error{ErrorCode::capacity_exhausted});
+    auto valid_snapshot=runtime::validate_snapshot(config.confirmed_state);
+    if(!valid_snapshot||config.confirmed_state.profile!=s.config.profile||s.config.role==EndpointRole::controller_only)return std::unexpected(Error{ErrorCode::invalid_argument});
     if (!runtime::context::required_known(config.confirmed_state))
       return std::unexpected(Error{ErrorCode::invalid_argument});
-    for (std::size_t i = 0; i < 4; ++i) {
+    for (std::size_t i = 0; i < runtime::active_state_fields(s.config.profile); ++i) {
       const auto &field = config.confirmed_state.fields[i];
       auto valid = validate_value(field.id, field.value);
-      if (field.id != runtime::baseline_fields[i] ||
+      if (field.id != runtime::state_fields[i] ||
           field.validity != runtime::Validity::known || !valid)
         return std::unexpected(Error{ErrorCode::invalid_argument});
     }
@@ -1938,7 +2053,7 @@ public:
     auto deadline = runtime::timing::deadline(now_, 2'000'000'000);
     if (!deadline)
       return std::unexpected(deadline.error());
-    auto closed = s.manager.request_quiesce(operation_context(s));
+    auto closed = s.config.role==EndpointRole::controller_only?Result<void>{}:s.manager.request_quiesce(operation_context(s));
     if (!closed)
       return closed;
     s.publisher.pause();
@@ -1956,6 +2071,7 @@ public:
     if (!config_.isolated_lab || target.runtime_ != this)
       return std::unexpected(Error{ErrorCode::unsupported_capability});
     auto &s = *streams_[target.index_];
+    if(s.config.device.enabled()||s.config.role==EndpointRole::controller_only)return std::unexpected(Error{ErrorCode::unsupported_capability});
     auto configured = s.backend.set_rule(field, rule);
     if (!configured)
       return configured;
@@ -1967,6 +2083,7 @@ public:
   backend_capability(const Controllee &target) const noexcept {
     if (!config_.isolated_lab || target.runtime_ != this)
       return std::unexpected(Error{ErrorCode::unsupported_capability});
+    if(streams_[target.index_]->config.device.enabled()||streams_[target.index_]->config.role==EndpointRole::controller_only)return std::unexpected(Error{ErrorCode::unsupported_capability});
     return streams_[target.index_]->backend.pending_capability();
   }
   Result<void> shutdown(StopMode mode = StopMode::graceful,
@@ -2002,9 +2119,14 @@ public:
       return std::unexpected(Error{ErrorCode::invalid_state});
     return {};
   }
+  Result<Controller> add_remote_controller(const RemoteTargetConfig& target) {
+    StreamConfig config;config.sid=target.sid;config.controller_id=target.controller_id;config.controllee_id=target.controllee_id;config.controller_peer=target.controller_peer;config.controllee_peer=target.controllee_peer;config.profile=target.profile;config.format=target.format;config.receiver=target.receiver;config.sample_rate=target.sample_rate;config.role=EndpointRole::controller_only;config.association_generation=target.association_generation;
+    auto endpoint=add_controllee(config);if(!endpoint)return std::unexpected(endpoint.error());return Controller(this,endpoint->index_);
+  }
   Result<Controller> add_controller(const Controllee &target) {
     if (target.runtime_ != this || target.index_ >= count_)
       return std::unexpected(Error{ErrorCode::invalid_argument});
+    if(streams_[target.index_]->config.role==EndpointRole::controllee_only)return std::unexpected(Error{ErrorCode::unsupported_capability});
     return Controller(this, target.index_);
   }
   Result<void> observe_pps(MonoTime capture, ProtocolTime time,

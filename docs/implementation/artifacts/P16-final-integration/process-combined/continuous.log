@@ -1,0 +1,20 @@
+ready role=combined mode=deterministic isolated_lab=true fixture_oui=abcdef simulated_pps=true local_base=41000 peer_base=42000 framework_bytes=12505328 scene_active=true scene_type_bytes=64 sweep_type_bytes=112
+AckV received: accepted=true; validation evidence only
+query center_hz=100000000 sample_rate_hz=100000 (remote rate is not changed)
+request center_hz=100000000 sweep=1 point=1 handle=1/0/1/1
+AckV received: accepted=true; validation evidence only
+tuned requested_hz=100000000 applied_hz=100000000 AckX=success AckS=matching latency_ns=2600000 dwell_start_ns=2700000 dwell_configured_ns=1000000 sweep=1 point=1 handle=1/0/1/1
+dwell complete requested_hz=100000000 configured_ns=1000000 elapsed_ns=1000000
+request center_hz=100025000 sweep=1 point=2 handle=1/0/2/1
+AckV received: accepted=true; validation evidence only
+tuned requested_hz=100025000 applied_hz=100025000 AckX=success AckS=matching latency_ns=1600000 dwell_start_ns=5300000 dwell_configured_ns=1000000 sweep=1 point=2 handle=1/0/2/1
+dwell complete requested_hz=100025000 configured_ns=1000000 elapsed_ns=1000000
+request center_hz=100050000 sweep=1 point=3 handle=1/0/3/1
+AckV received: accepted=true; validation evidence only
+tuned requested_hz=100050000 applied_hz=100050000 AckX=success AckS=matching latency_ns=1500000 dwell_start_ns=7800000 dwell_configured_ns=1000000 sweep=1 point=3 handle=1/0/3/1
+dwell complete requested_hz=100050000 configured_ns=1000000 elapsed_ns=1000000
+request center_hz=100075000 sweep=1 point=4 handle=1/0/4/1
+AckV received: accepted=true; validation evidence only
+operator stop: explicit best-effort RF cancellation requested; original outcome remains distinct
+cancellation observed=true confirmed=true (not remote physical quiescence)
+summary confirmed=3 received_iq=4 known_iq=4 receiver_drops=0 backend_writes=3 shutdown=5

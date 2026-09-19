@@ -72,8 +72,8 @@ class TransactionManager {
         return std::unexpected(cancelled.error());
       result = std::move(*cancelled);
     } else {
-      std::array<Diagnostics, 4> diagnostics{};
-      for (std::size_t i = 0; i < 4; ++i)
+      std::array<Diagnostics, state_field_capacity> diagnostics{};
+      for (std::size_t i = 0; i < state_field_capacity; ++i)
         if ((*selectors)[i])
           diagnostics[i].errors = not_executed;
       result = cancellation_response(
@@ -166,11 +166,11 @@ public:
                     original_packet->envelope.envelope.class_id) ||
         ((original_packet->envelope.envelope.command->cam >> 23) & 3) != 2)
       return rollback(Error{ErrorCode::invalid_argument});
-    for (std::size_t i = 0; i < 4; ++i)
+    for (std::size_t i = 0; i < state_field_capacity; ++i)
       if ((*selectors)[i]) {
         bool present = false;
         for (std::size_t j = 0; j < original_packet->fields.size(); ++j)
-          present |= original_packet->fields[j].id == baseline_fields[i];
+          present |= original_packet->fields[j].id == state_fields[i];
         if (!present)
           return rollback(Error{ErrorCode::invalid_argument});
       }

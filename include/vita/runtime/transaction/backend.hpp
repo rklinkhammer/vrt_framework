@@ -22,6 +22,7 @@ template <std::size_t N> struct ResultStorage {
   };
   std::array<Slot, N> slots{};
   TraceBinding trace;
+  std::shared_ptr<void> backend_owner;
 };
 // Capability pins result storage and ticket arena. The claim always precedes
 // external payload writes.
@@ -154,7 +155,7 @@ template <std::size_t Pending = 16> class VirtualBackend {
     timing::Boundary boundary;
     AsyncResult completion;
   };
-  std::array<VirtualRule, 4> rules_{};
+  std::array<VirtualRule, state_field_capacity> rules_{};
   std::array<std::optional<Work>, Pending> pending_{};
   std::size_t begins_ = 0, writes_ = 0;
   bool reversible_ = true, quiescence_available_ = true,
@@ -164,7 +165,7 @@ template <std::size_t Pending = 16> class VirtualBackend {
                                    const StateSnapshot &) noexcept {
     auto &backend = *static_cast<VirtualBackend *>(self);
     const auto index = field_index(id);
-    if (index == 4)
+    if (index == state_field_capacity)
       return Validation{value, {0, unsupported}, false};
     const auto &rule = backend.rules_[index];
     auto diagnostics = rule.diagnostics;
@@ -297,8 +298,8 @@ public:
   }
   Result<void> set_rule(FieldId id, VirtualRule rule) noexcept {
     const auto index = field_index(id);
-    if (index == 4 || (rule.diagnostics.warnings & rule.diagnostics.errors) ||
-        (rule.dependencies & 0xf0))
+    if (index == state_field_capacity || (rule.diagnostics.warnings & rule.diagnostics.errors) ||
+        (rule.dependencies & 0xe0))
       return std::unexpected(Error{ErrorCode::invalid_argument});
     if (rule.completion != FieldStatus::executed &&
         rule.completion != FieldStatus::failed &&

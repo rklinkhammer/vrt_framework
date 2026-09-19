@@ -1,7 +1,7 @@
 #include <vita/runtime/context/publisher.hpp>
 #include <cstdlib>
 using namespace vita;using namespace vita::runtime;using namespace vita::runtime::context;using namespace vita::memory;
-static EffectiveEvent event(unsigned rate=1){EffectiveEvent e;e.association_generation=1;e.actual_time={100,0};e.time_known=e.ordinal_known=true;for(auto& f:e.state.fields)f.validity=Validity::known;e.state.fields[1].value=*Hertz::from_integer(rate);e.state.fields[3].value=PayloadFormat{0x200003cf00000000ULL};return e;}
+static EffectiveEvent event(unsigned rate=1){EffectiveEvent e;e.association_generation=1;e.actual_time={100,0};e.time_known=e.ordinal_known=true;for(auto id:baseline_fields)e.state.fields[field_index(id)].validity=Validity::known;e.state.fields[1].value=*Hertz::from_integer(rate);e.state.fields[3].value=PayloadFormat{0x200003cf00000000ULL};return e;}
 struct Transport{bool reject=false;unsigned contexts=0,data=0;std::array<ContextFrame,32> sent;std::optional<TxStorage> packet;RevisionHandle revision;
  static Result<void> context(void* p,const ContextFrame& f)noexcept{auto&t=*static_cast<Transport*>(p);if(t.reject)return std::unexpected(Error{ErrorCode::capacity_exhausted});if(t.contexts==32)return std::unexpected(Error{ErrorCode::capacity_exhausted});t.sent[t.contexts++]=f;return {};}
  static Result<void> send(void* p,TxStorage& storage,const RevisionHandle& r)noexcept{auto&t=*static_cast<Transport*>(p);if(!t.contexts)return std::unexpected(Error{ErrorCode::invalid_state});++t.data;t.packet.emplace(std::move(storage));t.revision=r;return {};}

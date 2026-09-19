@@ -1,0 +1,3 @@
+ready role=controller mode=wallclock isolated_lab=true fixture_oui=abcdef simulated_pps=false local_base=50000 peer_base=50006 framework_bytes=12254688 scene_active=false scene_type_bytes=64 sweep_type_bytes=112
+summary confirmed=0 received_iq=0 known_iq=0 receiver_drops=0 backend_writes=0 shutdown=5
+scan failed code=8 native=0; timeout/failure does not establish no effect

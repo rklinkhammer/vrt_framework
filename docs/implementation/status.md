@@ -4,6 +4,8 @@ Execution started 2026-09-18 against specification baseline commit `8435ab71d800
 
 **Current M5 decision:** local software milestone COMPLETE / PASS under [D-M5-1](M5-operational-scope.md). Array-of-CIFs is excluded from production requirements; retained optional inspection is not full Array support. Earlier partial-status entries below are historical and superseded by the [independent operational review](M5-operational-verification.md). P15/M6 remains blocked on hardware inputs.
 
+**Post-M5 P16:** frequency-scan examples are complete and independently verified locally: 229/229 Release, 225/225 ASan/UBSan, 71 standalone headers, six targeted TSan checks and two UDP-disabled combined checks pass. See [P16 status](P16-status.md). The opt-in tunable profile preserves IQ Generator v1 and M5 acceptance; P15/M6 hardware remains separate.
+
 | Package | State | Independent evidence | Integration |
 |---|---|---|---|
 | P00 | Complete | [PASS](P00-verification.md): build/feature/ODR gates; dev, ASan/UBSan, TSan | Integrated |
@@ -22,6 +24,7 @@ Execution started 2026-09-18 against specification baseline commit `8435ab71d800
 | P13 | Functional verification passed; receiver performance modeling ongoing, non-blocking | [Receiver verification PASS](P13-receiver-verification.md); Release146/146; sanitizer details in verification report | [Accepted receiver focus](P13-receiver-performance-model.md): separate IQ sender; receiver harness validated; ten local replay trials complete; external measurements/model validation outstanding; prior local no-drop misses are characterization evidence |
 | P14 | Complete for accepted D-M5-1 operational/bounded codec scope; Array production support excluded | [M5 operational PASS](M5-operational-verification.md): unchanged198/198 Release,195/195 ASan/UBSan,69 headers;9/9 targeted checks plus sanitizer exclusion probe | [M5 local COMPLETE](M5-integration.md#m5-operational-scope-closure--d-m5-1); deployment qualification remains separate |
 | P15 | Blocked on required adapter/device inputs | [Independent readiness](P15-verification.md) | M6 optional hardware gate not passed |
+| P16 | Complete: opt-in tunable profile and documented Controller/Controllee examples | [Independent local PASS](P16-verification.md); hardware/deployment excluded | [Post-M5 package status](P16-status.md) |
 
 **M0 local gate: PASS.** [Integration report](M0-integration.md): 24/24 P00–P04 Debug checks passed together; 21/21 then-frozen headers compile independently. **M1 local gate: PASS.** [Integration report](M1-integration.md): 34/34 frozen-package Debug checks passed together; independent codec/transport ASan regression passed. Accepted I4/I11 codec corrections have passed the affected independent codec/transport regressions. **M2 local gate: PASS.** [Integration report](M2-integration.md): 64/64 combined Debug checks and 39 standalone public headers passed. **M3 local gate: PASS.** [Integration report](M3-integration.md): 108/108 combined Debug checks, including all 47 public headers and three examples. P11 independent verification additionally passed 89/89 affected ASan/UBSan and 19/19 targeted TSan tests.
 

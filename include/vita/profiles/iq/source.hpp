@@ -135,6 +135,7 @@ public:
 struct SourceProvider {
     void* context = nullptr;
     Result<void> (*callback)(void*, SampleWriteWindow&) noexcept = nullptr;
+    Result<void> (*effective)(void*,const runtime::EffectiveEvent&) noexcept = nullptr;
     Result<void> produce(SampleWriteWindow& window) const noexcept {
         if (!callback) return std::unexpected(Error{ErrorCode::invalid_state});
         return callback(context, window);

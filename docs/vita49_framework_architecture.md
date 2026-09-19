@@ -18,6 +18,8 @@ Accepted P14 scope clarification (2026-09-19): Beam Width and Barometric Pressur
 
 Accepted M5 scope revision D-M5-1 (2026-09-19): release acceptance follows the documented IQ operational profile and published bounded codec capabilities. Array-of-CIFs (CIF1/bit11) is excluded from production support and M5 acceptance; the separately tested explicit I9 structural inspection utility is retained as optional. No complete standard-field or universal interoperability claim is made. Existing general codecs remain available without becoming device controls. See [operational scope and acceptance](implementation/M5-operational-scope.md). This supersedes earlier complete-registry M5 requirements; deployment and M6 evidence remain separate.
 
+Post-M5 P16 adds an explicitly selected Tunable IQ v1 profile for the frequency-scan example; IQ Generator v1 remains unchanged. Its separately approved [contract](implementation/P16-contract.md) defines distinct class identities, RF Reference Frequency control/state, fixed session Sample Rate, an owned device-backend binding and remote-only Controller endpoints. Persistent state has five slots while per-command capacity remains four. Unresolved real effects gate Context/Data at their boundary, and Data PacketCount is finalized on private unaccepted headers immediately before transport submission. Current implementation, resource measurements and verification are tracked in [P16](implementation/P16-status.md), separately from this historical baseline and P15/M6 hardware qualification.
+
 ### 1.1 Selected reference configuration
 
 These values make the design and benchmarks reproducible. They are proposed engineering defaults, not measured capabilities or additional accepted performance requirements.

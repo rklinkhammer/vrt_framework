@@ -2,7 +2,7 @@
 #include <cassert>
 #include <iostream>
 using namespace vita;using namespace vita::runtime;using namespace vita::runtime::context;
-StateSnapshot known(std::uint32_t rate=1000000){StateSnapshot s;for(auto& f:s.fields)f.validity=Validity::known;s.fields[0].value=std::uint32_t{1};s.fields[1].value=*Hertz::from_integer(rate);s.fields[2].value=valid_data_enable|valid_data_indicator;s.fields[3].value=PayloadFormat{0x200003cf00000000ULL};return s;}
+StateSnapshot known(std::uint32_t rate=1000000){StateSnapshot s;for(auto id:baseline_fields)s.fields[field_index(id)].validity=Validity::known;s.fields[0].value=std::uint32_t{1};s.fields[1].value=*Hertz::from_integer(rate);s.fields[2].value=valid_data_enable|valid_data_indicator;s.fields[3].value=PayloadFormat{0x200003cf00000000ULL};return s;}
 AdmissionBundle credit(AdmissionPool& pool){auto c=pool.acquire(AdmissionRequest{}.need(Resource::revision).need(Resource::context_publication));assert(c);return std::move(*c);}
 EffectiveEvent event(std::uint64_t time,std::uint32_t rate=1000000){EffectiveEvent e;e.state=known(rate);e.actual_time={time,0};e.time_known=e.ordinal_known=true;e.sample_ordinal=time*1000;e.association_generation=1;return e;}
 struct Sink{std::size_t contexts=0,data=0;bool reject=false;ContextFrame latest;static Result<void> context(void* p,const ContextFrame& frame) noexcept{auto& s=*static_cast<Sink*>(p);if(s.reject)return std::unexpected(Error{ErrorCode::capacity_exhausted});s.latest=frame;++s.contexts;return {};}static Result<void> send(void* p,memory::TxStorage& bytes,const RevisionHandle&) noexcept{auto& s=*static_cast<Sink*>(p);assert(s.contexts);bytes=memory::TxStorage{};++s.data;return {};}PublisherBinding binding(){return {this,context,send};}};

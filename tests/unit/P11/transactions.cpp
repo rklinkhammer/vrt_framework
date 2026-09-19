@@ -7,7 +7,7 @@ using namespace vita;using namespace vita::runtime;using namespace vita::runtime
 static std::size_t allocations=0;
 void* operator new(std::size_t n){++allocations;if(auto p=std::malloc(n?n:1))return p;std::abort();}
 void* operator new[](std::size_t n){return ::operator new(n);}void operator delete(void* p) noexcept{std::free(p);}void operator delete[](void* p) noexcept{std::free(p);}
-StateSnapshot state(){StateSnapshot s;for(auto& f:s.fields)f.validity=Validity::known;s.fields[0].value=std::uint32_t{1};s.fields[1].value=*Hertz::from_integer(1000000);s.fields[2].value=std::uint32_t{0};s.fields[3].value=PayloadFormat{0x200003cf00000000ULL};return s;}
+StateSnapshot state(){StateSnapshot s;for(auto id:baseline_fields)s.fields[field_index(id)].validity=Validity::known;s.fields[0].value=std::uint32_t{1};s.fields[1].value=*Hertz::from_integer(1000000);s.fields[2].value=std::uint32_t{0};s.fields[3].value=PayloadFormat{0x200003cf00000000ULL};return s;}
 codec::PacketView packet(std::array<std::byte,512>& wire,std::uint32_t mid=1,bool cancel=false){codec::Envelope e;e.type=codec::PacketType::command;e.stream_id=1;e.cancel=cancel;e.command=codec::Command{0xa90c0000,mid,codec::Identifier::short_id(2),codec::Identifier::short_id(3)};Result<std::size_t> n;
  if(cancel){CancelPacket p;assert(p.select<SampleRate>());n=codec::encode_packet(e,p.freeze(),wire);}else{ControlPacket p;assert(p.set<SampleRate>(*Hertz::from_integer(2000000)));n=codec::encode_packet(e,p.freeze(),wire);}assert(n);auto parsed=codec::decode_packet(Bytes{wire}.first(*n));assert(parsed);return std::move(*parsed);}
 int main(){

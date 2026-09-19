@@ -1,0 +1,20 @@
+[1/12] Building CXX object tests/verification/P03/CMakeFiles/p03_verify_pool.dir/pool_contract.cpp.o
+[2/12] Building CXX object tests/verification/P06/CMakeFiles/p06_verify_async.dir/async_contract.cpp.o
+[3/12] Building CXX object tests/verification/P07/CMakeFiles/p07_verify_guard_race.dir/guard_race.cpp.o
+[4/12] Linking CXX executable tests/verification/P03/p03_verify_pool
+[5/12] Linking CXX executable tests/verification/P06/p06_verify_async
+[6/12] Linking CXX executable tests/verification/P07/p07_verify_guard_race
+[7/12] Building CXX object tests/verification/P11/CMakeFiles/p11_verify_late.dir/late_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/late_contract.cpp:1:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/../P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/late_contract.cpp:6:42: warning: missing field 'clock' initializer [-Wmissing-field-initializers]
+    6 |  RecoveryConfig recovery{4,confirmed,true};recovery.confirmed_state.fields[0].value=std::uint32_t{4};if(!device->recover(recovery))return 6;
+      |                                          ^
+2 warnings generated.
+[8/12] Linking CXX executable tests/verification/P11/p11_verify_late
+[9/12] Building CXX object tests/verification/P16/CMakeFiles/p16_verify_public.dir/public_contract.cpp.o
+[10/12] Linking CXX executable tests/verification/P16/p16_verify_public
+[11/12] Building CXX object tests/verification/P16/CMakeFiles/p16_verify_counters.dir/counter_contract.cpp.o
+[12/12] Linking CXX executable tests/verification/P16/p16_verify_counters

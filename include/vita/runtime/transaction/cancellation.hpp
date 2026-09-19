@@ -4,20 +4,20 @@
 namespace vita::runtime::transaction {
 struct CancellationResult {
   FixedVector<AckRecord, 2> responses;
-  std::array<bool, 4> cancelled{};
+  std::array<bool, state_field_capacity> cancelled{};
   AdmissionBundle credits;
 };
-inline Result<std::array<bool, 4>>
+inline Result<std::array<bool, state_field_capacity>>
 cancellation_selectors(const codec::PacketView &packet) noexcept {
   auto valid = codec::validate_cam(packet.envelope.envelope);
   if (!valid || !packet.envelope.envelope.cancel ||
       packet.envelope.envelope.ack || packet.opaque)
     return std::unexpected(Error{ErrorCode::invalid_argument});
-  std::array<bool, 4> selected{};
+  std::array<bool, state_field_capacity> selected{};
   for (std::size_t i = 0; i < packet.fields.size(); ++i) {
     const auto &view = packet.fields[i];
     if (view.kind != BodyKind::selectors ||
-        view.attribute != Attribute::current || field_index(view.id) == 4)
+        view.attribute != Attribute::current || field_index(view.id) == state_field_capacity)
       return std::unexpected(Error{ErrorCode::unsupported_capability});
     selected[field_index(view.id)] = true;
   }
@@ -33,8 +33,8 @@ inline AdmissionRequest cancellation_resources(std::uint32_t cam) noexcept {
 }
 inline CancellationResult cancellation_response(
     const codec::PacketView &packet, const StateSnapshot &state,
-    const timing::ClockSnapshot &clock, std::array<bool, 4> selected,
-    std::array<bool, 4> cancelled, std::array<Diagnostics, 4> diagnostics,
+    const timing::ClockSnapshot &clock, std::array<bool, state_field_capacity> selected,
+    std::array<bool, state_field_capacity> cancelled, std::array<Diagnostics, state_field_capacity> diagnostics,
     AdmissionBundle credits, unsigned ack_timing = 0) noexcept {
   CancellationResult result;
   result.credits = std::move(credits);
@@ -57,7 +57,7 @@ inline CancellationResult cancellation_response(
   ack.state = state;
   ack.timing = ack_timing;
   std::size_t count = 0, success = 0;
-  for (std::size_t i = 0; i < 4; ++i) {
+  for (std::size_t i = 0; i < state_field_capacity; ++i) {
     count += selected[i];
     success += cancelled[i];
   }
@@ -76,7 +76,7 @@ inline CancellationResult cancellation_response(
     ack.kind = AckKind::state;
     ack.diagnostics = {};
     std::size_t known = 0;
-    for (std::size_t i = 0; i < 4; ++i)
+    for (std::size_t i = 0; i < state_field_capacity; ++i)
       if (selected[i] && state.fields[i].validity == Validity::known) {
         ack.selected_mask |= 1u << i;
         ++known;

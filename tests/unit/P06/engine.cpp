@@ -4,7 +4,7 @@
 using namespace vita;
 using namespace vita::runtime;
 using namespace vita::runtime::transaction;
-StateSnapshot known_state(){StateSnapshot state;for(auto& f:state.fields)f.validity=Validity::known;state.fields[0].value=std::uint32_t{1};state.fields[1].value=*Hertz::from_integer(1'000'000);state.fields[2].value=std::uint32_t{0};state.fields[3].value=PayloadFormat{0x200003cf00000000ull};return state;}
+StateSnapshot known_state(){StateSnapshot state;for(auto id:baseline_fields)state.fields[field_index(id)].validity=Validity::known;state.fields[0].value=std::uint32_t{1};state.fields[1].value=*Hertz::from_integer(1'000'000);state.fields[2].value=std::uint32_t{0};state.fields[3].value=PayloadFormat{0x200003cf00000000ull};return state;}
 codec::PacketView command(std::array<std::byte,512>& bytes,std::uint32_t cam,bool multi=false,Hertz rate=Hertz{2'000'000ll<<20}){
     codec::Envelope envelope;envelope.type=codec::PacketType::command;envelope.stream_id=1;envelope.command=codec::Command{cam,1};
     ControlPacket control;assert(control.configure(0,(cam>>23)&3));assert(control.set<SampleRate>(rate));if(multi){assert(control.set<ReferencePoint>(10));assert(control.set<StateEvent>(1));}

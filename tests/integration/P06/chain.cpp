@@ -18,7 +18,7 @@ int main(){
         AdmissionPool admission(AdmissionPool::reference_capacities());VirtualBackend<> backend;
         assert(backend.set_rule(SampleRate::id,{true,true,{precision,0},Hertz{3'000'000ll<<20}}));
         assert(backend.set_rule(StateEvent::id,{true,false,{0,range_error}}));
-        StateSnapshot initial;for(auto& f:initial.fields)f.validity=Validity::known;
+        StateSnapshot initial;for(auto id:baseline_fields)initial.fields[field_index(id)].validity=Validity::known;
         initial.fields[0].value=std::uint32_t{1};initial.fields[1].value=Hertz{1'000'000ll<<20};initial.fields[2].value=std::uint32_t{0};initial.fields[3].value=PayloadFormat{0x200003cf00000000ull};
         Engine<2> engine(admission,backend.binding(),initial,EngineOptions{Profile::generic_virtual_test});
         Endpoint endpoint;endpoint.engine=&engine;endpoint.now.operation=17;endpoint.cam=simulated?0x089f0000:0x091f0000;

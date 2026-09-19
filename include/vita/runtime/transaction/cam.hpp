@@ -4,7 +4,7 @@
 namespace vita::runtime::transaction {
 inline constexpr std::uint32_t not_executed=1u<<31,device_failure=1u<<30,unsupported=1u<<29,range_error=1u<<28,precision=1u<<27,invalid_value=1u<<26,timing_error=1u<<25;
 inline constexpr std::uint32_t resource_exhausted=1u<<1,dependency_blocked=1u<<2,state_indeterminate=1u<<3;
-enum class Profile { iq_generator_v1,generic_virtual_test };
+enum class Profile { iq_generator_v1,generic_virtual_test,iq_frequency_tunable };
 struct Cam {
     std::uint32_t raw=0;unsigned action=0,timing=0;
     bool partial=false,allow_warning=false,allow_error=false,nack=false,request_v=false,request_x=false,request_s=false,detail_warning=false,detail_error=false;
@@ -12,7 +12,7 @@ struct Cam {
         if(envelope.type!=codec::PacketType::command||!envelope.command||envelope.ack||envelope.cancel)return std::unexpected(Error{ErrorCode::invalid_argument});
         auto valid=codec::validate_cam(envelope);if(!valid)return std::unexpected(valid.error());const auto raw=envelope.command->cam;
         Cam c{raw,(raw>>23)&3,(raw>>12)&7,bool(raw&(1u<<27)),bool(raw&(1u<<26)),bool(raw&(1u<<25)),bool(raw&(1u<<22)),bool(raw&(1u<<20)),bool(raw&(1u<<19)),bool(raw&(1u<<18)),bool(raw&(1u<<17)),bool(raw&(1u<<16))};
-        if(profile==Profile::iq_generator_v1&&c.action==2&&c.request_s&&!c.request_x)return std::unexpected(Error{ErrorCode::unsupported_capability});
+        if(profile!=Profile::generic_virtual_test&&c.action==2&&c.request_s&&!c.request_x)return std::unexpected(Error{ErrorCode::unsupported_capability});
         return c;
     }
 };
@@ -33,6 +33,14 @@ inline Validation iq_validate(FieldId id,SemanticValue value) noexcept {
     if(q<unit||q>100'000'000ll*unit){out.diagnostics.errors=range_error;out.resolvable=false;return out;}
     auto integer=q/unit,remainder=q%unit;
     if(remainder){if(remainder>unit/2||(remainder==unit/2&&(integer&1)))++integer;out.adjusted=Hertz{integer*unit};out.diagnostics.warnings=precision;}
+    return out;
+}
+inline Validation tunable_validate(FieldId id,SemanticValue value) noexcept {
+    Validation out{value};
+    if(id!=RFReferenceFrequency::id){out.diagnostics.errors=unsupported;out.resolvable=false;return out;}
+    const auto* frequency=std::get_if<Hertz>(&value);
+    constexpr std::int64_t unit=1ll<<20;
+    if(!frequency||frequency->q20<static_cast<std::int64_t>(profiles::iq::minimum_center_hz)*unit||frequency->q20>static_cast<std::int64_t>(profiles::iq::maximum_center_hz)*unit||frequency->q20%unit){out.diagnostics.errors=range_error;out.resolvable=false;}
     return out;
 }
 } // namespace vita::runtime::transaction

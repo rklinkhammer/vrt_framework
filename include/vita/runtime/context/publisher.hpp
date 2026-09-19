@@ -11,11 +11,12 @@ struct ContextFrame {
     std::uint64_t revision_id=0,association_generation=0;bool observation=false;
 };
 inline Result<std::size_t> encode_context(const ContextFrame& frame,codec::Envelope envelope,MutableBytes output) noexcept {
+    auto snapshot_valid=validate_snapshot(frame.state);if(!snapshot_valid)return std::unexpected(snapshot_valid.error());
     if(envelope.type!=codec::PacketType::context||!envelope.stream_id||envelope.trailer)return std::unexpected(Error{ErrorCode::invalid_argument});
     if(frame.time_known){if(!timing::valid(frame.time)||frame.time.seconds>UINT32_MAX||frame.epoch==codec::Tsi::none)return std::unexpected(Error{ErrorCode::invalid_argument});envelope.timestamp={frame.epoch,codec::Tsf::picoseconds,static_cast<std::uint32_t>(frame.time.seconds),frame.time.picoseconds};}
     else envelope.timestamp={};
     ContextPacket packet;
-    for(std::size_t i=0;i<4;++i)if(i!=2&&frame.state.fields[i].validity==Validity::known){auto set=packet.set_value(frame.state.fields[i].id,frame.state.fields[i].value);if(!set)return std::unexpected(set.error());}
+    for(std::size_t i=0;i<active_state_fields(frame.state.profile);++i)if(i!=2&&frame.state.fields[i].validity==Validity::known){auto set=packet.set_value(frame.state.fields[i].id,frame.state.fields[i].value);if(!set)return std::unexpected(set.error());}
     std::uint32_t indicators=0;
     if(frame.state.fields[2].validity==Validity::known){const auto* value=std::get_if<std::uint32_t>(&frame.state.fields[2].value);if(!value)return std::unexpected(Error{ErrorCode::invalid_argument});indicators=*value;}
     if(frame.refresh)indicators&=~(sample_loss_enable|sample_loss_indicator);

@@ -1,0 +1,31 @@
+{
+  "udp_enabled": false,
+  "example_test_exit": 0,
+  "p16_tests_registered": [
+    "p16_scene_scan",
+    "p16_scene_scan_options",
+    "p16_scene_scan_endpoint",
+    "p16_core",
+    "p16_binding",
+    "p16_budget",
+    "p16_held_counts",
+    "p16_verify_wire",
+    "p16_verify_scene",
+    "p16_verify_kernel",
+    "p16_verify_sweep",
+    "p16_verify_public",
+    "p16_verify_budget",
+    "p16_verify_deferred",
+    "p16_verify_counters",
+    "p16_verify_scene_runtime",
+    "p16_verify_endpoint",
+    "p16_verify_rf_lifecycle",
+    "p16_verify_owned_budget",
+    "p16_verify_process_combined",
+    "p16_verify_validation_rejection",
+    "p16_verify_validation",
+    "p16_example_combined",
+    "p16_example_wallclock"
+  ],
+  "udp_targets_absent": true
+}

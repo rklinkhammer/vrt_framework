@@ -1,0 +1,20 @@
+{
+  "compiler": "clang++",
+  "flags": [
+    "-std=c++23",
+    "-O1",
+    "-g",
+    "-Wall",
+    "-Wextra",
+    "-fsanitize=address,undefined",
+    "-fno-omit-frame-pointer",
+    "-fno-exceptions",
+    "-fno-rtti"
+  ],
+  "tests": {
+    "kernel_contract": "PASS",
+    "wire_contract": "PASS"
+  },
+  "scope": "direct frozen kernel only; public Runtime integration pending",
+  "verifier_correction": "outcomes returns fixed array4, corrected initial size1 assertion; no production repair"
+}

@@ -1,0 +1,2 @@
+ready role=controllee mode=wallclock isolated_lab=true fixture_oui=abcdef simulated_pps=true local_base=50006 peer_base=50000 framework_bytes=12258456 scene_bytes=64 sweep_bytes=112
+summary confirmed=0 received_iq=0 known_iq=0 receiver_drops=0 backend_writes=9 shutdown=5

@@ -1,0 +1,17 @@
+{
+  "scene_runtime_asan": "PASS",
+  "rf_lifecycle_default_and_real_scene_asan": "PASS",
+  "owned_backend_budget_asan": "PASS",
+  "endpoint_cli_asan": "PASS",
+  "optimized_scene_runtime_allocation": {
+    "result": "PASS",
+    "hot_cpp_allocations": 0,
+    "hot_c_allocations": 0,
+    "positive_probes": [
+      "malloc",
+      "aligned operator new"
+    ],
+    "scope": "macOS serialized critical test thread; linked separate Mach-O allocation interposition library; setup and teardown excluded"
+  },
+  "process_oracles": "preliminary PASS; final rebuilt source/binary gate pending"
+}

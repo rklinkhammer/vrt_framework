@@ -1,0 +1,27 @@
+{
+  "source_files": 379,
+  "sources_unchanged": true,
+  "release": {
+    "passed": 229,
+    "total": 229,
+    "seconds": 19.29
+  },
+  "thread_sanitizer": {
+    "passed": 6,
+    "total": 6,
+    "scope": "targeted concurrency/lifetime tests"
+  },
+  "core_only": {
+    "combined_examples_passed": 2,
+    "total": 2,
+    "udp_targets_absent": true
+  },
+  "platform": "macOS arm64 AppleClang 21 libc++",
+  "claims": "Local software verification; no hardware, external-peer or cross-host qualification",
+  "independent_asan_ubsan": {
+    "passed": 225,
+    "total": 225,
+    "seconds": 58.63,
+    "evidence": "../P16-final-integration/results.json"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "asan_ubsan": {
+    "passed": 225,
+    "total": 225,
+    "seconds": 58.63
+  },
+  "manifest": {
+    "combined_files": 97,
+    "changed": [],
+    "core_files": 22,
+    "core_changed": [],
+    "example_files": 13,
+    "example_changed": []
+  },
+  "release_coordinator": {
+    "passed": 229,
+    "total": 229,
+    "seconds": 19.29
+  },
+  "tsan_coordinator": {
+    "passed": 6,
+    "total": 6
+  },
+  "core_only_combined_coordinator": {
+    "passed": 2,
+    "total": 2
+  }
+}

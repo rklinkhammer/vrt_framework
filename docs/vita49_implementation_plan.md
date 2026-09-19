@@ -256,3 +256,9 @@ Final software acceptance: M0–M3 integrated; M4 software tests and executable 
 5. Continue along the dependency graph with candidate-specific verifier reports. Do not implement the entire library in a single agent task.
 
 This delivery contains the implementation plan. The first execution batch above is the starting point for subsequent implementation work.
+
+## Post-M5 P16: Controller frequency-scan example
+
+Authorized2026-09-19 under [the execution prompt](frequency_scan_example_implementation_prompt.md). This is additive operational capability, not a revision of the completed M5/D-M5-1 baseline. P15/M6 remains reserved for selected hardware.
+
+P16 stages: independently freeze profile/state/API contract; implement and verify bounded runtime/Context/backend extension; add virtual RF scene and Controller scan policy; gate combined loopback; gate separate-process POSIX UDP when enabled; complete teaching documentation, memory ledger and affected regression/sanitizer reports. Preserve original IQ v1 permissions. Completed locally on 2026-09-19: 229/229 Release, 225/225 ASan/UBSan, 71 standalone headers, six targeted TSan checks and two UDP-disabled combined example checks pass. [P16 status](implementation/P16-status.md) and its independent report preserve scope, source identities and evidence. Hardware/deployment qualification is separate.

@@ -5,7 +5,7 @@ struct Consumer{RetentionQuota local{1},global{1};RetainedRx held;MetadataSnapsh
  static void deliver(void* p,const BorrowedSignalRx& rx)noexcept{auto& c=*static_cast<Consumer*>(p);++c.delivered;c.snapshot=rx.metadata;auto kept=rx.retain(c.local,c.global);if(kept)c.held=std::move(*kept);else c.retain_failed=true;}
  static void drop(void* p,Confidence)noexcept{++static_cast<Consumer*>(p)->dropped;}
  ReceiverBinding binding(){return{this,deliver,drop};}};
-static StateSnapshot known(){StateSnapshot s;for(auto&f:s.fields)f.validity=Validity::known;s.fields[1].value=*Hertz::from_integer(1000000);s.fields[2].value=std::uint32_t{valid_data_enable|valid_data_indicator};s.fields[3].value=PayloadFormat{0x200003cf00000000ULL};return s;}
+static StateSnapshot known(){StateSnapshot s;for(auto id:baseline_fields)s.fields[field_index(id)].validity=Validity::known;s.fields[1].value=*Hertz::from_integer(1000000);s.fields[2].value=std::uint32_t{valid_data_enable|valid_data_indicator};s.fields[3].value=PayloadFormat{0x200003cf00000000ULL};return s;}
 int main(){
  auto backing=std::make_shared<Backing>();backing->bytes[0]=std::byte{42};BufferSpec spec{backing,backing->bytes.data(),64,1,64,MemoryDomain::cpu};auto pool=ExternalPool::create(std::span{&spec,1});if(!pool)return 1;
  RxEnvelope rx;auto lease=pool->acquire({64,64});if(!lease||!lease->set_size(4))return 2;auto index=rx.add_buffer(std::move(*lease));if(!index||!rx.append_payload({*index,0,4}))return 3;

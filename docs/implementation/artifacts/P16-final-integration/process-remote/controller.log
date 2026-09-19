@@ -1,0 +1,40 @@
+ready role=controller mode=wallclock isolated_lab=true fixture_oui=abcdef simulated_pps=false local_base=50000 peer_base=50006 framework_bytes=12254688 scene_active=false scene_type_bytes=64 sweep_type_bytes=112
+AckV received: accepted=true; validation evidence only
+query center_hz=100000000 sample_rate_hz=100000 (remote rate is not changed)
+request center_hz=100000000 sweep=1 point=1 handle=1/0/1/1
+AckV received: accepted=true; validation evidence only
+tuned requested_hz=100000000 applied_hz=100000000 AckX=success AckS=matching latency_ns=1693667 dwell_start_ns=2736583 dwell_configured_ns=3000000 sweep=1 point=1 handle=1/0/1/1
+dwell complete requested_hz=100000000 configured_ns=3000000 elapsed_ns=3076167
+request center_hz=100025000 sweep=1 point=2 handle=1/0/2/1
+AckV received: accepted=true; validation evidence only
+tuned requested_hz=100025000 applied_hz=100025000 AckX=success AckS=matching latency_ns=1766208 dwell_start_ns=7578958 dwell_configured_ns=3000000 sweep=1 point=2 handle=1/0/2/1
+dwell complete requested_hz=100025000 configured_ns=3000000 elapsed_ns=3167958
+request center_hz=100050000 sweep=1 point=3 handle=1/0/3/1
+AckV received: accepted=true; validation evidence only
+tuned requested_hz=100050000 applied_hz=100050000 AckX=success AckS=matching latency_ns=2078542 dwell_start_ns=12825458 dwell_configured_ns=3000000 sweep=1 point=3 handle=1/0/3/1
+dwell complete requested_hz=100050000 configured_ns=3000000 elapsed_ns=3140333
+request center_hz=100075000 sweep=1 point=4 handle=1/0/4/1
+AckV received: accepted=true; validation evidence only
+tuned requested_hz=100075000 applied_hz=100075000 AckX=success AckS=matching latency_ns=2110334 dwell_start_ns=18076125 dwell_configured_ns=3000000 sweep=1 point=4 handle=1/0/4/1
+dwell complete requested_hz=100075000 configured_ns=3000000 elapsed_ns=3056041
+request center_hz=100100000 sweep=1 point=5 handle=1/0/5/1
+AckV received: accepted=true; validation evidence only
+tuned requested_hz=100100000 applied_hz=100100000 AckX=success AckS=matching latency_ns=1978292 dwell_start_ns=23110458 dwell_configured_ns=3000000 sweep=1 point=5 handle=1/0/5/1
+dwell complete requested_hz=100100000 configured_ns=3000000 elapsed_ns=3070292
+request center_hz=100125000 sweep=1 point=6 handle=1/0/6/1
+AckV received: accepted=true; validation evidence only
+tuned requested_hz=100125000 applied_hz=100125000 AckX=success AckS=matching latency_ns=2119250 dwell_start_ns=28300000 dwell_configured_ns=3000000 sweep=1 point=6 handle=1/0/6/1
+dwell complete requested_hz=100125000 configured_ns=3000000 elapsed_ns=3159041
+request center_hz=100150000 sweep=1 point=7 handle=1/0/7/1
+AckV received: accepted=true; validation evidence only
+tuned requested_hz=100150000 applied_hz=100150000 AckX=success AckS=matching latency_ns=1790875 dwell_start_ns=33249916 dwell_configured_ns=3000000 sweep=1 point=7 handle=1/0/7/1
+dwell complete requested_hz=100150000 configured_ns=3000000 elapsed_ns=3110834
+request center_hz=100175000 sweep=1 point=8 handle=1/0/8/1
+AckV received: accepted=true; validation evidence only
+tuned requested_hz=100175000 applied_hz=100175000 AckX=success AckS=matching latency_ns=1995333 dwell_start_ns=38356083 dwell_configured_ns=3000000 sweep=1 point=8 handle=1/0/8/1
+dwell complete requested_hz=100175000 configured_ns=3000000 elapsed_ns=3075833
+request center_hz=100200000 sweep=1 point=9 handle=1/0/9/1
+AckV received: accepted=true; validation evidence only
+tuned requested_hz=100200000 applied_hz=100200000 AckX=success AckS=matching latency_ns=1999584 dwell_start_ns=43431500 dwell_configured_ns=3000000 sweep=1 point=9 handle=1/0/9/1
+dwell complete requested_hz=100200000 configured_ns=3000000 elapsed_ns=3131333
+summary confirmed=9 received_iq=15 known_iq=15 receiver_drops=4 backend_writes=0 shutdown=5

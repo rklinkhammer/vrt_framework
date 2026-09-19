@@ -1,0 +1,2 @@
+future0 mtu100 late0 jump0 completion_error13 retry0
+Assertion failed: (result||result.error().retryable), function trial, file deferred_contract.cpp, line 14.

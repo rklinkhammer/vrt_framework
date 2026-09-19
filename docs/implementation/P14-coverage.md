@@ -25,6 +25,10 @@ Readiness inventories for continuation: [CIF1/2/3](P14-cif123-readiness.md) and 
 
 Additional readiness: [CIF7, nested traversal, extensions and sample contracts](P14-remaining-contract-readiness.md). Probability scaling remains interpretation-limited under accepted D-P14-3; exact code preservation is authorized, not a percentage dialect.
 
+## Post-M5 application extension
+
+P16 explicitly adds RF Reference Frequency to the separately selected Tunable IQ v1 control/state profile. Its [coverage and evidence](P16-coverage.md) are tracked independently; this does not change the P14 generic field count, IQ Generator v1 permissions, M5 acceptance or the Array exclusion.
+
 ## Final continuation
 
 [Final M5 checkpoint](M5-integration.md#final-available-input-continuation-checkpoint) records198/195 tests,69 headers, the two independently caught CIF1 defects and repairs, source manifests, sample/reference/mutation evidence, memory costs and the required-input stop. This supersedes the in-progress language in earlier historical checkpoints. That earlier broader-scope stop is superseded by [D-M5-1](M5-operational-scope.md); P15 remains blocked on hardware inputs.

@@ -4,10 +4,11 @@
 #include <limits>
 namespace vita::runtime::context {
 inline bool same_state(const StateSnapshot& a,const StateSnapshot& b) noexcept {
-    for(std::size_t i=0;i<4;++i)if(a.fields[i].id!=b.fields[i].id||a.fields[i].validity!=b.fields[i].validity||(a.fields[i].validity==Validity::known&&a.fields[i].value!=b.fields[i].value))return false;return true;
+    if(a.profile!=b.profile)return false;
+    for(std::size_t i=0;i<active_state_fields(a.profile);++i)if(a.fields[i].id!=b.fields[i].id||a.fields[i].validity!=b.fields[i].validity||(a.fields[i].validity==Validity::known&&a.fields[i].value!=b.fields[i].value))return false;return true;
 }
 inline bool required_known(const StateSnapshot& state) noexcept {
-    return state.fields[1].validity==Validity::known && state.fields[3].validity==Validity::known;
+    return state.fields[1].validity==Validity::known && state.fields[3].validity==Validity::known && (state.profile!=profiles::iq::Profile::frequency_tunable||state.fields[4].validity==Validity::known);
 }
 enum class Publication : std::uint8_t { pending,accepted,failed };
 struct Revision {
@@ -70,7 +71,8 @@ public:
     EffectSink binding() noexcept{return {binding_.get(),binding_,reserve_thunk,record_thunk};}
     Result<RevisionReservation> reserve(std::size_t count) noexcept{return reserve_impl(state_,count);}
     Result<RevisionHandle> initial(EffectiveEvent event,AdmissionBundle credits) noexcept {
-        for(std::size_t i=0;i<event.state.fields.size();++i){const auto& field=event.state.fields[i];if(field.id!=baseline_fields[i])return std::unexpected(Error{ErrorCode::invalid_argument});if(field.validity==Validity::known){auto valid=validate_value(field.id,field.value);if(!valid)return std::unexpected(valid.error());}}
+        auto snapshot_valid=validate_snapshot(event.state);if(!snapshot_valid)return std::unexpected(snapshot_valid.error());
+        for(std::size_t i=0;i<active_state_fields(event.state.profile);++i){const auto& field=event.state.fields[i];if(field.id!=state_fields[i])return std::unexpected(Error{ErrorCode::invalid_argument});if(field.validity==Validity::known){auto valid=validate_value(field.id,field.value);if(!valid)return std::unexpected(valid.error());}}
         if(state_->current||event.association_generation!=state_->generation||!required_known(event.state))return std::unexpected(Error{ErrorCode::invalid_state});
         auto reservation=reserve(1);if(!reservation)return std::unexpected(reservation.error());record_thunk(binding_.get(),event,*reservation,std::move(credits));return current();
     }

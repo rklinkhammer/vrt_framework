@@ -39,6 +39,7 @@ inline Result<Request> request_from(const codec::PacketView &packet,
   request.cam = *cam;
   for (std::size_t i = 0; i < packet.fields.size(); ++i) {
     const auto &view = packet.fields[i];
+    if(field_index(view.id)==state_field_capacity)return std::unexpected(Error{ErrorCode::unsupported_capability});
     std::size_t index = 0;
     while (index < request.count && request.fields[index] != view.id)
       ++index;
@@ -49,7 +50,7 @@ inline Result<Request> request_from(const codec::PacketView &packet,
       request.values[index] = codec::placeholder(view.id);
       ++request.count;
     }
-    if (view.attribute != Attribute::current)
+    if (view.attribute != Attribute::current || (view.id==RFReferenceFrequency::id&&profile!=Profile::iq_frequency_tunable))
       request.unsupported_attributes[index] = true;
     else if (view.kind == BodyKind::values) {
       auto value = view.value();
@@ -75,7 +76,9 @@ struct EngineOptions {
   StateSnapshot (*observe)(void *, const StateSnapshot &,
                            const OperationContext &) noexcept = nullptr;
   TraceBinding trace{};
+  std::shared_ptr<void> backend_owner{};
 };
+struct PendingEffectBoundary { timing::Boundary boundary{};bool ordinal_known=false; };
 struct EngineDrainStatus {
   std::size_t active = 0, running = 0, responses = 0, capability_holders = 0,
               tickets_pending = 0;
@@ -131,7 +134,7 @@ template <std::size_t Transactions = 8> class Engine {
           guard.association_generation == association_generation_) {
         faulted_ = true;
         const auto field = field_index(guard.field);
-        if (field < 4 && state_.fields[field].validity != Validity::unknown) {
+        if (field < state_field_capacity && state_.fields[field].validity != Validity::unknown) {
           state_.fields[field].validity = Validity::unknown;
           if (state_.version != UINT64_MAX)
             ++state_.version;
@@ -145,6 +148,9 @@ template <std::size_t Transactions = 8> class Engine {
     plan.count = request.count;
     plan.expected_state_version = state.version;
     bool all = true;
+    bool has_rate=false,has_rf=false;
+    for(std::size_t i=0;i<request.count;++i){has_rate|=request.fields[i]==SampleRate::id;has_rf|=request.fields[i]==RFReferenceFrequency::id;}
+    const bool mixed=options_.profile==Profile::iq_frequency_tunable&&request.cam.action!=0&&has_rate&&has_rf;
     for (std::size_t i = 0; i < request.count; ++i) {
       Validation v{request.values[i]};
       if (request.unsupported_attributes[i]) {
@@ -153,6 +159,8 @@ template <std::size_t Transactions = 8> class Engine {
       } else if (request.cam.action != 0) {
         if (options_.profile == Profile::iq_generator_v1)
           v = iq_validate(request.fields[i], request.values[i]);
+        else if(options_.profile==Profile::iq_frequency_tunable)
+          v=tunable_validate(request.fields[i],request.values[i]);
         if (v.resolvable && backend_.validate) {
           auto extra = backend_.validate(backend_.context, request.fields[i],
                                          v.adjusted, state);
@@ -164,12 +172,14 @@ template <std::size_t Transactions = 8> class Engine {
         }
         if (v.resolvable) {
           auto native = validate_value(request.fields[i], v.adjusted);
+          if(options_.profile==Profile::iq_frequency_tunable&&!tunable_validate(request.fields[i],v.adjusted).resolvable)native=std::unexpected(Error{ErrorCode::invalid_argument});
           if (!native) {
             v.diagnostics.errors |= invalid_value;
             v.resolvable = false;
           }
         }
       }
+      if(mixed){v.resolvable=false;v.diagnostics.errors|=unsupported;}
       plan.fields[i] = {request.fields[i],
                         request.values[i],
                         v.adjusted,
@@ -178,11 +188,11 @@ template <std::size_t Transactions = 8> class Engine {
                         v.diagnostics,
                         slot.plan.time_known,
                         slot.plan.data_running};
-      for (std::size_t target = 0; target < 4; ++target)
+      for (std::size_t target = 0; target < state_field_capacity; ++target)
         if (v.dependencies & (1u << target)) {
           bool found = false;
           for (std::size_t j = 0; j < request.count; ++j)
-            if (request.fields[j] == baseline_fields[target]) {
+            if (request.fields[j] == state_fields[target]) {
               plan.fields[i].dependency_mask |= 1u << j;
               found = true;
             }
@@ -392,6 +402,7 @@ template <std::size_t Transactions = 8> class Engine {
     outcome.diagnostics.errors |= planned.diagnostics.errors;
     if (outcome.status == FieldStatus::executed) {
       auto valid = validate_value(planned.id, outcome.value);
+      if(options_.profile==Profile::iq_frequency_tunable&&!tunable_validate(planned.id,outcome.value).resolvable)valid=std::unexpected(Error{ErrorCode::invalid_argument});
       if (!valid) {
         outcome.status = FieldStatus::unknown_effect;
         outcome.validity = Validity::unknown;
@@ -507,8 +518,20 @@ public:
       : admission_(admission), backend_(backend), options_(options),
         state_(initial) {
     results_->trace = options_.trace;
+    results_->backend_owner = options_.backend_owner;
   }
   const StateSnapshot &state() const noexcept { return state_; }
+  std::optional<PendingEffectBoundary> pending_effect_boundary() const noexcept {
+    std::optional<PendingEffectBoundary> first;
+    for(const auto& slot:slots_){if(!slot.record.active||slot.record.complete||slot.plan.request.cam.action!=2)continue;
+      bool pending=false;for(std::size_t i=0;i<slot.plan.execution.count;++i)pending|=slot.plan.execution.fields[i].eligible&&slot.plan.outcomes[i].status==FieldStatus::pending;
+      if(!pending)continue;
+      PendingEffectBoundary candidate{slot.plan.execution.boundary,slot.plan.data_running};
+      if(!candidate.ordinal_known)return candidate;
+      if(!first||candidate.boundary.sample_ordinal<first->boundary.sample_ordinal)first=candidate;
+    }return first;
+  }
+
   bool faulted() const noexcept { return faulted_; }
   bool quiescing() const noexcept { return quiescing_; }
   std::uint64_t association_generation() const noexcept {
@@ -546,11 +569,12 @@ public:
   }
   Result<void> reset_state(const StateSnapshot &confirmed,
                            std::uint64_t generation) noexcept {
+    auto snapshot_valid=validate_snapshot(confirmed);if(!snapshot_valid)return snapshot_valid;
     if (!generation || generation <= association_generation_)
       return std::unexpected(Error{ErrorCode::stale_generation});
-    for (std::size_t i = 0; i < confirmed.fields.size(); ++i) {
+    for (std::size_t i = 0; i < active_state_fields(confirmed.profile); ++i) {
       const auto &field = confirmed.fields[i];
-      if (field.id != baseline_fields[i] ||
+      if (field.id != state_fields[i] ||
           static_cast<unsigned>(field.validity) >
               static_cast<unsigned>(Validity::unknown) ||
           field.validity == Validity::unknown)
@@ -561,10 +585,12 @@ public:
           return std::unexpected(valid.error());
       }
     }
-    if (options_.profile == Profile::iq_generator_v1 &&
+    if (options_.profile != Profile::generic_virtual_test &&
         (confirmed.fields[1].validity != Validity::known ||
-         confirmed.fields[3].validity != Validity::known))
+         confirmed.fields[3].validity != Validity::known ||
+         (options_.profile==Profile::iq_frequency_tunable&&confirmed.fields[4].validity!=Validity::known)))
       return std::unexpected(Error{ErrorCode::invalid_state});
+    if((options_.profile==Profile::iq_frequency_tunable)!=(confirmed.profile==profiles::iq::Profile::frequency_tunable))return std::unexpected(Error{ErrorCode::invalid_argument});
     if (!safe_to_reset())
       return std::unexpected(Error{ErrorCode::invalid_state});
     state_ = confirmed;
@@ -661,6 +687,8 @@ public:
   Result<Handle> accept(const codec::PacketView &packet,
                         const OperationContext &now) noexcept {
     observe_backend_faults();
+    auto current_state_valid=validate_snapshot(state_);
+    if(!current_state_valid||(options_.profile==Profile::iq_frequency_tunable)!=(state_.profile==profiles::iq::Profile::frequency_tunable))return std::unexpected(Error{ErrorCode::invalid_argument});
     if (!options_.trace.valid())
       return std::unexpected(Error{ErrorCode::invalid_argument});
     if (quiescing_)
@@ -676,7 +704,7 @@ public:
       return std::unexpected(request.error());
     if ((request->cam.action == 2 && !backend_.begin) ||
         (request->cam.action == 1 && !backend_.simulate))
-      return std::unexpected(Error{ErrorCode::invalid_state});
+      return std::unexpected(Error{ErrorCode::unsupported_capability});
     if (faulted_ && request->cam.action == 2)
       return std::unexpected(Error{ErrorCode::invalid_state});
     if (request->cam.timing) {
@@ -1048,7 +1076,7 @@ public:
         now.association_generation !=
             slot.plan.execution.association_generation)
       return std::unexpected(Error{ErrorCode::invalid_argument});
-    std::array<bool, 4> selected{};
+    std::array<bool, state_field_capacity> selected{};
     for (std::size_t view_index = 0; view_index < packet.fields.size();
          ++view_index) {
       const auto &view = packet.fields[view_index];
@@ -1056,7 +1084,7 @@ public:
           view.attribute != Attribute::current)
         return std::unexpected(Error{ErrorCode::unsupported_capability});
       auto index = field_index(view.id);
-      if (index == 4)
+      if (index == state_field_capacity)
         return std::unexpected(Error{ErrorCode::unsupported_capability});
       if (!selected[index]) {
         selected[index] = true;
@@ -1065,11 +1093,11 @@ public:
     if (slot.plan.request.cam.action != 2 ||
         !same_class(envelope.class_id, slot.plan.request.envelope.class_id))
       return std::unexpected(Error{ErrorCode::invalid_argument});
-    for (std::size_t index = 0; index < 4; ++index)
+    for (std::size_t index = 0; index < state_field_capacity; ++index)
       if (selected[index]) {
         bool present = false;
         for (std::size_t i = 0; i < slot.plan.execution.count; ++i)
-          present |= slot.plan.execution.fields[i].id == baseline_fields[index];
+          present |= slot.plan.execution.fields[i].id == state_fields[index];
         if (!present)
           return std::unexpected(Error{ErrorCode::invalid_argument});
       }
@@ -1110,8 +1138,8 @@ public:
           envelope.timestamp.tsf != codec::Tsf::picoseconds || !fit || !*fit ||
           (now.clock.state != timing::ClockState::locked &&
            now.clock.state != timing::ClockState::holdover)) {
-        std::array<Diagnostics, 4> errors{};
-        for (std::size_t i = 0; i < 4; ++i)
+        std::array<Diagnostics, state_field_capacity> errors{};
+        for (std::size_t i = 0; i < state_field_capacity; ++i)
           if (selected[i])
             errors[i].errors = not_executed;
         return cancellation_response(packet, state_, now.clock, selected, {},
@@ -1122,12 +1150,12 @@ public:
     // cancellation success.
     tickets_.scan(
         [&](CompletionRecord record) noexcept { consume(record, now); });
-    std::array<Diagnostics, 4> diagnostics{};
-    for (std::size_t index = 0; index < 4; ++index)
+    std::array<Diagnostics, state_field_capacity> diagnostics{};
+    for (std::size_t index = 0; index < state_field_capacity; ++index)
       if (selected[index]) {
         std::size_t field = slot.plan.execution.count;
         for (std::size_t i = 0; i < slot.plan.execution.count; ++i)
-          if (slot.plan.execution.fields[i].id == baseline_fields[index])
+          if (slot.plan.execution.fields[i].id == state_fields[index])
             field = i;
         bool cancelled = false;
         if (field < slot.plan.execution.count && !slot.record.complete &&
@@ -1146,7 +1174,7 @@ public:
               results_->slots[result_index].guard.cancelled.store(
                   true, std::memory_order_release);
               FieldOutcome outcome;
-              outcome.id = baseline_fields[index];
+              outcome.id = state_fields[index];
               outcome.status = FieldStatus::cancelled;
               outcome.diagnostics.errors = not_executed;
               cancelled = capability.complete(outcome);
@@ -1158,7 +1186,7 @@ public:
               }
             } else if (disarmed == DisarmResult::unknown_effect) {
               FieldOutcome outcome;
-              outcome.id = baseline_fields[index];
+              outcome.id = state_fields[index];
               outcome.status = FieldStatus::unknown_effect;
               outcome.validity = Validity::unknown;
               outcome.diagnostics.errors = device_failure | state_indeterminate;

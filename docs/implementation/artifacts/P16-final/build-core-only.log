@@ -1,0 +1,6 @@
+[0/1] Re-running CMake...
+-- Configuring done (0.3s)
+-- Generating done (0.1s)
+-- Build files have been written to: /Users/rklinkhammer/workspace/vrt_framework/build/p16-core-only
+[1/3] Building CXX object examples/frequency_scan/CMakeFiles/vita_frequency_scan_combined.dir/main.cpp.o
+[2/3] Linking CXX executable examples/frequency_scan/vita_frequency_scan_combined

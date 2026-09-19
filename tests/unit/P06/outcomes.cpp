@@ -8,7 +8,7 @@ using namespace vita::runtime::transaction;
 PacketView response(std::uint32_t cam,std::array<std::byte,24>& bytes,bool cancellation=false) {
     std::array<std::uint32_t,6> words{cancellation?0x65000006u:0x64000006u,1,cam,42,2,3};
     for(std::size_t i=0;i<6;++i)for(unsigned b=0;b<4;++b)bytes[i*4+b]=std::byte(words[i]>>(24-8*b));
-    auto view=decode_packet(bytes);assert(view);return std::move(*view);
+    DecodeOptions options;options.request=RequestContext{0xa9100000};auto view=decode_packet(bytes,options);assert(view);return std::move(*view);
 }
 int main() {
     ControllerObserver observer(42);std::array<std::byte,24> bytes{};
@@ -19,6 +19,13 @@ int main() {
     assert(observer.receive(response(0xa9080400,bytes)));assert(observer.observation().kind==ObservationKind::late_response);
     assert(observer.observation().confirms_execution&&!observer.observation().success&&!observer.observation().unknown_remote_outcome);
     assert(observer.timeout_observation()==timed);auto count=observer.observations().size();assert(observer.receive(response(0xa9080400,bytes)));assert(observer.observations().size()==count);
+    ControllerObserver accepted_v(42);assert(accepted_v.receive(response(0xa9100400,bytes)));
+    assert(accepted_v.observation().validation_outcome_known&&accepted_v.observation().validation_accepted&&!accepted_v.observation().confirms_execution&&!accepted_v.observation().success);
+    ControllerObserver rejected_v(42);assert(rejected_v.receive(response(0xa9100000,bytes)));assert(rejected_v.observation().validation_outcome_known&&!rejected_v.observation().validation_accepted);
+    ControllerObserver error_v(42);assert(error_v.receive(response(0xa9110400,bytes)));assert(error_v.observation().validation_outcome_known&&!error_v.observation().validation_accepted);
+    ControllerObserver partial_v(42);assert(partial_v.receive(response(0xa9100c00,bytes)));assert(partial_v.observation().validation_outcome_known&&!partial_v.observation().validation_accepted);
+    ControllerObserver late_v(42);late_v.timeout();assert(late_v.receive(response(0xa9100400,bytes)));assert(late_v.observation().kind==ObservationKind::late_response&&late_v.observation().validation_outcome_known&&late_v.observation().validation_accepted&&!late_v.observation().success&&late_v.timeout_observation());
+    assert(accepted_v.receive(response(0xa9100000,bytes)));assert(accepted_v.observation().contradictory&&!accepted_v.observation().validation_outcome_known&&!accepted_v.observation().validation_accepted);
     ControllerObserver fresh(42);assert(fresh.receive(response(0xa9080400,bytes)));assert(fresh.observation().success&&fresh.observation().confirms_execution);
     assert(fresh.receive(response(0xa9080800,bytes)));assert(fresh.observation().contradictory&&!fresh.observation().success);
     ControllerObserver ordinary(42);auto cancellation=ordinary.receive(response(0xa9080400,bytes,true));

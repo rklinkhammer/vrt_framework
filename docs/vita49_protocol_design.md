@@ -32,6 +32,26 @@ The following completes the software-selected portions of Sections 4 and 10 docu
 
 Section 10.1 allows at most one Data Stream in an Information Stream, and Sections 10.1.2–10.1.3 govern pairing. Type-0x0/SID-less decoding and standalone data-only bindings remain generic capabilities, not an additional paired stream in this Information Class. A standalone binding must supply its own class/profile document and static format mapping; it is not advertised as this paired Information Stream. Likewise, no concrete extension class is emitted by default. Register its separately documented payload before enabling it (Sections 6.4, 7.2, 8.6, 10.2.5.3–10.2.5.4).
 
+### 1.1 Post-M5 opt-in Tunable IQ v1 (P16)
+
+The [P16 contract](implementation/P16-contract.md) adds a separately selected profile for the frequency-scan example. It does not change IQ Generator v1 or the accepted M5 scope. Implementation and verification status is tracked in [P16](implementation/P16-status.md); the choices here are project profile policy, not additional standard requirements.
+
+| Item | Tunable IQ v1 choice |
+|---|---|
+| Identity | Configured OUI; Information Class `0x0002`; Data Packet Classes `0x0101`, `0x0102`, `0x0103` for IQ16, IQ32, float32; Context `0x0110`; Command/Ack `0x0120` |
+| Identity authority | Project-local codes requiring deployment configuration/agreement; isolated examples label their fixture OUI and simulated clock |
+| Center frequency | RF Reference Frequency, CIF0/bit27, signed Q20 `Hertz`; inclusive 1 MHz–6 GHz, integer-Hz grid; unsupported fractional/out-of-range values reject before effects |
+| RF/IF interpretation | RF Reference Frequency equals center; zero IF and RF offset |
+| State | Original four identities plus RF Reference Frequency; map by FieldId, independently of wire order; RF is required known for Data |
+| Context | Full snapshots include RF when known; effective center changes publish corresponding Context before affected Data under the existing publication gate |
+| Sample Rate | Fixed per configured source session, queryable; wire writes unsupported in this profile. A new configured session may choose another rate. IQ Generator v1 retains its existing writable Sample Rate |
+| Commands | RF tuning is writable; named query/readback includes RF. Sample Rate plus RF writes reject as a whole before effects, including partial-execution requests |
+| Completion | Actual effective packet/sample boundary with usable samples; virtual physical settling is zero. Validation or SDK submission alone is insufficient |
+| Unknown required state | Gate Data and use explicit known-state recovery with a fresh paired association; no stale-center fallback |
+| Unchanged scope | Existing bounded four-field command limit, IQ formats, clock policies, cancellation/lifetime contracts and production Array exclusion remain in force |
+
+The virtual scene places a 0.5-amplitude tone at 100.05 MHz. It translates to `tone_rf - center_rf`, suppresses tones outside `[-Fs/2, +Fs/2)`, and preserves tone/LO phase through retunes and skipped samples. This is an example passband, not an RF filter or detector qualification. The Controller starts local-monotonic dwell only after successful real execution and matching known applied RF readback. See the contract for exact phase, timeout and remote-endpoint behavior.
+
 ## 2. Packet Class option tables
 
 Untimed Control mode 0 does not relax the Data timestamp options below. Baseline Data requires a qualified locked clock at start and only the documented bounded holdover thereafter. Required-metadata recovery follows architecture §7.1, not an implicit same-SID reset.

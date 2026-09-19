@@ -9,3 +9,7 @@ foreach(example controller controllee combined)
     set_tests_properties(p10_example_${example} PROPERTIES LABELS "integration;examples")
   endif()
 endforeach()
+
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/frequency_scan/CMakeLists.txt")
+  add_subdirectory(frequency_scan)
+endif()

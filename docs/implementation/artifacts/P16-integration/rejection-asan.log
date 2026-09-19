@@ -1,0 +1,4 @@
+AckV received: accepted=true; validation evidence only
+query center_hz=100000000 sample_rate_hz=100000 (remote rate is not changed)
+request center_hz=100000000 sweep=1 point=1 handle=1/0/1/1
+AckV received: accepted=false; explicit validation rejection stops submissions

@@ -1,0 +1,7 @@
+{
+  "changed": [
+    "examples/frequency_scan/CMakeLists.txt",
+    "tests/verification/P16/CMakeLists.txt"
+  ],
+  "reason": "Serialize process tests sharing local port allocation search"
+}

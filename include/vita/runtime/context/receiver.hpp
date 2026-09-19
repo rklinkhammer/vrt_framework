@@ -7,17 +7,21 @@ struct MetadataSnapshot {
     std::uint32_t events=0;bool valid_data=false;
 };
 inline bool same_snapshot(const StateSnapshot& a,const StateSnapshot& b) noexcept {
-    for(std::size_t i=0;i<4;++i)if(a.fields[i].id!=b.fields[i].id||a.fields[i].validity!=b.fields[i].validity||(a.fields[i].validity==Validity::known&&a.fields[i].value!=b.fields[i].value))return false;return true;
+    if(a.profile!=b.profile)return false;
+    for(std::size_t i=0;i<active_state_fields(a.profile);++i)if(a.fields[i].id!=b.fields[i].id||a.fields[i].validity!=b.fields[i].validity||(a.fields[i].validity==Validity::known&&a.fields[i].value!=b.fields[i].value))return false;return true;
 }
 template<std::size_t Capacity=128> class ReceiverHistory {
     struct Entry {StateSnapshot state{};timing::ProtocolTime effective{};timing::MonoTime arrival{};std::uint32_t events{};bool full=true,conflict=false;};
     std::array<Entry,Capacity> entries_{};std::size_t count_=0;
+    profiles::iq::Profile profile_=profiles::iq::Profile::generator_v1;
     std::uint64_t generation_=1;codec::Tsi epoch_=codec::Tsi::none;std::optional<std::uint32_t> reference_{};
 public:
-    explicit ReceiverHistory(std::uint64_t generation=1,codec::Tsi epoch=codec::Tsi::none,std::optional<std::uint32_t> reference={}) noexcept:generation_(generation),epoch_(epoch),reference_(reference){}
+    explicit ReceiverHistory(std::uint64_t generation=1,codec::Tsi epoch=codec::Tsi::none,std::optional<std::uint32_t> reference={},profiles::iq::Profile profile=profiles::iq::Profile::generator_v1) noexcept:profile_(profile),generation_(generation),epoch_(epoch),reference_(reference){}
     Result<void> insert(StateSnapshot state,timing::ProtocolTime effective,timing::MonoTime arrival,bool full=true,std::uint32_t events=0) noexcept {
+        auto snapshot_valid=validate_snapshot(state);if(!snapshot_valid)return snapshot_valid;
+        if(state.profile!=profile_)return std::unexpected(Error{ErrorCode::identity_conflict});
         if(!timing::valid(effective))return std::unexpected(Error{ErrorCode::invalid_argument});
-        for(std::size_t i=0;i<4;++i){const auto& field=state.fields[i];if(field.id!=baseline_fields[i])return std::unexpected(Error{ErrorCode::invalid_argument});if(field.validity==Validity::known){auto valid=validate_value(field.id,field.value);if(!valid)return std::unexpected(valid.error());}}
+        for(std::size_t i=0;i<active_state_fields(state.profile);++i){const auto& field=state.fields[i];if(field.id!=state_fields[i])return std::unexpected(Error{ErrorCode::invalid_argument});if(field.validity==Validity::known){auto valid=validate_value(field.id,field.value);if(!valid)return std::unexpected(valid.error());}}
         if(state.fields[2].validity==Validity::known){auto* indicators=std::get_if<std::uint32_t>(&state.fields[2].value);if(!indicators)return std::unexpected(Error{ErrorCode::invalid_argument});events|=*indicators&(sample_loss_enable|sample_loss_indicator);*indicators&=~(sample_loss_enable|sample_loss_indicator);}
         std::size_t index=0;while(index<count_&&entries_[index].effective<effective)++index;
         if(index<count_&&entries_[index].effective==effective){auto& existing=entries_[index];if(existing.full!=full||!same_snapshot(existing.state,state)||existing.events!=events)existing.conflict=true;return {};}
@@ -28,8 +32,8 @@ public:
         auto const& envelope=packet.envelope.envelope;
         if(generation!=generation_)return std::unexpected(Error{ErrorCode::stale_generation});
         if(envelope.type!=codec::PacketType::context||packet.opaque||envelope.tsm||envelope.timestamp.tsi==codec::Tsi::none||envelope.timestamp.tsf!=codec::Tsf::picoseconds||(epoch_!=codec::Tsi::none&&envelope.timestamp.tsi!=epoch_))return std::unexpected(Error{ErrorCode::unsupported_capability});
-        StateSnapshot snapshot;
-        for(std::size_t i=0;i<packet.fields.size();++i){const auto& field=packet.fields[i];auto index=field_index(field.id);if(index==4||field.kind!=BodyKind::values||field.attribute!=Attribute::current)return std::unexpected(Error{ErrorCode::unsupported_capability});auto value=field.value();if(!value)return std::unexpected(value.error());snapshot.fields[index]={field.id,*value,Validity::known};}
+        StateSnapshot snapshot;snapshot.profile=profile_;
+        for(std::size_t i=0;i<packet.fields.size();++i){const auto& field=packet.fields[i];auto index=field_index(field.id);if(!profile_field(profile_,field.id)||index==state_field_capacity||field.kind!=BodyKind::values||field.attribute!=Attribute::current)return std::unexpected(Error{ErrorCode::unsupported_capability});auto value=field.value();if(!value)return std::unexpected(value.error());snapshot.fields[index]={field.id,*value,Validity::known};}
         if(reference_){auto* reference=std::get_if<std::uint32_t>(&snapshot.fields[0].value);if(snapshot.fields[0].validity!=Validity::known||!reference||*reference!=*reference_)return std::unexpected(Error{ErrorCode::identity_conflict});}
         return insert(snapshot,{envelope.timestamp.integer,envelope.timestamp.fractional},arrival,full);
     }
@@ -37,7 +41,7 @@ public:
         MetadataSnapshot result;const Entry* last=nullptr;bool anchored=false,ambiguous=false,delta=false;
         for(std::size_t i=0;i<count_&&entries_[i].effective<=sample;++i){const auto& entry=entries_[i];
             if(entry.full){result.state=entry.state;anchored=true;ambiguous=entry.conflict;delta=false;}
-            else {for(std::size_t f=0;f<4;++f)if(entry.state.fields[f].validity!=Validity::absent)result.state.fields[f]=entry.state.fields[f];ambiguous|=entry.conflict;delta=true;}
+            else {for(std::size_t f=0;f<state_field_capacity;++f)if(entry.state.fields[f].validity!=Validity::absent)result.state.fields[f]=entry.state.fields[f];ambiguous|=entry.conflict;delta=true;}
             last=&entry;
         }
         if(!last)return result;
@@ -79,8 +83,8 @@ template<std::size_t History=128,std::size_t Waiting=64> class ContextReceiver {
     bool allow_unknown_=false;std::optional<PayloadFormat> fixed_format_{};std::size_t waiting_count_=0;
     bool deliverable(const MetadataSnapshot& metadata) const noexcept{return metadata.confidence==Confidence::known&&metadata.valid_data;}
 public:
-    ContextReceiver(memory::RetentionQuota& global,ReceiverBinding binding,std::uint64_t generation=1,codec::Tsi epoch=codec::Tsi::none,bool allow_unknown=false,std::optional<std::uint32_t> reference={},std::optional<PayloadFormat> fixed_format={})
-      :history_(generation,epoch,reference),binding_(binding),global_quota_(global),allow_unknown_(allow_unknown),fixed_format_(fixed_format){}
+    ContextReceiver(memory::RetentionQuota& global,ReceiverBinding binding,std::uint64_t generation=1,codec::Tsi epoch=codec::Tsi::none,bool allow_unknown=false,std::optional<std::uint32_t> reference={},std::optional<PayloadFormat> fixed_format={},profiles::iq::Profile profile=profiles::iq::Profile::generator_v1)
+      :history_(generation,epoch,reference,profile),binding_(binding),global_quota_(global),allow_unknown_(allow_unknown),fixed_format_(fixed_format){}
     ReceiverHistory<History>& history() noexcept{return history_;}
     Result<void> receive_data(const memory::RxEnvelope& envelope,timing::ProtocolTime sample,std::uint64_t generation,timing::MonoTime now) noexcept {
         if(generation!=history_.generation())return std::unexpected(Error{ErrorCode::stale_generation});

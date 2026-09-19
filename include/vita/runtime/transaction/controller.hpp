@@ -9,6 +9,12 @@ struct ControllerHandle {std::size_t slot{};std::uint64_t generation{};friend bo
 struct TrackedRequest {ControllerHandle handle;codec::Envelope envelope;};
 struct StateObservation {
     StateSnapshot state{};std::uint8_t selected_mask{};codec::Timestamp timestamp{};bool hypothetical{},late{};
+    template<class Field> Result<typename Field::value_type> value() const noexcept {
+      const auto index=field_index(Field::id);
+      if(index==state_field_capacity||!(selected_mask&(1u<<index))||state.fields[index].validity!=Validity::known)return std::unexpected(Error{ErrorCode::invalid_state});
+      const auto* value=std::get_if<typename Field::value_type>(&state.fields[index].value);
+      if(!value)return std::unexpected(Error{ErrorCode::invalid_argument});return *value;
+    }
 };
 enum class CancelRegistration { fresh,retry };
 // Serialized controller domain. Construction allocates bounded record storage once.
@@ -49,18 +55,19 @@ class ControllerRegistry {
     }
     static Result<StateObservation> capture_state(const codec::PacketView& packet,const Record& record,bool cancellation) noexcept {
         StateObservation out;out.timestamp=packet.envelope.envelope.timestamp;
+        if(record.request.class_id&&record.request.class_id->information_class==2&&record.request.class_id->packet_class==0x120)out.state.profile=profiles::iq::Profile::frequency_tunable;
         if(out.timestamp.tsf==codec::Tsf::picoseconds && out.timestamp.fractional>=timing::picoseconds_per_second)return std::unexpected(Error{ErrorCode::invalid_argument});
         out.hypothetical=((packet.envelope.envelope.command->cam>>23)&3)==1;
         out.late=cancellation?record.observer.cancellation_timed_out():record.observer.timed_out();
-        for(std::size_t i=0;i<4;++i)if((cancellation?record.cancel_fields:record.requested_fields)&(1u<<i))out.state.fields[i].validity=Validity::unknown;
+        for(std::size_t i=0;i<state_field_capacity;++i)if((cancellation?record.cancel_fields:record.requested_fields)&(1u<<i))out.state.fields[i].validity=Validity::unknown;
         for(std::size_t i=0;i<packet.fields.size();++i){auto const& field=packet.fields[i];auto index=field_index(field.id);
-            if(index==4 || !((cancellation?record.cancel_fields:record.requested_fields)&(1u<<index)) || field.kind!=BodyKind::values || field.attribute!=Attribute::current)return std::unexpected(Error{ErrorCode::unsupported_capability});
+            if(index==state_field_capacity || !((cancellation?record.cancel_fields:record.requested_fields)&(1u<<index)) || field.kind!=BodyKind::values || field.attribute!=Attribute::current)return std::unexpected(Error{ErrorCode::unsupported_capability});
             auto value=field.value();if(!value)return std::unexpected(value.error());out.state.fields[index]={field.id,*value,Validity::known};out.selected_mask|=1u<<index;
         }return out;
     }
     static bool same_state(const StateObservation& a,const StateObservation& b) noexcept {
         if(a.selected_mask!=b.selected_mask||a.hypothetical!=b.hypothetical||a.timestamp.tsi!=b.timestamp.tsi||a.timestamp.tsf!=b.timestamp.tsf||a.timestamp.integer!=b.timestamp.integer||a.timestamp.fractional!=b.timestamp.fractional)return false;
-        for(std::size_t i=0;i<4;++i)if(a.state.fields[i].id!=b.state.fields[i].id||a.state.fields[i].validity!=b.state.fields[i].validity||(a.state.fields[i].validity==Validity::known&&a.state.fields[i].value!=b.state.fields[i].value))return false;
+        for(std::size_t i=0;i<state_field_capacity;++i)if(a.state.fields[i].id!=b.state.fields[i].id||a.state.fields[i].validity!=b.state.fields[i].validity||(a.state.fields[i].validity==Validity::known&&a.state.fields[i].value!=b.state.fields[i].value))return false;
         return true;
     }
 public:
@@ -96,7 +103,7 @@ public:
         if(rel.next_mid>UINT32_MAX)return std::unexpected(Error{ErrorCode::resource_limit});
         auto limit=timing::deadline(now,timeout_ns);if(!limit)return std::unexpected(limit.error());
         if(now.ns>UINT64_MAX-minimum_retention_ns||limit->ns>UINT64_MAX-minimum_retention_ns)return std::unexpected(Error{ErrorCode::overflow});
-        std::uint8_t selected=0;for(std::size_t i=0;i<request.fields.size();++i){auto index=field_index(request.fields[i].id);if(index==4)return std::unexpected(Error{ErrorCode::unsupported_capability});selected|=1u<<index;}
+        std::uint8_t selected=0;for(std::size_t i=0;i<request.fields.size();++i){auto index=field_index(request.fields[i].id);if(index==state_field_capacity)return std::unexpected(Error{ErrorCode::unsupported_capability});selected|=1u<<index;}
         for(std::size_t i=0;i<Records;++i){auto& r=storage_->records[i];if(r.used||r.generation==UINT64_MAX)continue;
             auto generation=r.generation;r=Record{};r.generation=generation;r.used=r.ordinary_active=true;r.references=1;
             r.key=rel.identity;r.key.message_id=static_cast<std::uint32_t>(rel.next_mid++);r.request=e;r.request.command->message_id=r.key.message_id;
@@ -114,7 +121,7 @@ public:
             for(std::size_t i=0;i<r->cancel_size;++i)if(r->cancel_meaning[i]!=cancel_byte(packet,i))return std::unexpected(Error{ErrorCode::identity_conflict});
             return CancelRegistration::retry;
         }
-        std::uint8_t selected=0;for(std::size_t i=0;i<packet.fields.size();++i){auto index=field_index(packet.fields[i].id);if(index==4)return std::unexpected(Error{ErrorCode::unsupported_capability});selected|=1u<<index;}
+        std::uint8_t selected=0;for(std::size_t i=0;i<packet.fields.size();++i){auto index=field_index(packet.fields[i].id);if(index==state_field_capacity)return std::unexpected(Error{ErrorCode::unsupported_capability});selected|=1u<<index;}
         if(selected&~r->requested_fields)return std::unexpected(Error{ErrorCode::invalid_argument});
         if(packet.envelope.wire.size()>MaxCancelBytes)return std::unexpected(Error{ErrorCode::capacity_exhausted});
         auto limit=timing::deadline(now,timeout_ns);if(!limit||limit->ns>UINT64_MAX-minimum_retention_ns)return std::unexpected(Error{ErrorCode::overflow});

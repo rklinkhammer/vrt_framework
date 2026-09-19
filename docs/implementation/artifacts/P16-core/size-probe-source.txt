@@ -1,0 +1,20 @@
+#include <vita/profiles/iq/lab.hpp>
+#include <vita/runtime/public/runtime.hpp>
+#include <cstdio>
+using namespace vita;
+int main(){
+ using Engine=runtime::transaction::Engine<16>;using Controller=runtime::transaction::ControllerRegistry<>;
+ std::printf("StateSnapshot=%zu\nEffectiveEvent=%zu\nRevision=%zu\nAckRecord=%zu\nControllerRegistryStorage=%zu\nControllerRecordStride=%zu\nEngine16=%zu\nEnginePlan=%zu\nEngineTransactionRecord=%zu\nSourceProvider=%zu\nRuntime=%zu\n",sizeof(runtime::StateSnapshot),sizeof(runtime::EffectiveEvent),sizeof(runtime::context::Revision),sizeof(runtime::transaction::AckRecord),Controller::storage_bytes(),runtime::transaction::ControllerRegistry<2>::storage_bytes()-runtime::transaction::ControllerRegistry<1>::storage_bytes(),sizeof(Engine),Engine::plan_bytes(),Engine::record_bytes(),sizeof(profiles::iq::SourceProvider),sizeof(VitaRuntime<>));
+#ifdef P16_CURRENT
+ std::printf("DeviceBackendBinding=%zu\n",sizeof(DeviceBackendBinding));
+#endif
+ auto c=profiles::iq::lab::config(0xabcdef);auto p=profiles::iq::lab::pools(profiles::iq::lab::reference_counts());if(!c||!p)return 1;auto r=VitaRuntime<>::create(*c,std::move(*p));if(!r)return 2;auto initial=(*r)->budget().charged_bytes();std::size_t per_pair=0;
+ for(unsigned i=0;i<16;++i){StreamConfig s;s.sid=i+1;s.controller_id=2;s.controllee_id=3;
+#ifdef P16_CURRENT
+ s.profile=profiles::iq::Profile::frequency_tunable;s.sample_rate=100000;
+#endif
+ auto d=(*r)->add_controllee(s);if(!d)return 3;if(i==0)per_pair=(*r)->budget().charged_bytes()-initial;}
+ auto stream=per_pair/2-runtime::context::RevisionStore<128>::storage_bytes()-sizeof(runtime::transaction::ResultStorage<64>)-runtime::CompletionArena<64>::metadata_bytes()-2048;
+ std::printf("PairedStreamCharge=%zu\nStreamDerived=%zu\nFullCharge=%zu\n",per_pair,stream,(*r)->budget().charged_bytes());
+ for(unsigned i=0;i<runtime::budget_category_count;++i){auto row=(*r)->budget().row(static_cast<runtime::BudgetCategory>(i));std::printf("category%u=%zu,%zu\n",i,row.reserved,row.charged);}
+}

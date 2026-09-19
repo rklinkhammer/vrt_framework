@@ -1,5 +1,6 @@
 #pragma once
 #include <vita/fields/types.hpp>
+#include <vita/profiles/iq/profile.hpp>
 #include <vita/runtime/timing/scheduling.hpp>
 #include <array>
 #include <memory>
@@ -9,11 +10,27 @@ namespace vita::runtime {
 enum class Validity : std::uint8_t { absent,known,unknown };
 struct FieldState { FieldId id{};SemanticValue value{std::uint32_t{0}};Validity validity=Validity::absent; };
 inline constexpr std::array baseline_fields{ReferencePoint::id,SampleRate::id,StateEvent::id,DataPayloadFormat::id};
-inline std::size_t field_index(FieldId id) noexcept {for(std::size_t i=0;i<baseline_fields.size();++i)if(baseline_fields[i]==id)return i;return baseline_fields.size();}
+inline constexpr std::size_t state_field_capacity=5,command_field_capacity=4;
+inline constexpr std::array state_fields{ReferencePoint::id,SampleRate::id,StateEvent::id,DataPayloadFormat::id,RFReferenceFrequency::id};
+inline std::size_t field_index(FieldId id) noexcept {for(std::size_t i=0;i<state_fields.size();++i)if(state_fields[i]==id)return i;return state_fields.size();}
 struct StateSnapshot {
     std::uint64_t version=0;
-    std::array<FieldState,4> fields{{{ReferencePoint::id},{SampleRate::id,Hertz{}},{StateEvent::id},{DataPayloadFormat::id,PayloadFormat{}}}};
+    std::array<FieldState,state_field_capacity> fields{{{ReferencePoint::id},{SampleRate::id,Hertz{}},{StateEvent::id},{DataPayloadFormat::id,PayloadFormat{}},{RFReferenceFrequency::id,Hertz{}}}};
+    profiles::iq::Profile profile=profiles::iq::Profile::generator_v1;
 };
+inline constexpr std::size_t active_state_fields(profiles::iq::Profile profile) noexcept {return profile==profiles::iq::Profile::frequency_tunable?5:4;}
+inline bool profile_field(profiles::iq::Profile profile,FieldId id) noexcept {
+    const auto index=field_index(id);return index<4 || (index==4&&profile==profiles::iq::Profile::frequency_tunable);
+}
+inline Result<void> validate_snapshot(const StateSnapshot& state) noexcept {
+    if(state.profile!=profiles::iq::Profile::generator_v1&&state.profile!=profiles::iq::Profile::frequency_tunable)return std::unexpected(Error{ErrorCode::invalid_argument});
+    for(std::size_t i=0;i<state_field_capacity;++i){const auto& field=state.fields[i];
+      if(i>=active_state_fields(state.profile)){if(field.validity!=Validity::absent)return std::unexpected(Error{ErrorCode::unsupported_capability});continue;}
+      if(field.id!=state_fields[i]||static_cast<unsigned>(field.validity)>static_cast<unsigned>(Validity::unknown))return std::unexpected(Error{ErrorCode::invalid_argument});
+      if(field.validity==Validity::known){auto valid=validate_value(field.id,field.value);if(!valid)return valid;}
+      if(i==4&&field.validity==Validity::known){const auto* value=std::get_if<Hertz>(&field.value);constexpr std::int64_t unit=1ll<<20;if(!value||value->q20<static_cast<std::int64_t>(profiles::iq::minimum_center_hz)*unit||value->q20>static_cast<std::int64_t>(profiles::iq::maximum_center_hz)*unit||value->q20%unit)return std::unexpected(Error{ErrorCode::invalid_argument});}
+    }return {};
+}
 struct Diagnostics { std::uint32_t warnings=0,errors=0; };
 struct PlannedField {
     FieldId id{};SemanticValue requested{std::uint32_t{0}},adjusted{std::uint32_t{0}};

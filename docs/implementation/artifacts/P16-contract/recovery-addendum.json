@@ -1,0 +1,11 @@
+{
+  "checkpoint": "Recovery phase epoch clarification approved before helper edit",
+  "approved_by": [
+    "coordinator",
+    "independent verifier"
+  ],
+  "files": {
+    "docs/implementation/P16-contract.md": "2dcbb67c8d4d60ee4593c9d383ddb267a4a1fcb65c4a6ebe8697dc3d370d0c5e",
+    "docs/frequency_scan_example_implementation_prompt.md": "b23f867047aeccbe6c14a882fc97043c1f1f1f5b75ca5461f4d9e22be96cb4fc"
+  }
+}

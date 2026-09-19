@@ -1,0 +1,8 @@
+{
+  "reason": "Shared CTest resource lock prevents same-port process test races",
+  "changed": [
+    "tests/verification/P16/CMakeLists.txt",
+    "examples/frequency_scan/CMakeLists.txt"
+  ],
+  "production_changed": false
+}

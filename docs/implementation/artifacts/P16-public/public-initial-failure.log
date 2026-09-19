@@ -1,0 +1,1 @@
+Assertion failed: (!remote->lifecycle().backend_quiescent), function main, file public_contract.cpp, line 23.
