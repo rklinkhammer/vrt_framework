@@ -165,9 +165,10 @@ private:
   memory::RetentionQuota receive_quota_{1024};
   runtime::RouteRegistry<registry_capacity> routes_;
   runtime::CounterRegistry<registry_capacity> counters_;
-  adapters::loopback::Loopback<transport_slots, registry_capacity,
-                               registry_capacity>
-      transport_;
+  using DefaultTransport =
+      adapters::loopback::Loopback<transport_slots, registry_capacity,
+                                   registry_capacity>;
+  runtime::transport::TransportBinding transport_;
   runtime::CompletionArena<transport_slots> tx_tickets_;
   std::array<TxRecord, transport_slots> transmissions_{};
   std::array<Book, controller_capacity> books_{};
@@ -224,6 +225,7 @@ private:
     std::array<PacketStamp, 64> stamps{};
     std::optional<ProtocolTime> data_highwater, coverage_floor;
     bool pending_loss = false;
+    std::optional<std::uint64_t> ingress_ns;std::uint32_t ingress_mid=0;
     std::array<runtime::timing::Boundary, Transactions * 2 + 3> boundaries{};
     std::size_t boundary_count = 0;
     Stream(VitaRuntime *r, std::size_t i, StreamConfig c)
@@ -232,13 +234,13 @@ private:
           pacing(timeline),
           engine(r->admission_, backend.binding(), initial(c),
                  runtime::transaction::EngineOptions{
-                     runtime::transaction::Profile::iq_generator_v1,
-                     revisions.binding(), &timeline, true, this,
-                     project_observation}),
+                     c.kind==ControlleeKind::virtual_register?runtime::transaction::Profile::generic_virtual_test:runtime::transaction::Profile::iq_generator_v1,
+                     c.kind==ControlleeKind::virtual_register?runtime::EffectSink{}:revisions.binding(), &timeline, true, this,
+                     c.kind==ControlleeKind::virtual_register?nullptr:project_observation,c.trace}),
           manager(engine, r->retention_, r->admission_),
           publisher(revisions, {this, send_context, send_data}),
           receiver(r->receive_quota_, {this, deliver, drop}, 1, r->epoch(),
-                   false, c.sid) {}
+                   false, c.sid) {if(c.kind==ControlleeKind::virtual_register)backend.set_inline_completion(true);}
     static runtime::StateSnapshot initial(const StreamConfig &c) {
       runtime::StateSnapshot state;
       for (auto &field : state.fields)
@@ -346,11 +348,16 @@ private:
               envelope.cancel ? book.cancel_cam : book.request.command->cam};
       return {};
     }
+    static void before_decode(void* p,const codec::Envelope& envelope) noexcept {
+      auto& s=*static_cast<Stream*>(p);if(!s.config.trace.enabled()||!envelope.command||envelope.cancel||envelope.ack)return;s.ingress_ns=s.config.trace.now_ns(s.config.trace.context);s.ingress_mid=envelope.command->message_id;
+    }
     static void receive_command(void *p, const codec::PacketView &packet,
                                 const memory::RxEnvelope &) noexcept {
       auto &s = *static_cast<Stream *>(p);
       auto &r = *s.owner;
       auto now = r.operation_context(s, packet.envelope.envelope.timestamp);
+      now.trace_peer=s.config.controller_peer;
+      if(s.config.trace.enabled()&&!packet.envelope.envelope.cancel&&packet.envelope.envelope.command){const auto mid=packet.envelope.envelope.command->message_id;const auto received=(s.ingress_ns&&s.ingress_mid==mid)?*s.ingress_ns:s.config.trace.now_ns(s.config.trace.context);s.ingress_ns.reset();s.config.trace.emit_at(runtime::transaction::TraceStage::received,{s.generation,now.operation,s.config.controller_peer,s.config.sid,mid},received);}
       auto admitted = s.manager.accept(
           packet, now, {s.config.controller_peer, s.generation});
       if (!admitted) {
@@ -417,9 +424,52 @@ private:
     return c;
   }
   VitaRuntime(RuntimeConfig config, ExternalPools pools)
-      : config_(config), pools_(std::move(pools)),
-        transport_(pools_.rx_data, pools_.rx_control, pools_.rx_cancellation,
-                   admission_, routes_, counters_, transport_capabilities()) {}
+      : config_(config), pools_(std::move(pools)) {}
+  Result<void> initialize_transport() {
+    runtime::transport::HostBindings host{
+        admission_,     routes_,           counters_,
+        pools_.rx_data, pools_.rx_control, pools_.rx_cancellation};
+    if (config_.transport.create) {
+      auto made =
+          config_.transport.create(config_.transport.context, std::move(host));
+      if (!made)
+        return std::unexpected(made.error());
+      if (!made->valid() || !made->associate || !made->detach ||
+          made->slot_capacity != config_.transport.slot_capacity ||
+          made->metadata_bytes != config_.transport.required_bytes ||
+          made->capabilities != config_.transport.capabilities) {
+        if (made->context && made->detach)
+          made->detach(made->context);
+        return std::unexpected(Error{ErrorCode::invalid_argument});
+      }
+      transport_ = std::move(*made);
+    } else {
+      auto owner = std::make_shared<DefaultTransport>(
+          pools_.rx_data, pools_.rx_control, pools_.rx_cancellation, admission_,
+          routes_, counters_, transport_capabilities());
+      transport_ = {
+          owner,
+          owner.get(),
+          DefaultTransport::metadata_bytes() + 128,
+          transport_slots,
+          transport_capabilities(),
+          [](void *p, runtime::transport::TxSubmission &&value) noexcept {
+            return static_cast<DefaultTransport *>(p)->try_send(
+                std::move(value));
+          },
+          [](void *p) noexcept {
+            return static_cast<DefaultTransport *>(p)->progress_next();
+          },
+          [](void *p, runtime::transport::TxToken token) noexcept {
+            return static_cast<DefaultTransport *>(p)->outstanding(token);
+          },
+          [](void *p) noexcept { static_cast<DefaultTransport *>(p)->close(); },
+          [](void *p, runtime::transport::TxToken token) noexcept {
+            return static_cast<DefaultTransport *>(p)->prove_quiescent(token);
+          }};
+    }
+    return {};
+  }
   codec::Tsi epoch() const noexcept {
     return static_cast<codec::Tsi>(static_cast<unsigned>(config_.clock.epoch) +
                                    1);
@@ -645,6 +695,19 @@ private:
     now.boundaries = {s.boundaries.data(), s.boundary_count};
     return now;
   }
+  static Error resource_backpressure(Error error) noexcept {
+    if (error.code == ErrorCode::capacity_exhausted ||
+        error.code == ErrorCode::resource_limit) {
+      error.retryable = true;
+      error.stage = ErrorStage::admission;
+    }
+    return error;
+  }
+  static SourceStatus publication_status(const Stream &s) noexcept {
+    return s.publisher.status() == runtime::context::StreamStatus::temporal_association
+               ? SourceStatus::temporal_association
+               : SourceStatus::context_unavailable;
+  }
   Result<void> generate(Stream &s) noexcept {
     if (!clock_snapshot_ || s.status != SourceStatus::running)
       return {};
@@ -682,10 +745,10 @@ private:
           .need(runtime::Resource::context_publication);
       auto credits = admission_.acquire(need);
       if (!credits)
-        return std::unexpected(credits.error());
+        return std::unexpected(resource_backpressure(credits.error()));
       auto reservation = s.revisions.reserve(1);
       if (!reservation)
-        return std::unexpected(reservation.error());
+        return std::unexpected(resource_backpressure(reservation.error()));
       auto state = s.engine.state();
       state.fields[2].value =
           std::uint32_t{runtime::context::sample_loss_enable |
@@ -699,10 +762,12 @@ private:
       event.time_known = event.ordinal_known = true;
       auto binding = s.revisions.binding();
       binding.record(binding.context, event, *reservation, std::move(*credits));
+      // The revision is recorded exactly once even if transport acceptance
+      // must retry. The publisher retains the Context-before-Data gate.
+      s.pending_loss = false;
       auto published = s.publisher.progress(now_, *clock_snapshot_);
       if (!published)
-        return published;
-      s.pending_loss = false;
+        return std::unexpected(resource_backpressure(published.error()));
     }
     auto current = s.revisions.current();
     if (!current)
@@ -711,15 +776,15 @@ private:
         *pairs * profiles::iq::bytes_per_pair(s.config.format);
     auto header = pools_.header.acquire({28});
     if (!header)
-      return std::unexpected(header.error());
+      return std::unexpected(resource_backpressure(header.error()));
     auto payload = pools_.payload.acquire({payload_size});
     if (!payload)
-      return std::unexpected(payload.error());
+      return std::unexpected(resource_backpressure(payload.error()));
     std::optional<memory::BufferLease> trailer;
     if (s.config.trailer) {
       auto acquired = pools_.trailer.acquire({4});
       if (!acquired)
-        return std::unexpected(acquired.error());
+        return std::unexpected(resource_backpressure(acquired.error()));
       trailer.emplace(std::move(*acquired));
     }
     auto payload_bytes = payload->writable_bytes();
@@ -731,8 +796,12 @@ private:
     if (!window)
       return std::unexpected(window.error());
     auto produced = s.config.source.produce(*window);
-    if (!produced)
-      return produced;
+    if (!produced) {
+      auto error = produced.error();
+      error.retryable = false;
+      error.stage = ErrorStage::execution;
+      return std::unexpected(error);
+    }
     auto complete = window->validate_complete();
     if (!complete)
       return complete;
@@ -760,7 +829,7 @@ private:
         break;
       }
     if (!stamp)
-      return std::unexpected(Error{ErrorCode::capacity_exhausted});
+      return std::unexpected(resource_backpressure(Error{ErrorCode::capacity_exhausted}));
     stamp->header = head_bytes->data();
     stamp->last_sample = last.time();
     header->set_size(*written);
@@ -796,7 +865,10 @@ private:
     if (!submitted) {
       stamp->header = nullptr;
       ++s.metrics.send_failures;
-      return submitted;
+      ++s.metrics.skipped_packets;
+      s.metrics.skipped_samples += *pairs;
+      s.pending_loss = true;
+      return std::unexpected(resource_backpressure(submitted.error()));
     }
     s.metrics.samples += *pairs;
     return {};
@@ -807,8 +879,14 @@ private:
       auto progressed = s.manager.progress(context);
       if (!progressed)
         return progressed;
-      if (!s.backend.pending() || !s.auto_complete)
+      if (!s.backend.pending() || !s.auto_complete) {
+        // Inline model completions are already READY. Drain them under the same
+        // bounded turn budget instead of adding one host cycle per queued field.
+        if (s.config.kind == ControlleeKind::virtual_register &&
+            s.manager.drain_status().active != 0)
+          continue;
         break;
+      }
       auto completed = s.backend.complete_next();
       if (!completed)
         return std::unexpected(completed.error());
@@ -819,7 +897,7 @@ private:
       s.publisher.backend_fault(s.engine.state());
     }
     const auto *rate = std::get_if<Hertz>(&s.engine.state().fields[1].value);
-    if (rate && rate->q20 > 0 && rate->q20 % (1ll << 20) == 0) {
+    if (s.config.kind==ControlleeKind::iq_source && rate && rate->q20 > 0 && rate->q20 % (1ll << 20) == 0) {
       const auto hz = static_cast<std::uint64_t>(rate->q20 >> 20);
       if (hz != s.timeline.rate()) {
         auto current = s.revisions.current();
@@ -903,17 +981,19 @@ private:
       }
       auto generated = generate(s);
       if (!generated) {
-        s.status = SourceStatus::faulted;
-        s.publisher.backend_fault(s.engine.state());
+        if (s.publisher.status() != runtime::context::StreamStatus::active) {
+          s.status = publication_status(s);
+        } else if (!generated.error().retryable) {
+          s.status = SourceStatus::faulted;
+          s.publisher.backend_fault(s.engine.state());
+        }
         return generated;
       }
       auto published = s.publisher.progress(now_, *clock_snapshot_);
       if (!published) {
-        s.status = s.publisher.status() ==
-                           runtime::context::StreamStatus::temporal_association
-                       ? SourceStatus::temporal_association
-                       : SourceStatus::context_unavailable;
-        return {};
+        if (s.publisher.status() != runtime::context::StreamStatus::active)
+          s.status = publication_status(s);
+        return std::unexpected(resource_backpressure(published.error()));
       }
     }
     return {};
@@ -1117,6 +1197,19 @@ private:
     auto can = controllers_.can_register_relationship(key);
     if (!can)
       return can;
+    const std::array<runtime::transport::Association, 2> associations{
+        {{{s.config.controller_peer, s.generation},
+          {s.config.controllee_peer, s.generation},
+          s.config.sid},
+         {{s.config.controllee_peer, s.generation},
+          {s.config.controller_peer, s.generation},
+          s.config.sid}}};
+    if (transport_.associate) {
+      auto preflight =
+          transport_.associate(transport_.context, associations, false);
+      if (!preflight)
+        return preflight;
+    }
     std::array<runtime::Route, 4> batch;
     const std::array types{
         codec::PacketType::command, codec::PacketType::command,
@@ -1139,12 +1232,19 @@ private:
       }
       route.context = &s;
       route.receive = callbacks[i];
+      if(i==0)route.before_decode=Stream::before_decode;
       if (i == 1)
         route.request_context = Stream::request_context;
       keys[i] = counter(s, types[i], i == 0);
     }
     // Fresh SID and fixed four-role shapes make both capacity-preflighted
     // installs infallible.
+    if (transport_.associate) {
+      auto commit =
+          transport_.associate(transport_.context, associations, true);
+      if (!commit)
+        return commit;
+    }
     auto installed = routes_.install(batch);
     if (!installed)
       return installed;
@@ -1376,6 +1476,7 @@ private:
     if (index >= count_)
       return std::unexpected(Error{ErrorCode::invalid_argument});
     auto &s = *streams_[index];
+    if(s.config.kind!=ControlleeKind::iq_source)return std::unexpected(Error{ErrorCode::unsupported_capability});
     freeze();
     if (shutdown_requested_ ||
         (!lifecycle_[index].active &&
@@ -1508,6 +1609,16 @@ private:
   }
 
 public:
+  ~VitaRuntime() {
+    if (transport_.context) {
+      if (transport_.detach)
+        transport_.detach(transport_.context);
+      else
+        transport_.close();
+      transport_.owner.reset();
+      transport_.context = nullptr;
+    }
+  }
   static Result<std::unique_ptr<VitaRuntime>> create(RuntimeConfig config,
                                                      ExternalPools pools) {
     if (!config.oui || *config.oui > 0xffffff ||
@@ -1573,19 +1684,34 @@ public:
       raw += *bytes;
       metadata += all[i]->metadata_bytes() + 128;
     }
-    const std::size_t base =
+    if (config.transport.create &&
+        (!config.transport.required_bytes || !config.transport.slot_capacity ||
+         config.transport.slot_capacity > transport_slots ||
+         !config.transport.capabilities.cpu_required ||
+         config.transport.capabilities.completion_is_delivery ||
+         config.transport.capabilities.max_tx_segments < 3))
+      return std::unexpected(Error{ErrorCode::invalid_argument});
+    const auto adapter_bytes = config.transport.create
+                                   ? config.transport.required_bytes
+                                   : DefaultTransport::metadata_bytes() + 128;
+    const std::size_t base_without_adapter =
         sizeof(VitaRuntime) +
         runtime::transaction::RetentionStore<CacheEntries,
                                              CacheBytes>::storage_bytes() +
         runtime::transaction::ControllerRegistry<>::storage_bytes() +
         runtime::CompletionArena<transport_slots>::metadata_bytes() +
-        transport_slots * runtime::QuiescenceGuard::metadata_bytes() +
         runtime::AdmissionPool::metadata_bytes() + 4096;
+    if (adapter_bytes > SIZE_MAX - base_without_adapter)
+      return std::unexpected(Error{ErrorCode::overflow});
+    if(config.worker_stack_bytes>runtime::framework_budget)return std::unexpected(Error{ErrorCode::capacity_exhausted});
+    const auto base = base_without_adapter + adapter_bytes + config.worker_stack_bytes;
     if (raw > config.memory_limit || metadata > config.memory_limit - raw ||
         base > config.memory_limit - raw - metadata)
       return std::unexpected(Error{ErrorCode::capacity_exhausted});
     auto result =
         std::unique_ptr<VitaRuntime>(new VitaRuntime(config, std::move(pools)));
+    if (auto transport = result->initialize_transport(); !transport)
+      return std::unexpected(transport.error());
     if (auto bound = result->clock_.bind(config.clock); !bound)
       return std::unexpected(bound.error());
     for (auto item :
@@ -1620,9 +1746,14 @@ public:
          *config.trailer_packet_class == 0x10 ||
          *config.trailer_packet_class == 0x20))
       return std::unexpected(Error{ErrorCode::invalid_argument});
+    if(!config.trace.valid()||(config.trace.enabled()&&!config.trace.storage_bytes))return std::unexpected(Error{ErrorCode::invalid_argument});
     auto pairs = packet_samples(config);
     if (!pairs)
       return std::unexpected(pairs.error());
+    if (28 + *pairs * profiles::iq::bytes_per_pair(config.format) +
+            (config.trailer ? 4u : 0u) >
+        transport_.capabilities.max_packet_bytes)
+      return std::unexpected(Error{ErrorCode::unsupported_capability});
     if (!pools_.payload.supports(
             {*pairs * profiles::iq::bytes_per_pair(config.format)}) ||
         !pools_.rx_data.supports(
@@ -1642,60 +1773,19 @@ public:
       budget_ = old;
       return std::unexpected(charged.error());
     }
+    if(config.trace.enabled()){
+      bool seen=false;
+      for(std::size_t i=0;i<count_;++i){const auto& prior=streams_[i]->config.trace;if(prior.enabled()&&!prior.owner.owner_before(config.trace.owner)&&!config.trace.owner.owner_before(prior.owner)){if(prior.storage_bytes!=config.trace.storage_bytes){budget_=old;return std::unexpected(Error{ErrorCode::invalid_argument});}seen=true;}}
+      if(!seen){if(config.trace.storage_bytes>runtime::framework_budget-128){budget_=old;return std::unexpected(Error{ErrorCode::capacity_exhausted});}auto measured=charge(runtime::BudgetCategory::metrics,config.trace.storage_bytes+128);if(!measured){budget_=old;return std::unexpected(measured.error());}}
+    }
     auto stream = std::make_unique<Stream>(this, count_, config);
     auto spare = std::make_unique<Stream>(this, count_, config);
     auto &s = *stream;
-    auto make_route =
-        [&](bool controller, codec::PacketType type,
-            void (*receive)(void *, const codec::PacketView &,
-                            const memory::RxEnvelope &) noexcept) {
-          auto e = envelope(s, type, controller);
-          runtime::Route route;
-          route.key = {
-              {{controller ? config.controller_peer : config.controllee_peer},
-               s.generation},
-              config.sid,
-              type,
-              e.class_id};
-          if (e.command) {
-            route.key.controllee = e.command->controllee;
-            route.key.controller = e.command->controller;
-          }
-          route.context = &s;
-          route.receive = receive;
-          if (!controller && type == codec::PacketType::command)
-            route.request_context = Stream::request_context;
-          return route;
-        };
-    for (auto route :
-         {make_route(true, codec::PacketType::command, Stream::receive_command),
-          make_route(false, codec::PacketType::command, Stream::receive_ack),
-          make_route(false, codec::PacketType::context,
-                     Stream::receive_context),
-          make_route(false, codec::PacketType::signal, Stream::receive_data)}) {
-      auto added = routes_.add(route);
-      if (!added)
-        return std::unexpected(added.error());
+    auto installed = install_association(s);
+    if (!installed) {
+      budget_ = old;
+      return std::unexpected(installed.error());
     }
-    for (auto key : {counter(s, codec::PacketType::command, true),
-                     counter(s, codec::PacketType::command),
-                     counter(s, codec::PacketType::context),
-                     counter(s, codec::PacketType::signal)}) {
-      auto added = counters_.add(key);
-      if (!added)
-        return std::unexpected(added.error());
-    }
-    runtime::transaction::TransactionKey key{
-        s.generation,
-        {config.controllee_peer, s.generation},
-        config.sid,
-        codec::Identifier::short_id(config.controller_id),
-        codec::Identifier::short_id(config.controllee_id),
-        0};
-    auto relationship = controllers_.register_relationship(key);
-    if (!relationship)
-      return std::unexpected(relationship.error());
-    s.relationship = *relationship;
     const auto index = count_++;
     s.installed = true;
     sid_history_[sid_count_++] = config.sid;
@@ -1990,10 +2080,26 @@ public:
     } guard{progressing_};
     progressing_ = true;
     now_ = now;
+    if (transport_.begin_cycle)
+      transport_.begin_cycle(transport_.context);
     freeze();
     auto clock = clock_.snapshot(now);
     if (clock)
       clock_snapshot_ = *clock;
+    auto consume_completions = [&]() noexcept {
+      tx_tickets_.scan([&](runtime::CompletionRecord completion) noexcept {
+        for (auto &tx : transmissions_)
+          if (tx.active && tx.operation == completion.operation) {
+            if (tx.controller)
+              controllers_.local_send(*tx.controller,
+                                      completion.result.status ==
+                                          runtime::CompletionStatus::succeeded);
+            tx = TxRecord{};
+            break;
+          }
+      });
+    };
+    consume_completions();
     for (std::size_t i = 0; i < transport_slots; ++i) {
       auto done = transport_.progress_next();
       if (!done) {
@@ -2004,17 +2110,7 @@ public:
       if (!*done)
         break;
     }
-    tx_tickets_.scan([&](runtime::CompletionRecord completion) noexcept {
-      for (auto &tx : transmissions_)
-        if (tx.active && tx.operation == completion.operation) {
-          if (tx.controller)
-            controllers_.local_send(*tx.controller,
-                                    completion.result.status ==
-                                        runtime::CompletionStatus::succeeded);
-          tx = TxRecord{};
-          break;
-        }
-    });
+    consume_completions();
     for (std::size_t i = 0; i < count_; ++i) {
       auto serviced = service(*streams_[i]);
       if (retired_[i]->installed) {
@@ -2032,17 +2128,7 @@ public:
       if (!*done)
         break;
     }
-    tx_tickets_.scan([&](runtime::CompletionRecord completion) noexcept {
-      for (auto &tx : transmissions_)
-        if (tx.active && tx.operation == completion.operation) {
-          if (tx.controller)
-            controllers_.local_send(*tx.controller,
-                                    completion.result.status ==
-                                        runtime::CompletionStatus::succeeded);
-          tx = TxRecord{};
-          break;
-        }
-    });
+    consume_completions();
     for (auto &io : io_)
       if (io.bank && !transport_.outstanding(io.token))
         io.bank = nullptr;

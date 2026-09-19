@@ -1,0 +1,4 @@
+359f28ff1edb2d0ea926604b020da6f7c9f1216c24561b047a8f46dfa9cc69a4  drafts/P14-sample-numeric/include/vita/codec/numeric_samples.hpp
+70d7b9f0a35f98051061aa4b0b853659d53a80ba18bf7fd7ccf90031403afbe3  drafts/P14-sample-numeric/verification/driver.cpp
+48ef6504bef1f8ff95437f247a9b669e2f464707feb95bbca42b0a0b16019207  drafts/P14-sample-numeric/verification/oracle.py
+f89c790967df9bcc379c4c351ca91ceca33445196321be0cff80b1d42c0986d5  drafts/P14-sample-numeric/verification/boundaries.cpp

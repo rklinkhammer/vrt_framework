@@ -1,0 +1,19 @@
+# P14 IEEE conversion and sample adapters
+
+Status: independently verified components promoted to the live tree; aggregate integration gate passed198/195. Producer and verifier evidence remain distinct.
+
+`codec/ieee_samples.hpp` provides explicit-policy binary16/32/64 classification and conversion using bounded integer arithmetic. Rounding, precision loss, overflow, nonfinite values and NaN payload handling are explicit caller choices. Result flags are local values; the implementation does not change the host floating environment. The producer compared2,014,000 cases to the pinned Berkeley SoftFloat reference; a separate verifier compared476,480 cases and independently checked literal boundaries. Ordinary CI uses portable literal/policy tests; the external oracle is optional and never downloads dependencies. See [independent IEEE report](P14-ieee-verification.md) and [reference provenance](P14-ieee-reference-readiness.md). These are conversion claims, not complete IEEE754 arithmetic conformance.
+
+`codec/sample_descriptors.hpp` maps the VITA PayloadFormat bits to the existing raw packing and fixed/VRT/IEEE numerical specifications. Its privately constructed Descriptor keeps derived fields immutable. Signal domain is required explicitly. The adapter checks reserved numeric codes, widths, tags, fraction/repeat/vector rules, time-domain restrictions and log-power eligibility. Polar phase units are explicit; non-normalized polar phase remains unspecified without class documentation. No physical calibration or class identity is inferred.
+
+A PayloadBinding supplies a complete packing-structure count and explicit padding evidence. Omitted, exact and permitted implied-zero reporting are distinct. Counts are never guessed from trailing bits. Complete structures may end in a partially occupied word; splitting structures across packets is unsupported. Processing-efficient fields wider than32 bits retain the existing explicit unsupported scope.
+
+`codec/segmented_samples.hpp` adds bounded access to one payload held in several byte regions. It copies only span descriptors and cumulative ends into fixed inline storage, borrows immutable bytes and allocates no payload. Fragment-array lifetime need not extend past creation; underlying byte lifetimes must. Empty supplied descriptors count toward the configured bound. Extent and padding validate before access. Both contiguous and segmented paths use the existing shared measure and private packing-offset helper; keeping this helper internal avoids a public unchecked API. This is memory segmentation, not packet/frame reassembly or metadata association.
+
+The producer tests and two independently authored verifier tests are promoted unchanged. Independent descriptor/fragment evidence includes42,748 format/boundary cases, literal asymmetric tags, nonzero slack, unaligned one-byte fragments, lifetime/resource cases and instrumented ordinary/aligned C++ allocation checks. See [independent report](P14-sample-descriptors-verification.md). The isolated reviewed sources are retained under `drafts/P14-sample-descriptors/`; the live API uses the same headers.
+
+No runtime buffer pool or baseline packet object is enlarged. These codecs add no IQ-device controls, extension deployment, peer agreement or hardware qualification. The final live configure/build/test counts and source manifest will be recorded in the aggregate checkpoint before this batch is advertised as integrated.
+
+Measured on the current macOS arm64 toolchain: immutable Descriptor72bytes and default eight-segment view304bytes. These are caller-owned values. See [size probe](artifacts/P14-final-local/sizes.txt).
+
+Final live integration:198/198 Release and195/195 ASan/UBSan checks pass,69 standalone headers. Source manifests, logs and limitations are in [M5 progress](M5-integration.md#final-available-input-continuation-checkpoint).

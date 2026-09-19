@@ -1,0 +1,31 @@
+Test project /Users/rklinkhammer/workspace/vrt_framework/build/udp-asan-ubsan
+      Start 141: p14_scalars
+ 1/11 Test #141: p14_scalars .......................   Passed    0.08 sec
+      Start 142: p14_public_usage
+ 2/11 Test #142: p14_public_usage ..................   Passed    0.07 sec
+      Start 143: p14_structures
+ 3/11 Test #143: p14_structures ....................   Passed    0.09 sec
+      Start 144: p14_structured_wire
+ 4/11 Test #144: p14_structured_wire ...............   Passed    0.08 sec
+      Start 145: p14_verify_scalars
+ 5/11 Test #145: p14_verify_scalars ................   Passed    0.09 sec
+      Start 146: p14_verify_allocation
+ 6/11 Test #146: p14_verify_allocation .............   Passed    0.22 sec
+      Start 147: p14_verify_structured_wire
+ 7/11 Test #147: p14_verify_structured_wire ........   Passed    0.09 sec
+      Start 148: p14_verify_native
+ 8/11 Test #148: p14_verify_native .................   Passed    0.08 sec
+      Start 149: p14_verify_structured_limits
+ 9/11 Test #149: p14_verify_structured_limits ......   Passed    0.09 sec
+      Start 150: p14_verify_native_allocation
+10/11 Test #150: p14_verify_native_allocation ......   Passed    0.19 sec
+      Start 151: p14_verify_structured_mutations
+11/11 Test #151: p14_verify_structured_mutations ...   Passed    0.25 sec
+
+100% tests passed out of 11
+
+Label Time Summary:
+P14      =   0.31 sec*proc (4 tests)
+codec    =   0.31 sec*proc (4 tests)
+
+Total Test time (real) =   1.32 sec

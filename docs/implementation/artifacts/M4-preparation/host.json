@@ -1,0 +1,60 @@
+{
+  "captured_utc": "2026-09-19T03:08:07.253786+00:00",
+  "scope": "local host provenance; not deployment qualification",
+  "system": "Darwin",
+  "release": "27.0.0",
+  "version": "Darwin Kernel Version 27.0.0: Tue Aug 11 21:05:48 PDT 2026; root:xnu-13432.1.9~1/RELEASE_ARM64_T6041",
+  "machine": "arm64",
+  "compiler": {
+    "command": [
+      "/Library/Developer/CommandLineTools/usr/bin/clang++",
+      "--version"
+    ],
+    "exit_code": 0,
+    "stdout": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin27.0.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin",
+    "stderr": ""
+  },
+  "source_revision": {
+    "command": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exit_code": 0,
+    "stdout": "dd1597e0a439bf180f41711b2725b44fd81fe0bd",
+    "stderr": ""
+  },
+  "required_run_metadata": [
+    "source manifest",
+    "build flags",
+    "affinity and scheduling",
+    "clock binding and actual measurement clock",
+    "socket buffer sizes",
+    "addresses and MTU",
+    "copy path",
+    "warmup and measured duration",
+    "offered load and loss method",
+    "latency observations",
+    "native memory ledger",
+    "allocation and profiling overhead"
+  ],
+  "os_build": {
+    "command": [
+      "sw_vers"
+    ],
+    "exit_code": 0,
+    "stdout": "ProductName:\t\tmacOS\nProductVersion:\t\t27.0\nBuildVersion:\t\t26A428",
+    "stderr": ""
+  },
+  "cpu_and_memory": {
+    "command": [
+      "sysctl",
+      "machdep.cpu.brand_string",
+      "hw.ncpu",
+      "hw.memsize"
+    ],
+    "exit_code": 0,
+    "stdout": "machdep.cpu.brand_string: Apple M4 Max\nhw.ncpu: 16\nhw.memsize: 68719476736",
+    "stderr": ""
+  }
+}

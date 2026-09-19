@@ -1,0 +1,7 @@
+if(NOT UNIX)
+  message(FATAL_ERROR "vita::posix_udp requires POSIX sockets")
+endif()
+add_library(vita_posix_udp STATIC socket.cpp)
+add_library(vita::posix_udp ALIAS vita_posix_udp)
+target_link_libraries(vita_posix_udp PUBLIC vita::core)
+target_compile_options(vita_posix_udp PRIVATE -Wall -Wextra -Wpedantic -fno-exceptions -fno-rtti)

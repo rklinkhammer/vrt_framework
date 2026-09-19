@@ -1,0 +1,1 @@
+SemanticValue=16 FieldEntry=328 LayoutContext=48 FieldView=32 PacketView=2736 Snapshot16=5312 Native8192Snapshot16=13512 GenericView1664=66736 GenericSnapshot128Native8192=50248 GenericWorkspace=50248 AttributeInput=120

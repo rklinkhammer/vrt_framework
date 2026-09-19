@@ -1,0 +1,2686 @@
+Start testing: Sep 19 08:38 EDT
+----------------------------------------------------------
+1/170 Testing: p00_core_multitu
+1/170 Test: p00_core_multitu
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/p00_core_multitu"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release
+"p00_core_multitu" start time: Sep 19 08:38 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p00_core_multitu" end time: Sep 19 08:38 EDT
+"p00_core_multitu" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/170 Testing: p00_cxx23
+2/170 Test: p00_cxx23
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/p00_cxx23"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release
+"p00_cxx23" start time: Sep 19 08:38 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p00_cxx23" end time: Sep 19 08:38 EDT
+"p00_cxx23" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/170 Testing: public_headers_standalone
+3/170 Test: public_headers_standalone
+Command: "/opt/homebrew/Frameworks/Python.framework/Versions/3.14/bin/python3.14" "/Users/rklinkhammer/workspace/vrt_framework/tests/compile/public_headers.py" "/usr/bin/c++" "/Users/rklinkhammer/workspace/vrt_framework/include" ""
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release
+"public_headers_standalone" start time: Sep 19 08:38 EDT
+Output:
+----------------------------------------------------------
+PASS: 60 standalone public headers
+<end of output>
+Test time =  14.75 sec
+----------------------------------------------------------
+Test Passed.
+"public_headers_standalone" end time: Sep 19 08:38 EDT
+"public_headers_standalone" time elapsed: 00:00:14
+----------------------------------------------------------
+
+4/170 Testing: architecture_fixtures
+4/170 Test: architecture_fixtures
+Command: "/opt/homebrew/Frameworks/Python.framework/Versions/3.14/bin/python3.14" "/Users/rklinkhammer/workspace/vrt_framework/docs/fixtures/check_architecture_fixtures.py"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release
+"architecture_fixtures" start time: Sep 19 08:38 EDT
+Output:
+----------------------------------------------------------
+PASS: 190 architecture fixture checks; no framework implementation tested.
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"architecture_fixtures" end time: Sep 19 08:38 EDT
+"architecture_fixtures" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/170 Testing: p13_allocation_probe
+5/170 Test: p13_allocation_probe
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/bench/p13_allocation_probe"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/bench
+"p13_allocation_probe" start time: Sep 19 08:38 EDT
+Output:
+----------------------------------------------------------
+5
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"p13_allocation_probe" end time: Sep 19 08:38 EDT
+"p13_allocation_probe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+6/170 Testing: p13_runner_smoke
+6/170 Test: p13_runner_smoke
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/bench/vita_benchmark" "--duration-seconds" "0.2" "--warmup-seconds" "0" "--burst-every-seconds" "0.1" "--output-dir" "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/p13-smoke"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/bench
+"p13_runner_smoke" start time: Sep 19 08:38 EDT
+Output:
+----------------------------------------------------------
+normal: commands=84 trace=420 framework=55305480 critical_allocations=0
+<end of output>
+Test time =   1.41 sec
+----------------------------------------------------------
+Test Passed.
+"p13_runner_smoke" end time: Sep 19 08:39 EDT
+"p13_runner_smoke" time elapsed: 00:00:01
+----------------------------------------------------------
+
+7/170 Testing: malformed_packet_mutation_replay
+7/170 Test: malformed_packet_mutation_replay
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/fuzz/vita_fuzz_replay" "/Users/rklinkhammer/workspace/vrt_framework/fuzz/corpus" "100000" "0x564954413439"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/fuzz
+"malformed_packet_mutation_replay" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+seeds=12 mutations=100000 final_rng=3072068718813708468 checksum=16816288533938920164 cap=65536
+<end of output>
+Test time =   0.13 sec
+----------------------------------------------------------
+Test Passed.
+"malformed_packet_mutation_replay" end time: Sep 19 08:39 EDT
+"malformed_packet_mutation_replay" time elapsed: 00:00:00
+----------------------------------------------------------
+
+8/170 Testing: p00_verify_features
+8/170 Test: p00_verify_features
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P00/p00_verify_features"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P00
+"p00_verify_features" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p00_verify_features" end time: Sep 19 08:39 EDT
+"p00_verify_features" time elapsed: 00:00:00
+----------------------------------------------------------
+
+9/170 Testing: p00_verify_multi_tu
+9/170 Test: p00_verify_multi_tu
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P00/p00_verify_multi_tu"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P00
+"p00_verify_multi_tu" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p00_verify_multi_tu" end time: Sep 19 08:39 EDT
+"p00_verify_multi_tu" time elapsed: 00:00:00
+----------------------------------------------------------
+
+10/170 Testing: p00_verify_bad_library
+10/170 Test: p00_verify_bad_library
+Command: "/opt/homebrew/Frameworks/Python.framework/Versions/3.14/bin/python3.14" "/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P00/check_bad_library.py" "/usr/bin/c++" ""
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P00
+"p00_verify_bad_library" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+-- The CXX compiler identification is AppleClang 21.0.0.21000334
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test VITA_HAS_REQUIRED_CXX23
+-- Performing Test VITA_HAS_REQUIRED_CXX23 - Failed
+CMake Error at CMakeLists.txt:12 (message):
+  VITA requires C++23 with std::expected, std::span, std::bit_cast,
+  std::endian, std::byteswap and concepts.  Select a compiler AND standard
+  library implementing these facilities.  See
+  CMakeFiles/CMakeConfigureLog.yaml.
+
+
+-- Configuring incomplete, errors occurred!
+
+PASS: missing required standard library fails with an actionable diagnostic
+<end of output>
+Test time =   0.39 sec
+----------------------------------------------------------
+Test Passed.
+"p00_verify_bad_library" end time: Sep 19 08:39 EDT
+"p00_verify_bad_library" time elapsed: 00:00:00
+----------------------------------------------------------
+
+11/170 Testing: p00_verify_core_only
+11/170 Test: p00_verify_core_only
+Command: "/opt/homebrew/Frameworks/Python.framework/Versions/3.14/bin/python3.14" "/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P00/check_core_only.py" "/usr/bin/c++" ""
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P00
+"p00_verify_core_only" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+-- The CXX compiler identification is AppleClang 21.0.0.21000334
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test VITA_HAS_REQUIRED_CXX23
+-- Performing Test VITA_HAS_REQUIRED_CXX23 - Success
+-- Configuring done (0.4s)
+-- Generating done (0.0s)
+-- Build files have been written to: /var/folders/8d/6844p_cd23q9bwcmmv3b2x5r0000gn/T/vita-p00-core-only-pjqjdtpy/build
+[ 50%] Building CXX object CMakeFiles/core_consumer.dir/main.cpp.o
+[100%] Linking CXX executable core_consumer
+[100%] Built target core_consumer
+PASS: core-only downstream builds without Python, adapters, RTTI, or exceptions
+<end of output>
+Test time =   0.65 sec
+----------------------------------------------------------
+Test Passed.
+"p00_verify_core_only" end time: Sep 19 08:39 EDT
+"p00_verify_core_only" time elapsed: 00:00:00
+----------------------------------------------------------
+
+12/170 Testing: p01_semantics
+12/170 Test: p01_semantics
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P01/p01_semantics"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P01
+"p01_semantics" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p01_semantics" end time: Sep 19 08:39 EDT
+"p01_semantics" time elapsed: 00:00:00
+----------------------------------------------------------
+
+13/170 Testing: p01_verify_core
+13/170 Test: p01_verify_core
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P01/p01_verify_core"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P01
+"p01_verify_core" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p01_verify_core" end time: Sep 19 08:39 EDT
+"p01_verify_core" time elapsed: 00:00:00
+----------------------------------------------------------
+
+14/170 Testing: p01_verify_semantics
+14/170 Test: p01_verify_semantics
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P01/p01_verify_semantics"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P01
+"p01_verify_semantics" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p01_verify_semantics" end time: Sep 19 08:39 EDT
+"p01_verify_semantics" time elapsed: 00:00:00
+----------------------------------------------------------
+
+15/170 Testing: p01_verify_allocations
+15/170 Test: p01_verify_allocations
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P01/p01_verify_allocations"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P01
+"p01_verify_allocations" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"p01_verify_allocations" end time: Sep 19 08:39 EDT
+"p01_verify_allocations" time elapsed: 00:00:00
+----------------------------------------------------------
+
+16/170 Testing: p02_codec
+16/170 Test: p02_codec
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P02/p02_codec"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P02
+"p02_codec" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p02_codec" end time: Sep 19 08:39 EDT
+"p02_codec" time elapsed: 00:00:00
+----------------------------------------------------------
+
+17/170 Testing: p02_prologue
+17/170 Test: p02_prologue
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P02/p02_prologue"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P02
+"p02_prologue" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p02_prologue" end time: Sep 19 08:39 EDT
+"p02_prologue" time elapsed: 00:00:00
+----------------------------------------------------------
+
+18/170 Testing: p02_ack_timing
+18/170 Test: p02_ack_timing
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P02/p02_ack_timing"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P02
+"p02_ack_timing" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p02_ack_timing" end time: Sep 19 08:39 EDT
+"p02_ack_timing" time elapsed: 00:00:00
+----------------------------------------------------------
+
+19/170 Testing: p02_verify_wire
+19/170 Test: p02_verify_wire
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P02/p02_verify_wire"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P02
+"p02_verify_wire" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p02_verify_wire" end time: Sep 19 08:39 EDT
+"p02_verify_wire" time elapsed: 00:00:00
+----------------------------------------------------------
+
+20/170 Testing: p02_verify_packet
+20/170 Test: p02_verify_packet
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P02/p02_verify_packet"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P02
+"p02_verify_packet" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p02_verify_packet" end time: Sep 19 08:39 EDT
+"p02_verify_packet" time elapsed: 00:00:00
+----------------------------------------------------------
+
+21/170 Testing: p02_verify_samples
+21/170 Test: p02_verify_samples
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P02/p02_verify_samples"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P02
+"p02_verify_samples" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p02_verify_samples" end time: Sep 19 08:39 EDT
+"p02_verify_samples" time elapsed: 00:00:00
+----------------------------------------------------------
+
+22/170 Testing: p02_verify_prologue
+22/170 Test: p02_verify_prologue
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P02/p02_verify_prologue"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P02
+"p02_verify_prologue" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p02_verify_prologue" end time: Sep 19 08:39 EDT
+"p02_verify_prologue" time elapsed: 00:00:00
+----------------------------------------------------------
+
+23/170 Testing: p03_memory
+23/170 Test: p03_memory
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P03/p03_memory"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P03
+"p03_memory" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+P03 ownership checks passed; sizes lease=32 retained=944 rx=1032 tx=176 block=80
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p03_memory" end time: Sep 19 08:39 EDT
+"p03_memory" time elapsed: 00:00:00
+----------------------------------------------------------
+
+24/170 Testing: p03_verify_pool
+24/170 Test: p03_verify_pool
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P03/p03_verify_pool"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P03
+"p03_verify_pool" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p03_verify_pool" end time: Sep 19 08:39 EDT
+"p03_verify_pool" time elapsed: 00:00:00
+----------------------------------------------------------
+
+25/170 Testing: p03_verify_envelope
+25/170 Test: p03_verify_envelope
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P03/p03_verify_envelope"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P03
+"p03_verify_envelope" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p03_verify_envelope" end time: Sep 19 08:39 EDT
+"p03_verify_envelope" time elapsed: 00:00:00
+----------------------------------------------------------
+
+26/170 Testing: p03_verify_edges
+26/170 Test: p03_verify_edges
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P03/p03_verify_edges"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P03
+"p03_verify_edges" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p03_verify_edges" end time: Sep 19 08:39 EDT
+"p03_verify_edges" time elapsed: 00:00:00
+----------------------------------------------------------
+
+27/170 Testing: p04_runtime
+27/170 Test: p04_runtime
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P04/p04_runtime"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P04
+"p04_runtime" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+P04 checks passed; slot=88 completion_arena=90200 plan_arena=2097472 charged=3154328 available_reference_charge=36834216
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p04_runtime" end time: Sep 19 08:39 EDT
+"p04_runtime" time elapsed: 00:00:00
+----------------------------------------------------------
+
+28/170 Testing: p04_verify_tickets
+28/170 Test: p04_verify_tickets
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P04/p04_verify_tickets"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P04
+"p04_verify_tickets" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p04_verify_tickets" end time: Sep 19 08:39 EDT
+"p04_verify_tickets" time elapsed: 00:00:00
+----------------------------------------------------------
+
+29/170 Testing: p04_verify_admission_executor
+29/170 Test: p04_verify_admission_executor
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P04/p04_verify_admission_executor"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P04
+"p04_verify_admission_executor" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p04_verify_admission_executor" end time: Sep 19 08:39 EDT
+"p04_verify_admission_executor" time elapsed: 00:00:00
+----------------------------------------------------------
+
+30/170 Testing: p04_verify_quiescence_budget
+30/170 Test: p04_verify_quiescence_budget
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P04/p04_verify_quiescence_budget"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P04
+"p04_verify_quiescence_budget" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p04_verify_quiescence_budget" end time: Sep 19 08:39 EDT
+"p04_verify_quiescence_budget" time elapsed: 00:00:00
+----------------------------------------------------------
+
+31/170 Testing: p04_verify_coupled_admission
+31/170 Test: p04_verify_coupled_admission
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P04/p04_verify_coupled_admission"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P04
+"p04_verify_coupled_admission" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p04_verify_coupled_admission" end time: Sep 19 08:39 EDT
+"p04_verify_coupled_admission" time elapsed: 00:00:00
+----------------------------------------------------------
+
+32/170 Testing: p05_loopback
+32/170 Test: p05_loopback
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P05/p05_loopback"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P05
+"p05_loopback" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p05_loopback" end time: Sep 19 08:39 EDT
+"p05_loopback" time elapsed: 00:00:00
+----------------------------------------------------------
+
+33/170 Testing: p05_isolation
+33/170 Test: p05_isolation
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P05/p05_isolation"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P05
+"p05_isolation" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p05_isolation" end time: Sep 19 08:39 EDT
+"p05_isolation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+34/170 Testing: p05_budget
+34/170 Test: p05_budget
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P05/p05_budget"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P05
+"p05_budget" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+P05 budget projection: adapter=28816 routes=9736 counters=2632 total=41184
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p05_budget" end time: Sep 19 08:39 EDT
+"p05_budget" time elapsed: 00:00:00
+----------------------------------------------------------
+
+35/170 Testing: p05_verify_chain
+35/170 Test: p05_verify_chain
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P05/p05_verify_chain"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P05
+"p05_verify_chain" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p05_verify_chain" end time: Sep 19 08:39 EDT
+"p05_verify_chain" time elapsed: 00:00:00
+----------------------------------------------------------
+
+36/170 Testing: p05_verify_routes
+36/170 Test: p05_verify_routes
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P05/p05_verify_routes"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P05
+"p05_verify_routes" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p05_verify_routes" end time: Sep 19 08:39 EDT
+"p05_verify_routes" time elapsed: 00:00:00
+----------------------------------------------------------
+
+37/170 Testing: p05_verify_faults
+37/170 Test: p05_verify_faults
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P05/p05_verify_faults"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P05
+"p05_verify_faults" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p05_verify_faults" end time: Sep 19 08:39 EDT
+"p05_verify_faults" time elapsed: 00:00:00
+----------------------------------------------------------
+
+38/170 Testing: p05_verify_budget
+38/170 Test: p05_verify_budget
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P05/p05_verify_budget"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P05
+"p05_verify_budget" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p05_verify_budget" end time: Sep 19 08:39 EDT
+"p05_verify_budget" time elapsed: 00:00:00
+----------------------------------------------------------
+
+39/170 Testing: p05_m1_chain
+39/170 Test: p05_m1_chain
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/integration/P05/p05_m1_chain"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/integration/P05
+"p05_m1_chain" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p05_m1_chain" end time: Sep 19 08:39 EDT
+"p05_m1_chain" time elapsed: 00:00:00
+----------------------------------------------------------
+
+40/170 Testing: p06_engine
+40/170 Test: p06_engine
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P06/p06_engine"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P06
+"p06_engine" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p06_engine" end time: Sep 19 08:39 EDT
+"p06_engine" time elapsed: 00:00:00
+----------------------------------------------------------
+
+41/170 Testing: p06_outcomes
+41/170 Test: p06_outcomes
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P06/p06_outcomes"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P06
+"p06_outcomes" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p06_outcomes" end time: Sep 19 08:39 EDT
+"p06_outcomes" time elapsed: 00:00:00
+----------------------------------------------------------
+
+42/170 Testing: p06_verify_cam
+42/170 Test: p06_verify_cam
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P06/p06_verify_cam"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P06
+"p06_verify_cam" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p06_verify_cam" end time: Sep 19 08:39 EDT
+"p06_verify_cam" time elapsed: 00:00:00
+----------------------------------------------------------
+
+43/170 Testing: p06_verify_async
+43/170 Test: p06_verify_async
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P06/p06_verify_async"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P06
+"p06_verify_async" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p06_verify_async" end time: Sep 19 08:39 EDT
+"p06_verify_async" time elapsed: 00:00:00
+----------------------------------------------------------
+
+44/170 Testing: p06_verify_factors
+44/170 Test: p06_verify_factors
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P06/p06_verify_factors"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P06
+"p06_verify_factors" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"p06_verify_factors" end time: Sep 19 08:39 EDT
+"p06_verify_factors" time elapsed: 00:00:00
+----------------------------------------------------------
+
+45/170 Testing: p06_verify_scenarios
+45/170 Test: p06_verify_scenarios
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P06/p06_verify_scenarios"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P06
+"p06_verify_scenarios" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p06_verify_scenarios" end time: Sep 19 08:39 EDT
+"p06_verify_scenarios" time elapsed: 00:00:00
+----------------------------------------------------------
+
+46/170 Testing: p06_verify_controller
+46/170 Test: p06_verify_controller
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P06/p06_verify_controller"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P06
+"p06_verify_controller" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p06_verify_controller" end time: Sep 19 08:39 EDT
+"p06_verify_controller" time elapsed: 00:00:00
+----------------------------------------------------------
+
+47/170 Testing: p06_verify_timing
+47/170 Test: p06_verify_timing
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P06/p06_verify_timing"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P06
+"p06_verify_timing" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p06_verify_timing" end time: Sep 19 08:39 EDT
+"p06_verify_timing" time elapsed: 00:00:00
+----------------------------------------------------------
+
+48/170 Testing: p06_verify_admission
+48/170 Test: p06_verify_admission
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P06/p06_verify_admission"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P06
+"p06_verify_admission" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p06_verify_admission" end time: Sep 19 08:39 EDT
+"p06_verify_admission" time elapsed: 00:00:00
+----------------------------------------------------------
+
+49/170 Testing: p06_verify_outcomes
+49/170 Test: p06_verify_outcomes
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P06/p06_verify_outcomes"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P06
+"p06_verify_outcomes" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p06_verify_outcomes" end time: Sep 19 08:39 EDT
+"p06_verify_outcomes" time elapsed: 00:00:00
+----------------------------------------------------------
+
+50/170 Testing: p06_verify_allocation
+50/170 Test: p06_verify_allocation
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P06/p06_verify_allocation"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P06
+"p06_verify_allocation" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"p06_verify_allocation" end time: Sep 19 08:39 EDT
+"p06_verify_allocation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+51/170 Testing: p06_verify_query
+51/170 Test: p06_verify_query
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P06/p06_verify_query"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P06
+"p06_verify_query" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p06_verify_query" end time: Sep 19 08:39 EDT
+"p06_verify_query" time elapsed: 00:00:00
+----------------------------------------------------------
+
+52/170 Testing: p06_loopback_transaction
+52/170 Test: p06_loopback_transaction
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/integration/P06/p06_loopback_transaction"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/integration/P06
+"p06_loopback_transaction" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p06_loopback_transaction" end time: Sep 19 08:39 EDT
+"p06_loopback_transaction" time elapsed: 00:00:00
+----------------------------------------------------------
+
+53/170 Testing: p07_transactions
+53/170 Test: p07_transactions
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P07/p07_transactions"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P07
+"p07_transactions" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p07_transactions" end time: Sep 19 08:39 EDT
+"p07_transactions" time elapsed: 00:00:00
+----------------------------------------------------------
+
+54/170 Testing: p07_timing
+54/170 Test: p07_timing
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P07/p07_timing"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P07
+"p07_timing" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p07_timing" end time: Sep 19 08:39 EDT
+"p07_timing" time elapsed: 00:00:00
+----------------------------------------------------------
+
+55/170 Testing: p07_controller
+55/170 Test: p07_controller
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P07/p07_controller"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P07
+"p07_controller" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+P07 controller record=1480 storage=385024
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p07_controller" end time: Sep 19 08:39 EDT
+"p07_controller" time elapsed: 00:00:00
+----------------------------------------------------------
+
+56/170 Testing: p07_verify_retention
+56/170 Test: p07_verify_retention
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P07/p07_verify_retention"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P07
+"p07_verify_retention" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p07_verify_retention" end time: Sep 19 08:39 EDT
+"p07_verify_retention" time elapsed: 00:00:00
+----------------------------------------------------------
+
+57/170 Testing: p07_verify_keys
+57/170 Test: p07_verify_keys
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P07/p07_verify_keys"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P07
+"p07_verify_keys" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p07_verify_keys" end time: Sep 19 08:39 EDT
+"p07_verify_keys" time elapsed: 00:00:00
+----------------------------------------------------------
+
+58/170 Testing: p07_verify_manager
+58/170 Test: p07_verify_manager
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P07/p07_verify_manager"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P07
+"p07_verify_manager" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p07_verify_manager" end time: Sep 19 08:39 EDT
+"p07_verify_manager" time elapsed: 00:00:00
+----------------------------------------------------------
+
+59/170 Testing: p07_verify_controller
+59/170 Test: p07_verify_controller
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P07/p07_verify_controller"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P07
+"p07_verify_controller" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p07_verify_controller" end time: Sep 19 08:39 EDT
+"p07_verify_controller" time elapsed: 00:00:00
+----------------------------------------------------------
+
+60/170 Testing: p07_verify_guard_race
+60/170 Test: p07_verify_guard_race
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P07/p07_verify_guard_race"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P07
+"p07_verify_guard_race" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p07_verify_guard_race" end time: Sep 19 08:39 EDT
+"p07_verify_guard_race" time elapsed: 00:00:00
+----------------------------------------------------------
+
+61/170 Testing: p07_verify_timed_cancel
+61/170 Test: p07_verify_timed_cancel
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P07/p07_verify_timed_cancel"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P07
+"p07_verify_timed_cancel" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p07_verify_timed_cancel" end time: Sep 19 08:39 EDT
+"p07_verify_timed_cancel" time elapsed: 00:00:00
+----------------------------------------------------------
+
+62/170 Testing: p07_verify_admission
+62/170 Test: p07_verify_admission
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P07/p07_verify_admission"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P07
+"p07_verify_admission" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p07_verify_admission" end time: Sep 19 08:39 EDT
+"p07_verify_admission" time elapsed: 00:00:00
+----------------------------------------------------------
+
+63/170 Testing: p07_loopback
+63/170 Test: p07_loopback
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/integration/P07/p07_loopback"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/integration/P07
+"p07_loopback" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p07_loopback" end time: Sep 19 08:39 EDT
+"p07_loopback" time elapsed: 00:00:00
+----------------------------------------------------------
+
+64/170 Testing: p08_timing
+64/170 Test: p08_timing
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P08/p08_timing"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P08
+"p08_timing" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+P08 checks passed; clock=88 timeline=56 boundary=48 snapshot=48
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p08_timing" end time: Sep 19 08:39 EDT
+"p08_timing" time elapsed: 00:00:00
+----------------------------------------------------------
+
+65/170 Testing: p08_verify_timeline
+65/170 Test: p08_verify_timeline
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P08/p08_verify_timeline"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P08
+"p08_verify_timeline" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p08_verify_timeline" end time: Sep 19 08:39 EDT
+"p08_verify_timeline" time elapsed: 00:00:00
+----------------------------------------------------------
+
+66/170 Testing: p08_verify_clock
+66/170 Test: p08_verify_clock
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P08/p08_verify_clock"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P08
+"p08_verify_clock" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p08_verify_clock" end time: Sep 19 08:39 EDT
+"p08_verify_clock" time elapsed: 00:00:00
+----------------------------------------------------------
+
+67/170 Testing: p08_verify_scheduling
+67/170 Test: p08_verify_scheduling
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P08/p08_verify_scheduling"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P08
+"p08_verify_scheduling" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p08_verify_scheduling" end time: Sep 19 08:39 EDT
+"p08_verify_scheduling" time elapsed: 00:00:00
+----------------------------------------------------------
+
+68/170 Testing: p09_context
+68/170 Test: p09_context
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P09/p09_context"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P09
+"p09_context" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+revision=432 store=55352 publisher=13704 history=21536 receiver=84080
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p09_context" end time: Sep 19 08:39 EDT
+"p09_context" time elapsed: 00:00:00
+----------------------------------------------------------
+
+69/170 Testing: p09_receiver
+69/170 Test: p09_receiver
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P09/p09_receiver"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P09
+"p09_receiver" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p09_receiver" end time: Sep 19 08:39 EDT
+"p09_receiver" time elapsed: 00:00:00
+----------------------------------------------------------
+
+70/170 Testing: p09_verify_history
+70/170 Test: p09_verify_history
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P09/p09_verify_history"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P09
+"p09_verify_history" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p09_verify_history" end time: Sep 19 08:39 EDT
+"p09_verify_history" time elapsed: 00:00:00
+----------------------------------------------------------
+
+71/170 Testing: p09_verify_revisions
+71/170 Test: p09_verify_revisions
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P09/p09_verify_revisions"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P09
+"p09_verify_revisions" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p09_verify_revisions" end time: Sep 19 08:39 EDT
+"p09_verify_revisions" time elapsed: 00:00:00
+----------------------------------------------------------
+
+72/170 Testing: p09_verify_receiver
+72/170 Test: p09_verify_receiver
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P09/p09_verify_receiver"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P09
+"p09_verify_receiver" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p09_verify_receiver" end time: Sep 19 08:39 EDT
+"p09_verify_receiver" time elapsed: 00:00:00
+----------------------------------------------------------
+
+73/170 Testing: p09_verify_publisher
+73/170 Test: p09_verify_publisher
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P09/p09_verify_publisher"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P09
+"p09_verify_publisher" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p09_verify_publisher" end time: Sep 19 08:39 EDT
+"p09_verify_publisher" time elapsed: 00:00:00
+----------------------------------------------------------
+
+74/170 Testing: p09_verify_effects
+74/170 Test: p09_verify_effects
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P09/p09_verify_effects"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P09
+"p09_verify_effects" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p09_verify_effects" end time: Sep 19 08:39 EDT
+"p09_verify_effects" time elapsed: 00:00:00
+----------------------------------------------------------
+
+75/170 Testing: p09_verify_allocation
+75/170 Test: p09_verify_allocation
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P09/p09_verify_allocation"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P09
+"p09_verify_allocation" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"p09_verify_allocation" end time: Sep 19 08:39 EDT
+"p09_verify_allocation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+76/170 Testing: p09_verify_context_wire
+76/170 Test: p09_verify_context_wire
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P09/p09_verify_context_wire"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P09
+"p09_verify_context_wire" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p09_verify_context_wire" end time: Sep 19 08:39 EDT
+"p09_verify_context_wire" time elapsed: 00:00:00
+----------------------------------------------------------
+
+77/170 Testing: p09_verify_budget
+77/170 Test: p09_verify_budget
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P09/p09_verify_budget"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P09
+"p09_verify_budget" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p09_verify_budget" end time: Sep 19 08:39 EDT
+"p09_verify_budget" time elapsed: 00:00:00
+----------------------------------------------------------
+
+78/170 Testing: p09_effects
+78/170 Test: p09_effects
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/integration/P09/p09_effects"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/integration/P09
+"p09_effects" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p09_effects" end time: Sep 19 08:39 EDT
+"p09_effects" time elapsed: 00:00:00
+----------------------------------------------------------
+
+79/170 Testing: p10_source
+79/170 Test: p10_source
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P10/p10_source"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P10
+"p10_source" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_source" end time: Sep 19 08:39 EDT
+"p10_source" time elapsed: 00:00:00
+----------------------------------------------------------
+
+80/170 Testing: p10_lab
+80/170 Test: p10_lab
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P10/p10_lab"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P10
+"p10_lab" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+lab raw=464896 provider_metadata=23832 pool_frontends=160
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_lab" end time: Sep 19 08:39 EDT
+"p10_lab" time elapsed: 00:00:00
+----------------------------------------------------------
+
+81/170 Testing: p10_runtime
+81/170 Test: p10_runtime
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P10/p10_runtime"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P10
+"p10_runtime" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"p10_runtime" end time: Sep 19 08:39 EDT
+"p10_runtime" time elapsed: 00:00:00
+----------------------------------------------------------
+
+82/170 Testing: p10_budget
+82/170 Test: p10_budget
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P10/p10_budget"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P10
+"p10_budget" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+Reference actual native storage plus declared ownership overhead: 51753888 / 67108864 bytes
+category0 charged30998528 reserved30998528
+category1 charged1568880 reserved2621440
+category2 charged8388608 reserved8388608
+category3 charged2162704 reserved2162704
+category4 charged0 reserved2097152
+category5 charged0 reserved1048576
+category6 charged0 reserved1048576
+category7 charged0 reserved1048576
+category8 charged0 reserved3145728
+category9 charged0 reserved524288
+category10 charged7698688 reserved7698688
+category11 charged0 reserved966656
+category12 charged0 reserved1048576
+category13 charged936480 reserved4194304
+category14 charged0 reserved116464
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_budget" end time: Sep 19 08:39 EDT
+"p10_budget" time elapsed: 00:00:00
+----------------------------------------------------------
+
+83/170 Testing: p10_verify_credit
+83/170 Test: p10_verify_credit
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P10/p10_verify_credit"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P10
+"p10_verify_credit" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_verify_credit" end time: Sep 19 08:39 EDT
+"p10_verify_credit" time elapsed: 00:00:00
+----------------------------------------------------------
+
+84/170 Testing: p10_verify_source
+84/170 Test: p10_verify_source
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P10/p10_verify_source"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P10
+"p10_verify_source" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_verify_source" end time: Sep 19 08:39 EDT
+"p10_verify_source" time elapsed: 00:00:00
+----------------------------------------------------------
+
+85/170 Testing: p10_verify_packetization
+85/170 Test: p10_verify_packetization
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P10/p10_verify_packetization"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P10
+"p10_verify_packetization" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_verify_packetization" end time: Sep 19 08:39 EDT
+"p10_verify_packetization" time elapsed: 00:00:00
+----------------------------------------------------------
+
+86/170 Testing: p10_verify_pacing
+86/170 Test: p10_verify_pacing
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P10/p10_verify_pacing"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P10
+"p10_verify_pacing" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_verify_pacing" end time: Sep 19 08:39 EDT
+"p10_verify_pacing" time elapsed: 00:00:00
+----------------------------------------------------------
+
+87/170 Testing: p10_verify_mapping
+87/170 Test: p10_verify_mapping
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P10/p10_verify_mapping"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P10
+"p10_verify_mapping" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_verify_mapping" end time: Sep 19 08:39 EDT
+"p10_verify_mapping" time elapsed: 00:00:00
+----------------------------------------------------------
+
+88/170 Testing: p10_verify_ownership
+88/170 Test: p10_verify_ownership
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P10/p10_verify_ownership"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P10
+"p10_verify_ownership" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_verify_ownership" end time: Sep 19 08:39 EDT
+"p10_verify_ownership" time elapsed: 00:00:00
+----------------------------------------------------------
+
+89/170 Testing: p10_verify_allocation
+89/170 Test: p10_verify_allocation
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P10/p10_verify_allocation"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P10
+"p10_verify_allocation" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_verify_allocation" end time: Sep 19 08:39 EDT
+"p10_verify_allocation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+90/170 Testing: p10_verify_clock_scenarios
+90/170 Test: p10_verify_clock_scenarios
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P10/p10_verify_clock_scenarios"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P10
+"p10_verify_clock_scenarios" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_verify_clock_scenarios" end time: Sep 19 08:39 EDT
+"p10_verify_clock_scenarios" time elapsed: 00:00:00
+----------------------------------------------------------
+
+91/170 Testing: p10_verify_rate
+91/170 Test: p10_verify_rate
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P10/p10_verify_rate"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P10
+"p10_verify_rate" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_verify_rate" end time: Sep 19 08:39 EDT
+"p10_verify_rate" time elapsed: 00:00:00
+----------------------------------------------------------
+
+92/170 Testing: p10_verify_provider
+92/170 Test: p10_verify_provider
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P10/p10_verify_provider"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P10
+"p10_verify_provider" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_verify_provider" end time: Sep 19 08:39 EDT
+"p10_verify_provider" time elapsed: 00:00:00
+----------------------------------------------------------
+
+93/170 Testing: p10_verify_callback
+93/170 Test: p10_verify_callback
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P10/p10_verify_callback"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P10
+"p10_verify_callback" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_verify_callback" end time: Sep 19 08:39 EDT
+"p10_verify_callback" time elapsed: 00:00:00
+----------------------------------------------------------
+
+94/170 Testing: p10_verify_reference
+94/170 Test: p10_verify_reference
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P10/p10_verify_reference"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P10
+"p10_verify_reference" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+reference raw=30998528 charged=51753888 streams=16
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_verify_reference" end time: Sep 19 08:39 EDT
+"p10_verify_reference" time elapsed: 00:00:00
+----------------------------------------------------------
+
+95/170 Testing: p10_verify_wait
+95/170 Test: p10_verify_wait
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P10/p10_verify_wait"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P10
+"p10_verify_wait" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_verify_wait" end time: Sep 19 08:39 EDT
+"p10_verify_wait" time elapsed: 00:00:00
+----------------------------------------------------------
+
+96/170 Testing: p11_runtime
+96/170 Test: p11_runtime
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P11/p11_runtime"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P11
+"p11_runtime" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p11_runtime" end time: Sep 19 08:39 EDT
+"p11_runtime" time elapsed: 00:00:00
+----------------------------------------------------------
+
+97/170 Testing: p11_transactions
+97/170 Test: p11_transactions
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P11/p11_transactions"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P11
+"p11_transactions" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p11_transactions" end time: Sep 19 08:39 EDT
+"p11_transactions" time elapsed: 00:00:00
+----------------------------------------------------------
+
+98/170 Testing: p11_verify_engine
+98/170 Test: p11_verify_engine
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P11/p11_verify_engine"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P11
+"p11_verify_engine" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p11_verify_engine" end time: Sep 19 08:39 EDT
+"p11_verify_engine" time elapsed: 00:00:00
+----------------------------------------------------------
+
+99/170 Testing: p11_verify_manager
+99/170 Test: p11_verify_manager
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P11/p11_verify_manager"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P11
+"p11_verify_manager" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p11_verify_manager" end time: Sep 19 08:39 EDT
+"p11_verify_manager" time elapsed: 00:00:00
+----------------------------------------------------------
+
+100/170 Testing: p11_verify_recovery
+100/170 Test: p11_verify_recovery
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P11/p11_verify_recovery"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P11
+"p11_verify_recovery" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p11_verify_recovery" end time: Sep 19 08:39 EDT
+"p11_verify_recovery" time elapsed: 00:00:00
+----------------------------------------------------------
+
+101/170 Testing: p11_verify_scenarios
+101/170 Test: p11_verify_scenarios
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P11/p11_verify_scenarios"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P11
+"p11_verify_scenarios" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p11_verify_scenarios" end time: Sep 19 08:39 EDT
+"p11_verify_scenarios" time elapsed: 00:00:00
+----------------------------------------------------------
+
+102/170 Testing: p11_verify_banks
+102/170 Test: p11_verify_banks
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P11/p11_verify_banks"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P11
+"p11_verify_banks" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p11_verify_banks" end time: Sep 19 08:39 EDT
+"p11_verify_banks" time elapsed: 00:00:00
+----------------------------------------------------------
+
+103/170 Testing: p11_verify_continuity
+103/170 Test: p11_verify_continuity
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P11/p11_verify_continuity"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P11
+"p11_verify_continuity" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p11_verify_continuity" end time: Sep 19 08:39 EDT
+"p11_verify_continuity" time elapsed: 00:00:00
+----------------------------------------------------------
+
+104/170 Testing: p11_verify_shutdown
+104/170 Test: p11_verify_shutdown
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P11/p11_verify_shutdown"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P11
+"p11_verify_shutdown" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p11_verify_shutdown" end time: Sep 19 08:39 EDT
+"p11_verify_shutdown" time elapsed: 00:00:00
+----------------------------------------------------------
+
+105/170 Testing: p11_verify_leases
+105/170 Test: p11_verify_leases
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P11/p11_verify_leases"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P11
+"p11_verify_leases" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p11_verify_leases" end time: Sep 19 08:39 EDT
+"p11_verify_leases" time elapsed: 00:00:00
+----------------------------------------------------------
+
+106/170 Testing: p11_verify_allocation
+106/170 Test: p11_verify_allocation
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P11/p11_verify_allocation"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P11
+"p11_verify_allocation" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p11_verify_allocation" end time: Sep 19 08:39 EDT
+"p11_verify_allocation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+107/170 Testing: p11_verify_late
+107/170 Test: p11_verify_late
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P11/p11_verify_late"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P11
+"p11_verify_late" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p11_verify_late" end time: Sep 19 08:39 EDT
+"p11_verify_late" time elapsed: 00:00:00
+----------------------------------------------------------
+
+108/170 Testing: p11_verify_timed
+108/170 Test: p11_verify_timed
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P11/p11_verify_timed"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P11
+"p11_verify_timed" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p11_verify_timed" end time: Sep 19 08:39 EDT
+"p11_verify_timed" time elapsed: 00:00:00
+----------------------------------------------------------
+
+109/170 Testing: p12_binding
+109/170 Test: p12_binding
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P12/p12_binding"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P12
+"p12_binding" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p12_binding" end time: Sep 19 08:39 EDT
+"p12_binding" time elapsed: 00:00:00
+----------------------------------------------------------
+
+110/170 Testing: p12_socket
+110/170 Test: p12_socket
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P12/p12_socket"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P12
+"p12_socket" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p12_socket" end time: Sep 19 08:39 EDT
+"p12_socket" time elapsed: 00:00:00
+----------------------------------------------------------
+
+111/170 Testing: p12_adapter
+111/170 Test: p12_adapter
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P12/p12_adapter"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P12
+"p12_adapter" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"p12_adapter" end time: Sep 19 08:39 EDT
+"p12_adapter" time elapsed: 00:00:00
+----------------------------------------------------------
+
+112/170 Testing: p12_runtime_binding
+112/170 Test: p12_runtime_binding
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P12/p12_runtime_binding"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P12
+"p12_runtime_binding" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p12_runtime_binding" end time: Sep 19 08:39 EDT
+"p12_runtime_binding" time elapsed: 00:00:00
+----------------------------------------------------------
+
+113/170 Testing: p12_verify_factory
+113/170 Test: p12_verify_factory
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P12/p12_verify_factory"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P12
+"p12_verify_factory" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p12_verify_factory" end time: Sep 19 08:39 EDT
+"p12_verify_factory" time elapsed: 00:00:00
+----------------------------------------------------------
+
+114/170 Testing: p12_verify_framing
+114/170 Test: p12_verify_framing
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P12/p12_verify_framing"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P12
+"p12_verify_framing" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p12_verify_framing" end time: Sep 19 08:39 EDT
+"p12_verify_framing" time elapsed: 00:00:00
+----------------------------------------------------------
+
+115/170 Testing: p12_verify_socket
+115/170 Test: p12_verify_socket
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P12/p12_verify_socket"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P12
+"p12_verify_socket" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p12_verify_socket" end time: Sep 19 08:39 EDT
+"p12_verify_socket" time elapsed: 00:00:00
+----------------------------------------------------------
+
+116/170 Testing: p12_verify_receive
+116/170 Test: p12_verify_receive
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P12/p12_verify_receive"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P12
+"p12_verify_receive" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p12_verify_receive" end time: Sep 19 08:39 EDT
+"p12_verify_receive" time elapsed: 00:00:00
+----------------------------------------------------------
+
+117/170 Testing: p12_verify_isolation
+117/170 Test: p12_verify_isolation
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P12/p12_verify_isolation"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P12
+"p12_verify_isolation" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p12_verify_isolation" end time: Sep 19 08:39 EDT
+"p12_verify_isolation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+118/170 Testing: p12_verify_mtu
+118/170 Test: p12_verify_mtu
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P12/p12_verify_mtu"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P12
+"p12_verify_mtu" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p12_verify_mtu" end time: Sep 19 08:39 EDT
+"p12_verify_mtu" time elapsed: 00:00:00
+----------------------------------------------------------
+
+119/170 Testing: p12_verify_rx_isolation
+119/170 Test: p12_verify_rx_isolation
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P12/p12_verify_rx_isolation"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P12
+"p12_verify_rx_isolation" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p12_verify_rx_isolation" end time: Sep 19 08:39 EDT
+"p12_verify_rx_isolation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+120/170 Testing: p12_verify_syscall
+120/170 Test: p12_verify_syscall
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P12/p12_verify_syscall"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P12
+"p12_verify_syscall" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p12_verify_syscall" end time: Sep 19 08:39 EDT
+"p12_verify_syscall" time elapsed: 00:00:00
+----------------------------------------------------------
+
+121/170 Testing: p12_verify_cycle
+121/170 Test: p12_verify_cycle
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P12/p12_verify_cycle"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P12
+"p12_verify_cycle" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p12_verify_cycle" end time: Sep 19 08:39 EDT
+"p12_verify_cycle" time elapsed: 00:00:00
+----------------------------------------------------------
+
+122/170 Testing: p12_verify_runtime
+122/170 Test: p12_verify_runtime
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P12/p12_verify_runtime"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P12
+"p12_verify_runtime" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p12_verify_runtime" end time: Sep 19 08:39 EDT
+"p12_verify_runtime" time elapsed: 00:00:00
+----------------------------------------------------------
+
+123/170 Testing: p12_verify_allocation
+123/170 Test: p12_verify_allocation
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P12/p12_verify_allocation"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P12
+"p12_verify_allocation" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"p12_verify_allocation" end time: Sep 19 08:39 EDT
+"p12_verify_allocation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+124/170 Testing: p12_verify_callback
+124/170 Test: p12_verify_callback
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P12/p12_verify_callback"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P12
+"p12_verify_callback" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p12_verify_callback" end time: Sep 19 08:39 EDT
+"p12_verify_callback" time elapsed: 00:00:00
+----------------------------------------------------------
+
+125/170 Testing: p13_hooks
+125/170 Test: p13_hooks
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P13/p13_hooks"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P13
+"p13_hooks" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p13_hooks" end time: Sep 19 08:39 EDT
+"p13_hooks" time elapsed: 00:00:00
+----------------------------------------------------------
+
+126/170 Testing: p13_retention_occupancy
+126/170 Test: p13_retention_occupancy
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P13/p13_retention_occupancy"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P13
+"p13_retention_occupancy" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+records=3000 total_placement_probes=4498500 storage_bytes=10551312
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"p13_retention_occupancy" end time: Sep 19 08:39 EDT
+"p13_retention_occupancy" time elapsed: 00:00:00
+----------------------------------------------------------
+
+127/170 Testing: p13_peer_capture
+127/170 Test: p13_peer_capture
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P13/p13_peer_capture"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P13
+"p13_peer_capture" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p13_peer_capture" end time: Sep 19 08:39 EDT
+"p13_peer_capture" time elapsed: 00:00:00
+----------------------------------------------------------
+
+128/170 Testing: p13_payload_modes
+128/170 Test: p13_payload_modes
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P13/p13_payload_modes"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P13
+"p13_payload_modes" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p13_payload_modes" end time: Sep 19 08:39 EDT
+"p13_payload_modes" time elapsed: 00:00:00
+----------------------------------------------------------
+
+129/170 Testing: p13_receiver_analysis
+129/170 Test: p13_receiver_analysis
+Command: "/opt/homebrew/Frameworks/Python.framework/Versions/3.14/bin/python3.14" "/Users/rklinkhammer/workspace/vrt_framework/tests/unit/P13/receiver_analysis_test.py"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P13
+"p13_receiver_analysis" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+..........
+----------------------------------------------------------------------
+Ran 10 tests in 0.895s
+
+OK
+<end of output>
+Test time =   0.94 sec
+----------------------------------------------------------
+Test Passed.
+"p13_receiver_analysis" end time: Sep 19 08:39 EDT
+"p13_receiver_analysis" time elapsed: 00:00:00
+----------------------------------------------------------
+
+130/170 Testing: p13_verify_trace
+130/170 Test: p13_verify_trace
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P13/p13_verify_trace"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P13
+"p13_verify_trace" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p13_verify_trace" end time: Sep 19 08:39 EDT
+"p13_verify_trace" time elapsed: 00:00:00
+----------------------------------------------------------
+
+131/170 Testing: p13_verify_runtime_trace
+131/170 Test: p13_verify_runtime_trace
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P13/p13_verify_runtime_trace"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P13
+"p13_verify_runtime_trace" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p13_verify_runtime_trace" end time: Sep 19 08:39 EDT
+"p13_verify_runtime_trace" time elapsed: 00:00:00
+----------------------------------------------------------
+
+132/170 Testing: p13_verify_ingress
+132/170 Test: p13_verify_ingress
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P13/p13_verify_ingress"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P13
+"p13_verify_ingress" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p13_verify_ingress" end time: Sep 19 08:39 EDT
+"p13_verify_ingress" time elapsed: 00:00:00
+----------------------------------------------------------
+
+133/170 Testing: p13_verify_ring
+133/170 Test: p13_verify_ring
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P13/p13_verify_ring"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P13
+"p13_verify_ring" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p13_verify_ring" end time: Sep 19 08:39 EDT
+"p13_verify_ring" time elapsed: 00:00:00
+----------------------------------------------------------
+
+134/170 Testing: p13_verify_allocation_probe
+134/170 Test: p13_verify_allocation_probe
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P13/p13_verify_allocation_probe"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P13
+"p13_verify_allocation_probe" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p13_verify_allocation_probe" end time: Sep 19 08:39 EDT
+"p13_verify_allocation_probe" time elapsed: 00:00:00
+----------------------------------------------------------
+
+135/170 Testing: p13_verify_oracle
+135/170 Test: p13_verify_oracle
+Command: "/opt/homebrew/Frameworks/Python.framework/Versions/3.14/bin/python3.14" "/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P13/oracle_contract.py"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P13
+"p13_verify_oracle" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+independent raw-artifact oracle mutations passed
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"p13_verify_oracle" end time: Sep 19 08:39 EDT
+"p13_verify_oracle" time elapsed: 00:00:00
+----------------------------------------------------------
+
+136/170 Testing: p13_verify_retention_index
+136/170 Test: p13_verify_retention_index
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P13/p13_verify_retention_index"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P13
+"p13_verify_retention_index" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.03 sec
+----------------------------------------------------------
+Test Passed.
+"p13_verify_retention_index" end time: Sep 19 08:39 EDT
+"p13_verify_retention_index" time elapsed: 00:00:00
+----------------------------------------------------------
+
+137/170 Testing: p13_verify_pressure
+137/170 Test: p13_verify_pressure
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P13/p13_verify_pressure"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P13
+"p13_verify_pressure" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p13_verify_pressure" end time: Sep 19 08:39 EDT
+"p13_verify_pressure" time elapsed: 00:00:00
+----------------------------------------------------------
+
+138/170 Testing: p13_verify_late_capture
+138/170 Test: p13_verify_late_capture
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P13/p13_verify_late_capture"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P13
+"p13_verify_late_capture" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p13_verify_late_capture" end time: Sep 19 08:39 EDT
+"p13_verify_late_capture" time elapsed: 00:00:00
+----------------------------------------------------------
+
+139/170 Testing: p13_verify_payload
+139/170 Test: p13_verify_payload
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P13/p13_verify_payload"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P13
+"p13_verify_payload" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p13_verify_payload" end time: Sep 19 08:39 EDT
+"p13_verify_payload" time elapsed: 00:00:00
+----------------------------------------------------------
+
+140/170 Testing: p13_verify_payload_runtime
+140/170 Test: p13_verify_payload_runtime
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P13/p13_verify_payload_runtime"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P13
+"p13_verify_payload_runtime" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p13_verify_payload_runtime" end time: Sep 19 08:39 EDT
+"p13_verify_payload_runtime" time elapsed: 00:00:00
+----------------------------------------------------------
+
+141/170 Testing: p13_verify_receiver_wire
+141/170 Test: p13_verify_receiver_wire
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P13/p13_verify_receiver_wire"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P13
+"p13_verify_receiver_wire" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p13_verify_receiver_wire" end time: Sep 19 08:39 EDT
+"p13_verify_receiver_wire" time elapsed: 00:00:00
+----------------------------------------------------------
+
+142/170 Testing: p13_verify_receiver_core
+142/170 Test: p13_verify_receiver_core
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P13/p13_verify_receiver_core"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P13
+"p13_verify_receiver_core" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"p13_verify_receiver_core" end time: Sep 19 08:39 EDT
+"p13_verify_receiver_core" time elapsed: 00:00:00
+----------------------------------------------------------
+
+143/170 Testing: p13_verify_receiver_analysis
+143/170 Test: p13_verify_receiver_analysis
+Command: "/opt/homebrew/Frameworks/Python.framework/Versions/3.14/bin/python3.14" "/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P13/receiver_analysis_contract.py"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P13
+"p13_verify_receiver_analysis" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+independent receiver analyzer pairing, corruption and nondelivery checks passed
+<end of output>
+Test time =   0.75 sec
+----------------------------------------------------------
+Test Passed.
+"p13_verify_receiver_analysis" end time: Sep 19 08:39 EDT
+"p13_verify_receiver_analysis" time elapsed: 00:00:00
+----------------------------------------------------------
+
+144/170 Testing: p14_scalars
+144/170 Test: p14_scalars
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P14/p14_scalars"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P14
+"p14_scalars" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p14_scalars" end time: Sep 19 08:39 EDT
+"p14_scalars" time elapsed: 00:00:00
+----------------------------------------------------------
+
+145/170 Testing: p14_public_usage
+145/170 Test: p14_public_usage
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P14/p14_public_usage"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P14
+"p14_public_usage" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p14_public_usage" end time: Sep 19 08:39 EDT
+"p14_public_usage" time elapsed: 00:00:00
+----------------------------------------------------------
+
+146/170 Testing: p14_structures
+146/170 Test: p14_structures
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P14/p14_structures"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P14
+"p14_structures" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p14_structures" end time: Sep 19 08:39 EDT
+"p14_structures" time elapsed: 00:00:00
+----------------------------------------------------------
+
+147/170 Testing: p14_structured_wire
+147/170 Test: p14_structured_wire
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P14/p14_structured_wire"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P14
+"p14_structured_wire" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p14_structured_wire" end time: Sep 19 08:39 EDT
+"p14_structured_wire" time elapsed: 00:00:00
+----------------------------------------------------------
+
+148/170 Testing: p14_cif1_fixed
+148/170 Test: p14_cif1_fixed
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P14/p14_cif1_fixed"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P14
+"p14_cif1_fixed" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p14_cif1_fixed" end time: Sep 19 08:39 EDT
+"p14_cif1_fixed" time elapsed: 00:00:00
+----------------------------------------------------------
+
+149/170 Testing: p14_cif2_identifiers
+149/170 Test: p14_cif2_identifiers
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P14/p14_cif2_identifiers"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P14
+"p14_cif2_identifiers" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p14_cif2_identifiers" end time: Sep 19 08:39 EDT
+"p14_cif2_identifiers" time elapsed: 00:00:00
+----------------------------------------------------------
+
+150/170 Testing: p14_cif2_uuid
+150/170 Test: p14_cif2_uuid
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P14/p14_cif2_uuid"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P14
+"p14_cif2_uuid" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p14_cif2_uuid" end time: Sep 19 08:39 EDT
+"p14_cif2_uuid" time elapsed: 00:00:00
+----------------------------------------------------------
+
+151/170 Testing: p14_cif3
+151/170 Test: p14_cif3
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P14/p14_cif3"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/unit/P14
+"p14_cif3" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p14_cif3" end time: Sep 19 08:39 EDT
+"p14_cif3" time elapsed: 00:00:00
+----------------------------------------------------------
+
+152/170 Testing: p14_verify_scalars
+152/170 Test: p14_verify_scalars
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14/p14_verify_scalars"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14
+"p14_verify_scalars" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p14_verify_scalars" end time: Sep 19 08:39 EDT
+"p14_verify_scalars" time elapsed: 00:00:00
+----------------------------------------------------------
+
+153/170 Testing: p14_verify_allocation
+153/170 Test: p14_verify_allocation
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14/p14_verify_allocation"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14
+"p14_verify_allocation" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"p14_verify_allocation" end time: Sep 19 08:39 EDT
+"p14_verify_allocation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+154/170 Testing: p14_verify_structured_wire
+154/170 Test: p14_verify_structured_wire
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14/p14_verify_structured_wire"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14
+"p14_verify_structured_wire" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p14_verify_structured_wire" end time: Sep 19 08:39 EDT
+"p14_verify_structured_wire" time elapsed: 00:00:00
+----------------------------------------------------------
+
+155/170 Testing: p14_verify_native
+155/170 Test: p14_verify_native
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14/p14_verify_native"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14
+"p14_verify_native" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p14_verify_native" end time: Sep 19 08:39 EDT
+"p14_verify_native" time elapsed: 00:00:00
+----------------------------------------------------------
+
+156/170 Testing: p14_verify_structured_limits
+156/170 Test: p14_verify_structured_limits
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14/p14_verify_structured_limits"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14
+"p14_verify_structured_limits" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p14_verify_structured_limits" end time: Sep 19 08:39 EDT
+"p14_verify_structured_limits" time elapsed: 00:00:00
+----------------------------------------------------------
+
+157/170 Testing: p14_verify_native_allocation
+157/170 Test: p14_verify_native_allocation
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14/p14_verify_native_allocation"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14
+"p14_verify_native_allocation" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"p14_verify_native_allocation" end time: Sep 19 08:39 EDT
+"p14_verify_native_allocation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+158/170 Testing: p14_verify_structured_mutations
+158/170 Test: p14_verify_structured_mutations
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14/p14_verify_structured_mutations"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14
+"p14_verify_structured_mutations" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"p14_verify_structured_mutations" end time: Sep 19 08:39 EDT
+"p14_verify_structured_mutations" time elapsed: 00:00:00
+----------------------------------------------------------
+
+159/170 Testing: p14_verify_cif1_fixed
+159/170 Test: p14_verify_cif1_fixed
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14/p14_verify_cif1_fixed"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14
+"p14_verify_cif1_fixed" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"p14_verify_cif1_fixed" end time: Sep 19 08:39 EDT
+"p14_verify_cif1_fixed" time elapsed: 00:00:00
+----------------------------------------------------------
+
+160/170 Testing: p14_verify_cif1_boundary
+160/170 Test: p14_verify_cif1_boundary
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14/p14_verify_cif1_boundary"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14
+"p14_verify_cif1_boundary" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p14_verify_cif1_boundary" end time: Sep 19 08:39 EDT
+"p14_verify_cif1_boundary" time elapsed: 00:00:00
+----------------------------------------------------------
+
+161/170 Testing: p14_verify_cif2_wire
+161/170 Test: p14_verify_cif2_wire
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14/p14_verify_cif2_wire"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14
+"p14_verify_cif2_wire" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p14_verify_cif2_wire" end time: Sep 19 08:39 EDT
+"p14_verify_cif2_wire" time elapsed: 00:00:00
+----------------------------------------------------------
+
+162/170 Testing: p14_verify_cif2_native
+162/170 Test: p14_verify_cif2_native
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14/p14_verify_cif2_native"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14
+"p14_verify_cif2_native" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"p14_verify_cif2_native" end time: Sep 19 08:39 EDT
+"p14_verify_cif2_native" time elapsed: 00:00:00
+----------------------------------------------------------
+
+163/170 Testing: p14_verify_cif2_boundaries
+163/170 Test: p14_verify_cif2_boundaries
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14/p14_verify_cif2_boundaries"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14
+"p14_verify_cif2_boundaries" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p14_verify_cif2_boundaries" end time: Sep 19 08:39 EDT
+"p14_verify_cif2_boundaries" time elapsed: 00:00:00
+----------------------------------------------------------
+
+164/170 Testing: p14_verify_cif3_scalars
+164/170 Test: p14_verify_cif3_scalars
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14/p14_verify_cif3_scalars"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14
+"p14_verify_cif3_scalars" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p14_verify_cif3_scalars" end time: Sep 19 08:39 EDT
+"p14_verify_cif3_scalars" time elapsed: 00:00:00
+----------------------------------------------------------
+
+165/170 Testing: p14_verify_cif3_duration
+165/170 Test: p14_verify_cif3_duration
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14/p14_verify_cif3_duration"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14
+"p14_verify_cif3_duration" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.06 sec
+----------------------------------------------------------
+Test Passed.
+"p14_verify_cif3_duration" end time: Sep 19 08:39 EDT
+"p14_verify_cif3_duration" time elapsed: 00:00:00
+----------------------------------------------------------
+
+166/170 Testing: p14_verify_cif3_details
+166/170 Test: p14_verify_cif3_details
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14/p14_verify_cif3_details"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14
+"p14_verify_cif3_details" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p14_verify_cif3_details" end time: Sep 19 08:39 EDT
+"p14_verify_cif3_details" time elapsed: 00:00:00
+----------------------------------------------------------
+
+167/170 Testing: p14_verify_cif3_allocation
+167/170 Test: p14_verify_cif3_allocation
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14/p14_verify_cif3_allocation"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/tests/verification/P14
+"p14_verify_cif3_allocation" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"p14_verify_cif3_allocation" end time: Sep 19 08:39 EDT
+"p14_verify_cif3_allocation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+168/170 Testing: p10_example_controller
+168/170 Test: p10_example_controller
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/examples/vita_controller_example"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/examples
+"p10_example_controller" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+Controller observed 1000000 samples/s
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_example_controller" end time: Sep 19 08:39 EDT
+"p10_example_controller" time elapsed: 00:00:00
+----------------------------------------------------------
+
+169/170 Testing: p10_example_controllee
+169/170 Test: p10_example_controllee
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/examples/vita_controllee_example"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/examples
+"p10_example_controllee" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+Controllee emitted 4 packets
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_example_controllee" end time: Sep 19 08:39 EDT
+"p10_example_controllee" time elapsed: 00:00:00
+----------------------------------------------------------
+
+170/170 Testing: p10_example_combined
+170/170 Test: p10_example_combined
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/udp-release/examples/vita_combined_example"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/udp-release/examples
+"p10_example_combined" start time: Sep 19 08:39 EDT
+Output:
+----------------------------------------------------------
+Controller received execution evidence
+Combined endpoint emitted 7 packets
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_example_combined" end time: Sep 19 08:39 EDT
+"p10_example_combined" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Sep 19 08:39 EDT
+
+P14 =   0.01 sec*proc
+
+allocation =   0.00 sec*proc
+
+benchmark =   1.41 sec*proc
+
+budget =   0.09 sec*proc
+
+cancellation =   0.01 sec*proc
+
+clock =   0.01 sec*proc
+
+codec =   0.19 sec*proc
+
+compile =  15.82 sec*proc
+
+concurrency =   0.01 sec*proc
+
+context =   0.01 sec*proc
+
+controller =   0.00 sec*proc
+
+documentation =   0.02 sec*proc
+
+examples =   0.01 sec*proc
+
+functional =   1.41 sec*proc
+
+fuzz =   0.13 sec*proc
+
+identity =   0.00 sec*proc
+
+integration =   0.06 sec*proc
+
+lifecycle =   0.01 sec*proc
+
+oracle =   0.02 sec*proc
+
+ownership =   0.04 sec*proc
+
+profile =   0.01 sec*proc
+
+retention =   0.00 sec*proc
+
+revision =   0.00 sec*proc
+
+source =   0.00 sec*proc
+
+timing =   0.01 sec*proc
+
+trace =   0.00 sec*proc
+
+transaction =   0.11 sec*proc
+
+transport =   0.02 sec*proc
+
+udp =   0.02 sec*proc
+

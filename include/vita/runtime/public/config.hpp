@@ -3,6 +3,8 @@
 #include <vita/runtime/context/receiver.hpp>
 #include <vita/runtime/execution/budget.hpp>
 #include <vita/runtime/transaction/controller.hpp>
+#include <vita/runtime/transaction/trace.hpp>
+#include <vita/runtime/transport/binding.hpp>
 namespace vita {
 inline std::atomic<std::uint64_t> runtime_identity_source{1};
 struct ExternalPools {
@@ -15,7 +17,10 @@ struct RuntimeConfig {
   runtime::timing::TimingCapabilities timing;
   std::size_t memory_limit = runtime::framework_budget;
   bool isolated_lab = false;
+  std::size_t worker_stack_bytes=0;
+  runtime::transport::TransportFactory transport{};
 };
+enum class ControlleeKind { iq_source, virtual_register };
 struct StreamConfig {
   std::uint32_t sid = 0, controller_id = 0, controllee_id = 0;
   std::uint64_t controller_peer = 1, controllee_peer = 2;
@@ -26,6 +31,8 @@ struct StreamConfig {
   std::optional<std::uint16_t> trailer_packet_class;
   profiles::iq::SourceProvider source = profiles::iq::default_source();
   runtime::context::ReceiverBinding receiver{};
+  ControlleeKind kind=ControlleeKind::iq_source;
+  runtime::transaction::TraceBinding trace{};
 };
 struct CommandOptions {
   bool partial = true, allow_warning = false, allow_error = false,

@@ -24,7 +24,7 @@ int main() {
     assert(ack.freeze().layout().subtype==PacketSubtype::diagnostic_ack);
     assert(!checked_add(SIZE_MAX,1));assert(!checked_multiply(SIZE_MAX,2));
     assert(!measure(old,SIZE_MAX-3));
-    QueryPacket unknown;assert(unknown.select(FieldId{1,31}));assert(!measure(unknown.freeze()));
+    QueryPacket unknown;assert(unknown.select(FieldId{3,0}));assert(!measure(unknown.freeze()));
     PacketBuilder<BodyKind::values,1> bounded;assert(bounded.set<SampleRate>(*rate));assert(!bounded.set<ReferencePoint>(4));assert(bounded.freeze().fields().size()==1);
     SemanticArena<2> arena;std::array<std::uint32_t,2> words{5,6};auto slice=arena.append(words);assert(slice && (*arena.view(*slice))[1]==6);assert(!arena.append(words));assert(arena.size()==2);assert(!arena.view({SIZE_MAX,1}));
     FixedVector<std::unique_ptr<int>,1> fixed;assert(fixed.push_back(std::make_unique<int>(7)));assert(!fixed.push_back(std::make_unique<int>(8)));assert(*fixed[0]==7);fixed.clear();assert(fixed.empty());

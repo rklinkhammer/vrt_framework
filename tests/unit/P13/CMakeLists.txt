@@ -1,0 +1,12 @@
+vita_add_test(p13_hooks ${CMAKE_CURRENT_SOURCE_DIR}/hooks.cpp)
+set_tests_properties(p13_hooks PROPERTIES LABELS "trace;transaction")
+vita_add_test(p13_retention_occupancy ${CMAKE_CURRENT_SOURCE_DIR}/retention_occupancy.cpp)
+set_tests_properties(p13_retention_occupancy PROPERTIES LABELS "transaction;budget")
+
+if(TARGET vita::posix_udp)
+  vita_add_test(p13_peer_capture peer_capture.cpp)
+  target_link_libraries(p13_peer_capture PRIVATE vita::posix_udp)
+endif()
+vita_add_test(p13_payload_modes ${CMAKE_CURRENT_SOURCE_DIR}/payload_modes.cpp)
+set_tests_properties(p13_payload_modes PROPERTIES LABELS "source;ownership")
+add_test(NAME p13_receiver_analysis COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/receiver_analysis_test.py)

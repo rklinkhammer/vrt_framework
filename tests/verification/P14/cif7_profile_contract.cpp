@@ -1,0 +1,10 @@
+#include <vita/codec/packet.hpp>
+#include <vita/runtime/transaction/engine.hpp>
+#include <vita/runtime/context/receiver.hpp>
+#include <cassert>
+using namespace vita;using namespace vita::codec;using namespace vita::runtime;using namespace vita::runtime::transaction;
+int main(){for(unsigned a=1;a<13;++a){auto attribute=static_cast<Attribute>(a);ControlPacket command;assert(command.with_attributes(attribute_bit(attribute)));SemanticValue value=a==11?SemanticValue{ProbabilityCode{255,0}}:a==12?SemanticValue{BeliefCode{255}}:SemanticValue{*Hertz::from_integer(2)};std::array<AttributeInput,1> input{{{SampleRate::id,attribute,InputValue{value}}}};assert(command.set_field_attributes<SampleRate>(input));Envelope envelope;envelope.type=PacketType::command;envelope.stream_id=1;envelope.command=Command{0xa91c0000,42,Identifier::short_id(2),Identifier::short_id(3)};std::array<std::byte,256>wire{};auto n=encode_packet(envelope,command.freeze(),wire);assert(n);auto parsed=decode_packet(Bytes{wire}.first(*n));assert(parsed&&parsed->fields.size()==1&&parsed->fields[0].attribute==attribute);
+ AdmissionPool pool(AdmissionPool::reference_capacities());VirtualBackend<> backend;StateSnapshot initial;initial.fields[1].value=*Hertz::from_integer(1);initial.fields[1].validity=Validity::known;Engine<1> engine(pool,backend.binding(),initial);auto h=engine.accept(*parsed,{});assert(h);for(unsigned i=0;i<8&&!*engine.complete(*h);++i)assert(engine.progress({}));assert(*engine.complete(*h)&&backend.begins()==0&&backend.writes()==0&&std::get<Hertz>(engine.state().fields[1].value)==*Hertz::from_integer(1));auto outcomes=engine.outcomes(*h);assert(outcomes&&((*outcomes)[0].diagnostics.errors&unsupported));
+ // A matching profile Context cannot treat statistics as effective Current state.
+ auto context=*parsed;context.envelope.envelope.type=PacketType::context;context.envelope.envelope.command.reset();context.envelope.envelope.timestamp={Tsi::gps,Tsf::picoseconds,1,0};vita::runtime::context::ReceiverHistory<> history;auto received=history.receive(context,1,{0});assert(!received&&received.error().code==ErrorCode::unsupported_capability);
+ }}

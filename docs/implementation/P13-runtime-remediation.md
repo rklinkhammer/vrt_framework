@@ -1,0 +1,9 @@
+# P13 Runtime backpressure remediation
+
+Independent verification PASS; see [remediation verification](P13-remediation-verification.md). The frozen overload capture showed two streams ceasing Data early. Code review found that Runtime promoted any generator resource rejection to a backend fault and any Context publication rejection to a permanent unavailable status, even while the Context publisher remained active and eligible to retry. The capture lacks the final status/error diagnostics needed to prove the exact original trigger.
+
+`runtime.hpp` now marks resource-acquisition/submission errors as retryable only for capacity/resource limits, keeps the source running while the publisher remains active, and preserves the publisher's actual 10 ms / 64-held-packet terminal gate. Source callback failures remain execution faults even if a callback sets a retryable flag. A sample-loss revision clears its local pending flag immediately after being recorded, so retrying its publication cannot record that same revision twice. Rejected Data after timeline advancement is included in skipped-packet/sample accounting and requests a sample-loss event.
+
+No pool limits, clock qualification, retention duration or terminal Context limits are increased. Existing source recovery remains explicit after a real terminal publisher failure. Independent tests exercise temporary header/Context-pool exhaustion, recovery before the gate deadline, terminal exhaustion, and callback failure before this candidate is approved.
+
+Integrated validation: final optimized 139/139 checks; independent ASan/UBSan 135/135 and targeted TSan 7/7. Revised normal/overload diagnostics retain all four sources through their measurement windows; no backend/Context fault transition is recorded. Full no-drop sustained qualification remains open.

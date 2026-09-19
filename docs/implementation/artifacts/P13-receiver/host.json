@@ -1,0 +1,10 @@
+{
+  "platform": "macOS-27.0-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin27.0.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+  "scope": "local IPv4 loopback, separate sender and receiver processes",
+  "warmup_seconds": 1,
+  "measurement_seconds": 4,
+  "streams": 4,
+  "pairs": 256
+}

@@ -1,0 +1,11 @@
+#include "../P10/runtime_fixture.hpp"
+using namespace vita;using namespace vita::runtime;using namespace vita::runtime::transaction;using namespace verify_p10;
+struct Log {std::array<TraceEvent,32> rows{};unsigned count=0;bool overflow=false;static void record(void*p,const TraceEvent&e)noexcept{auto&l=*static_cast<Log*>(p);if(l.count==l.rows.size()){l.overflow=true;return;}l.rows[l.count++]=e;}};
+int main(){auto log=std::make_shared<Log>();TraceBinding trace{log,log.get(),steady_trace_ns,Log::record,sizeof(Log)+128};using Runtime=VitaRuntime<2,4,32,65536>;auto made=Runtime::create(runtime_config(),external_pools());if(!made)return 1;auto& runtime=**made;auto config=stream_config();config.kind=ControlleeKind::virtual_register;config.trace=trace;auto device=runtime.add_controllee(config);if(!device||device->start())return 2;
+ auto charge=runtime.budget().row(BudgetCategory::metrics).charged;config.sid=2;config.trace.storage_bytes+=1;const auto before=runtime.budget().charged_bytes();if(runtime.add_controllee(config)||runtime.budget().charged_bytes()!=before)return 3;config.trace=trace;auto second=runtime.add_controllee(config);if(!second||runtime.budget().row(BudgetCategory::metrics).charged!=charge)return 4;
+ auto controller=runtime.add_controller(*device);if(!controller)return 5;auto transaction=controller->set_sample_rate(*Hertz::from_integer(123));if(!transaction)return 6;
+ // No PPS observation, no Data start, no generator packet-boundary progression.
+ for(unsigned n=0;n<4;++n)if(!runtime.progress({0}))return 7;
+ if(log->overflow||log->count!=5||device->metrics().packets||std::get<Hertz>(device->confirmed_state().fields[1].value)!=*Hertz::from_integer(123))return 8;
+ const std::array<TraceStage,5> expected{TraceStage::received,TraceStage::validated,TraceStage::dispatch,TraceStage::device_done,TraceStage::recorded};auto key=log->rows[0].key;for(unsigned n=0;n<5;++n){const auto&e=log->rows[n];if(e.stage!=expected[n]||e.key!=key||!e.monotonic_ns||e.simulated||(n&&e.monotonic_ns<log->rows[n-1].monotonic_ns))return 9;}
+ if(key.association_generation!=1||key.peer!=1||key.sid!=1||!key.mid||!key.operation||log->rows[4].status!=FieldStatus::executed)return 10;return 0;}

@@ -1,0 +1,9 @@
+# P14 IEEE conversion reference readiness
+
+The earlier source-input limitation has a concrete reference path for scoped numerical conversion work. The coordinator retrieved the author-linked Berkeley SoftFloat3e source at revision `a0c6494cdc11865811dec815d5c0049fba9d82a8` from [ucb-bar/berkeley-softfloat-3](https://github.com/ucb-bar/berkeley-softfloat-3), outside the workspace. [Author interface documentation](https://www.jhauser.us/arithmetic/SoftFloat-3/doc/SoftFloat.html) describes binary16/32/64 conversions and rounding controls; [source documentation](https://www.jhauser.us/arithmetic/SoftFloat-3/doc/SoftFloat-source.html) describes portability and specialization.
+
+The portable `build/Linux-ARM-VFPv2-GCC` target built successfully on the current macOS arm64 toolchain using `make -j4`. An independently supplied literal smoke program checked binary32 one to binary16, binary16 negative zero to binary64, and the smallest binary16 subnormal to binary32. All passed. This is reference readiness, not verification of any project IEEE conversion implementation.
+
+The source retains its upstream license outside the repository. It is an optional verification oracle, not a production dependency. Revision, temporary paths and build log are under ignored `artifacts/P14-softfloat-reference.json` and `artifacts/P14-softfloat/build.log`. Recreate by cloning the linked repository and checking out the recorded revision before building the named target. Record specialization, rounding mode and flags in future differential tests; NaN handling can depend on the selected specialization.
+
+A later batch must state its supported conversion operations, rounding/nonfinite/overflow/precision policies and special-value behavior. Comparison against this reference does not establish all IEEE754 operations or universal platform conformance. Raw IEEE bit preservation is already a separately verified API.

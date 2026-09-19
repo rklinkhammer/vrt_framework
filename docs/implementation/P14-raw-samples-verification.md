@@ -1,0 +1,9 @@
+# P14 exact raw sample verification
+
+Independent draft gate: PASS by the CIF2/CIF3 implementer acting as verifier of a different agent's sample implementation. [Independent report](../../drafts/P14-samples/verification/report.md) records source clauses, a separate bit-string oracle and direct optimized/sanitizer checks. The producer header and independent test were promoted byte-for-byte into `include/vita/codec/general_samples.hpp` and `tests/verification/P14/raw_samples_contract.cpp`; developer tests are `tests/unit/P14/raw_samples.cpp`.
+
+The bounded API covers exact raw data/tag bits, link-efficient widths1–64, processing-efficient widths1–32, real/Cartesian/polar components, vector/repetition ordering, explicit complete structure counts, checked borrowed access and caller-output packing. It preserves IEEE bit patterns without numerical conversion. Unknown processing-efficient grouping above32bits returns unsupported; no alternative grouping is guessed. Complete structure counts are caller-supplied, so payload padding is not guessed to be samples.
+
+The independent oracle checks widths1–64, cross-word fields, asymmetric tags, processing gaps, full output bytes, repetition coordinates, limits/overflow, bounds, overlap and prewrite failure atomicity. The copied view remains a borrow; no RX ownership extension is implied. Independent allocation evidence is source inspection, with producer ordinary-C++ allocation probes recorded separately. No numerical conversion, DPF decoding, segmentation, whole-frame assembly, physical calibration or full sample-format qualification is claimed by this batch.
+
+Live full integration PASS:174/174 optimized tests,171/171 ASan/UBSan tests and62 standalone headers. Final source hashes and logs are recorded in [M5 integration](M5-integration.md) and the [combined manifest](artifacts/P14-samples-extensions/manifest.json).

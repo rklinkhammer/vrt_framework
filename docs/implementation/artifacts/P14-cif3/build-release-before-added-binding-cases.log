@@ -1,0 +1,600 @@
+[1/290] Building CXX object fuzz/CMakeFiles/vita_fuzz_replay.dir/replay.cpp.o
+[2/290] Building CXX object bench/CMakeFiles/vita_replay_sender.dir/replay_main.cpp.o
+[3/290] Building CXX object tests/unit/P01/CMakeFiles/p01_semantics.dir/semantics.cpp.o
+[4/290] Building CXX object tests/verification/P01/CMakeFiles/p01_verify_semantics.dir/semantic_contract.cpp.o
+[5/290] Building CXX object bench/CMakeFiles/vita_receiver_benchmark.dir/receiver_main.cpp.o
+[6/290] Building CXX object tests/verification/P01/CMakeFiles/p01_verify_allocations.dir/allocation_contract.cpp.o
+[7/290] Building CXX object tests/unit/P02/CMakeFiles/p02_codec.dir/other_tu.cpp.o
+[8/290] Building CXX object tests/unit/P02/CMakeFiles/p02_prologue.dir/prologue.cpp.o
+[9/290] Building CXX object tests/unit/P02/CMakeFiles/p02_ack_timing.dir/ack_timing.cpp.o
+[10/290] Building CXX object tests/verification/P02/CMakeFiles/p02_verify_wire.dir/wire_contract.cpp.o
+[11/290] Building CXX object tests/unit/P02/CMakeFiles/p02_codec.dir/codec.cpp.o
+[12/290] Building CXX object tests/verification/P02/CMakeFiles/p02_verify_samples.dir/other_tu.cpp.o
+[13/290] Building CXX object tests/verification/P02/CMakeFiles/p02_verify_samples.dir/sample_contract.cpp.o
+[14/290] Building CXX object tests/verification/P02/CMakeFiles/p02_verify_prologue.dir/prologue_contract.cpp.o
+[15/290] Building CXX object tests/verification/P02/CMakeFiles/p02_verify_packet.dir/packet_contract.cpp.o
+[16/290] Building CXX object bench/CMakeFiles/vita_benchmark.dir/main.cpp.o
+[17/290] Building CXX object tests/unit/P05/CMakeFiles/p05_budget.dir/budget.cpp.o
+[18/290] Building CXX object tests/unit/P05/CMakeFiles/p05_loopback.dir/loopback.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/unit/P05/loopback.cpp:1:
+/Users/rklinkhammer/workspace/vrt_framework/tests/unit/P05/support.hpp:36:79: warning: missing field 'completion_credit' initializer [-Wmissing-field-initializers]
+   36 |     return TxSubmission{std::move(storage),std::move(*ticket),{44,1},key,fault};
+      |                                                                               ^
+1 warning generated.
+[19/290] Building CXX object tests/unit/P05/CMakeFiles/p05_isolation.dir/isolation.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/unit/P05/isolation.cpp:1:
+/Users/rklinkhammer/workspace/vrt_framework/tests/unit/P05/support.hpp:36:79: warning: missing field 'completion_credit' initializer [-Wmissing-field-initializers]
+   36 |     return TxSubmission{std::move(storage),std::move(*ticket),{44,1},key,fault};
+      |                                                                               ^
+/Users/rklinkhammer/workspace/vrt_framework/tests/unit/P05/isolation.cpp:29:80: warning: missing field 'completion_credit' initializer [-Wmissing-field-initializers]
+   29 |         return TxSubmission{std::move(storage),std::move(*ticket),{44,1},key,{}};
+      |                                                                                ^
+2 warnings generated.
+[20/290] Building CXX object tests/verification/P05/CMakeFiles/p05_verify_routes.dir/routes_contract.cpp.o
+[21/290] Building CXX object tests/verification/P05/CMakeFiles/p05_verify_budget.dir/budget_contract.cpp.o
+[22/290] Building CXX object tests/verification/P05/CMakeFiles/p05_verify_chain.dir/loopback_integration.cpp.o
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P05/loopback_integration.cpp:45:97: warning: missing field 'completion_credit' initializer [-Wmissing-field-initializers]
+   45 |         auto accepted=transport.try_send({std::move(storage),std::move(*completion),peer,counter});
+      |                                                                                                 ^
+1 warning generated.
+[23/290] Building CXX object tests/verification/P05/CMakeFiles/p05_verify_faults.dir/faults_contract.cpp.o
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P05/faults_contract.cpp:25:116: warning: missing field 'completion_credit' initializer [-Wmissing-field-initializers]
+   25 |     auto token=arena.reserve(id);if(!token)std::abort();return {std::move(storage),std::move(*token),peer,key,fault};
+      |                                                                                                                    ^
+1 warning generated.
+[24/290] Building CXX object tests/integration/P05/CMakeFiles/p05_m1_chain.dir/chain.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/integration/P05/chain.cpp:1:
+/Users/rklinkhammer/workspace/vrt_framework/tests/integration/P05/../../unit/P05/support.hpp:36:79: warning: missing field 'completion_credit' initializer [-Wmissing-field-initializers]
+   36 |     return TxSubmission{std::move(storage),std::move(*ticket),{44,1},key,fault};
+      |                                                                               ^
+1 warning generated.
+[25/290] Building CXX object tests/verification/P06/CMakeFiles/p06_verify_cam.dir/cam_contract.cpp.o
+[26/290] Building CXX object tests/unit/P06/CMakeFiles/p06_outcomes.dir/outcomes.cpp.o
+[27/290] Building CXX object tests/verification/P06/CMakeFiles/p06_verify_async.dir/async_contract.cpp.o
+[28/290] Building CXX object tests/verification/P06/CMakeFiles/p06_verify_controller.dir/controller_contract.cpp.o
+[29/290] Building CXX object tests/unit/P06/CMakeFiles/p06_engine.dir/engine.cpp.o
+[30/290] Building CXX object tests/verification/P06/CMakeFiles/p06_verify_factors.dir/engine_factors.cpp.o
+[31/290] Building CXX object tests/verification/P06/CMakeFiles/p06_verify_scenarios.dir/scenario_contract.cpp.o
+[32/290] Building CXX object tests/verification/P06/CMakeFiles/p06_verify_outcomes.dir/outcome_contract.cpp.o
+[33/290] Building CXX object tests/verification/P06/CMakeFiles/p06_verify_timing.dir/timing_contract.cpp.o
+[34/290] Building CXX object tests/verification/P06/CMakeFiles/p06_verify_admission.dir/admission_contract.cpp.o
+[35/290] Building CXX object tests/verification/P06/CMakeFiles/p06_verify_allocation.dir/allocation_contract.cpp.o
+[36/290] Building CXX object tests/verification/P06/CMakeFiles/p06_verify_query.dir/query_contract.cpp.o
+[37/290] Building CXX object tests/integration/P06/CMakeFiles/p06_loopback_transaction.dir/chain.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/integration/P06/chain.cpp:1:
+/Users/rklinkhammer/workspace/vrt_framework/tests/integration/P06/../../unit/P05/support.hpp:36:79: warning: missing field 'completion_credit' initializer [-Wmissing-field-initializers]
+   36 |     return TxSubmission{std::move(storage),std::move(*ticket),{44,1},key,fault};
+      |                                                                               ^
+/Users/rklinkhammer/workspace/vrt_framework/tests/integration/P06/chain.cpp:31:369: warning: missing field 'completion_credit' initializer [-Wmissing-field-initializers]
+   31 |         auto send=[&](memory::BufferLease lease,std::size_t length,CounterKey key,PeerSession peer,std::uint64_t operation){assert(lease.set_size(length));memory::TxStorage storage;assert(storage.append(std::move(lease),0,length));auto ticket=tickets.reserve(operation);assert(ticket);auto accepted=transport.try_send({std::move(storage),std::move(*ticket),peer,key,{}});assert(accepted);assert(transport.progress(*accepted));tickets.scan([&](CompletionRecord r) noexcept {assert(r.result.status==CompletionStatus::succeeded);++completions;});};
+      |                                                                                                                                                                                                                                                                                                                                                                                 ^
+2 warnings generated.
+[38/290] Building CXX object tests/unit/P07/CMakeFiles/p07_transactions.dir/transactions.cpp.o
+[39/290] Building CXX object tests/unit/P07/CMakeFiles/p07_controller.dir/controller.cpp.o
+[40/290] Building CXX object tests/unit/P07/CMakeFiles/p07_timing.dir/timing.cpp.o
+[41/290] Building CXX object tests/verification/P07/CMakeFiles/p07_verify_keys.dir/key_contract.cpp.o
+[42/290] Building CXX object tests/verification/P07/CMakeFiles/p07_verify_retention.dir/retention_contract.cpp.o
+[43/290] Building CXX object tests/verification/P07/CMakeFiles/p07_verify_controller.dir/controller_contract.cpp.o
+[44/290] Building CXX object tests/verification/P07/CMakeFiles/p07_verify_manager.dir/manager_contract.cpp.o
+[45/290] Building CXX object tests/verification/P07/CMakeFiles/p07_verify_guard_race.dir/guard_race.cpp.o
+[46/290] Building CXX object tests/verification/P07/CMakeFiles/p07_verify_timed_cancel.dir/timed_cancel.cpp.o
+[47/290] Building CXX object tests/unit/P09/CMakeFiles/p09_receiver.dir/receiver.cpp.o
+[48/290] Building CXX object tests/verification/P09/CMakeFiles/p09_verify_history.dir/history_contract.cpp.o
+[49/290] Building CXX object tests/verification/P07/CMakeFiles/p07_verify_admission.dir/admission_contract.cpp.o
+[50/290] Building CXX object tests/unit/P09/CMakeFiles/p09_context.dir/context.cpp.o
+[51/290] Building CXX object tests/integration/P07/CMakeFiles/p07_loopback.dir/chain.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/integration/P07/chain.cpp:1:
+/Users/rklinkhammer/workspace/vrt_framework/tests/integration/P07/../../unit/P05/support.hpp:36:79: warning: missing field 'completion_credit' initializer [-Wmissing-field-initializers]
+   36 |     return TxSubmission{std::move(storage),std::move(*ticket),{44,1},key,fault};
+      |                                                                               ^
+/Users/rklinkhammer/workspace/vrt_framework/tests/integration/P07/chain.cpp:23:480: warning: missing field 'completion_credit' initializer [-Wmissing-field-initializers]
+   23 |     auto send=[&](Bytes wire,CounterKey key,PeerSession peer){auto lease=tx.acquire({wire.size()});assert(lease);auto bytes=lease->writable_bytes();assert(bytes);std::copy(wire.begin(),wire.end(),bytes->begin());assert(lease->set_size(wire.size()));memory::TxStorage storage;assert(storage.append(std::move(*lease),0,wire.size()));auto completion=tickets.reserve(++submitted);assert(completion);auto token=transport.try_send({std::move(storage),std::move(*completion),peer,key,{}});assert(token);assert(transport.progress(*token));assert(tickets.scan([](CompletionRecord result) noexcept {assert(result.result.status==CompletionStatus::succeeded);})==1);};
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ^
+2 warnings generated.
+[52/290] Building CXX object tests/verification/P09/CMakeFiles/p09_verify_revisions.dir/revision_contract.cpp.o
+[53/290] Building CXX object tests/verification/P09/CMakeFiles/p09_verify_receiver.dir/receiver_contract.cpp.o
+[54/290] Building CXX object tests/verification/P09/CMakeFiles/p09_verify_publisher.dir/publisher_contract.cpp.o
+[55/290] Building CXX object tests/verification/P09/CMakeFiles/p09_verify_budget.dir/budget_contract.cpp.o
+[56/290] Building CXX object tests/verification/P09/CMakeFiles/p09_verify_context_wire.dir/context_wire.cpp.o
+[57/290] Building CXX object tests/verification/P09/CMakeFiles/p09_verify_allocation.dir/allocation_contract.cpp.o
+[58/290] Building CXX object tests/unit/P10/CMakeFiles/p10_source.dir/source.cpp.o
+[59/290] Building CXX object tests/verification/P09/CMakeFiles/p09_verify_effects.dir/effects_contract.cpp.o
+[60/290] Building CXX object tests/unit/P10/CMakeFiles/p10_lab.dir/lab.cpp.o
+[61/290] Building CXX object tests/integration/P09/CMakeFiles/p09_effects.dir/effects.cpp.o
+[62/290] Building CXX object tests/verification/P10/CMakeFiles/p10_verify_credit.dir/credit_contract.cpp.o
+[63/290] Building CXX object tests/verification/P10/CMakeFiles/p10_verify_source.dir/source_contract.cpp.o
+[64/290] Building CXX object tests/verification/P10/CMakeFiles/p10_verify_packetization.dir/packetization_contract.cpp.o
+[65/290] Building CXX object tests/unit/P10/CMakeFiles/p10_budget.dir/budget.cpp.o
+[66/290] Building CXX object tests/unit/P10/CMakeFiles/p10_runtime.dir/runtime.cpp.o
+[67/290] Building CXX object tests/verification/P10/CMakeFiles/p10_verify_pacing.dir/pacing_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P10/pacing_contract.cpp:1:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+1 warning generated.
+[68/290] Building CXX object tests/verification/P10/CMakeFiles/p10_verify_mapping.dir/mapping_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P10/mapping_contract.cpp:1:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+1 warning generated.
+[69/290] Building CXX object tests/verification/P10/CMakeFiles/p10_verify_ownership.dir/ownership_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P10/ownership_contract.cpp:1:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+1 warning generated.
+[70/290] Building CXX object tests/verification/P10/CMakeFiles/p10_verify_allocation.dir/allocation_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P10/allocation_contract.cpp:1:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+1 warning generated.
+[71/290] Building CXX object tests/verification/P10/CMakeFiles/p10_verify_clock_scenarios.dir/clock_scenarios.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P10/clock_scenarios.cpp:1:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+1 warning generated.
+[72/290] Building CXX object tests/verification/P10/CMakeFiles/p10_verify_rate.dir/rate_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P10/rate_contract.cpp:1:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+1 warning generated.
+[73/290] Building CXX object tests/verification/P10/CMakeFiles/p10_verify_provider.dir/provider_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P10/provider_contract.cpp:1:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+1 warning generated.
+[74/290] Building CXX object tests/verification/P10/CMakeFiles/p10_verify_callback.dir/callback_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P10/callback_contract.cpp:1:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+1 warning generated.
+[75/290] Building CXX object tests/verification/P10/CMakeFiles/p10_verify_reference.dir/reference_contract.cpp.o
+[76/290] Building CXX object tests/verification/P10/CMakeFiles/p10_verify_wait.dir/wait_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P10/wait_contract.cpp:1:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+1 warning generated.
+[77/290] Building CXX object tests/unit/P11/CMakeFiles/p11_transactions.dir/transactions.cpp.o
+[78/290] Building CXX object tests/unit/P11/CMakeFiles/p11_runtime.dir/runtime.cpp.o
+[79/290] Building CXX object tests/verification/P11/CMakeFiles/p11_verify_engine.dir/engine_contract.cpp.o
+[80/290] Building CXX object tests/verification/P11/CMakeFiles/p11_verify_manager.dir/manager_contract.cpp.o
+[81/290] Building CXX object tests/verification/P11/CMakeFiles/p11_verify_recovery.dir/recovery_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/recovery_contract.cpp:1:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/../P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/recovery_contract.cpp:38:118: warning: missing field 'clock' initializer [-Wmissing-field-initializers]
+   38 |   Reinit reinit;Completion completion;RecoveryConfig recovery{4,device->confirmed_state(),true,&reinit,Reinit::invoke};recovery.confirmed_state.fields[0].value=std::uint32_t{4};
+      |                                                                                                                      ^
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/recovery_contract.cpp:51:82: warning: missing field 'clock' initializer [-Wmissing-field-initializers]
+   51 |   RecoveryConfig recovery{4,device->confirmed_state(),true,&reinit,Reinit::invoke};recovery.confirmed_state.fields[0].value=std::uint32_t{4};
+      |                                                                                  ^
+3 warnings generated.
+[82/290] Building CXX object tests/verification/P11/CMakeFiles/p11_verify_scenarios.dir/scenarios.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/scenarios.cpp:1:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/../P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/scenarios.cpp:19:84: warning: missing field 'clock' initializer [-Wmissing-field-initializers]
+   19 |  const auto stopped_count=receiver.packets;RecoveryConfig recovery{1,confirmed,true};
+      |                                                                                    ^
+2 warnings generated.
+[83/290] Building CXX object tests/verification/P11/CMakeFiles/p11_verify_banks.dir/banks_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/banks_contract.cpp:1:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/../P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/banks_contract.cpp:6:119: warning: missing field 'clock' initializer [-Wmissing-field-initializers]
+    6 |   for(unsigned iteration=0;iteration<6;++iteration){RecoveryConfig recovery{4+iteration,device->confirmed_state(),true};recovery.confirmed_state.fields[0].value=std::uint32_t{4+iteration};if(!device->recover(recovery))return 3;
+      |                                                                                                                       ^
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/banks_contract.cpp:14:59: warning: missing field 'clock' initializer [-Wmissing-field-initializers]
+   14 |   RecoveryConfig recovery{4,device->confirmed_state(),true};recovery.confirmed_state.fields[0].value=std::uint32_t{4};if(!device->recover(recovery))return 10;
+      |                                                           ^
+3 warnings generated.
+[84/290] Building CXX object tests/verification/P11/CMakeFiles/p11_verify_continuity.dir/continuity_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/continuity_contract.cpp:1:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/../P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/continuity_contract.cpp:6:58: warning: missing field 'clock' initializer [-Wmissing-field-initializers]
+    6 |  RecoveryConfig recovery{4,device->confirmed_state(),true};recovery.confirmed_state.fields[0].value=std::uint32_t{4};if(!device->recover(recovery))return 3;
+      |                                                          ^
+2 warnings generated.
+[85/290] Building CXX object tests/verification/P11/CMakeFiles/p11_verify_shutdown.dir/shutdown_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/shutdown_contract.cpp:1:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/../P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+1 warning generated.
+[86/290] Building CXX object tests/verification/P11/CMakeFiles/p11_verify_leases.dir/lease_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/lease_contract.cpp:1:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/../P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/lease_contract.cpp:12:59: warning: missing field 'clock' initializer [-Wmissing-field-initializers]
+   12 |   RecoveryConfig recovery{4,device->confirmed_state(),true};recovery.confirmed_state.fields[0].value=std::uint32_t{4};if(!device->recover(recovery))return 3;
+      |                                                           ^
+2 warnings generated.
+[87/290] Building CXX object tests/verification/P11/CMakeFiles/p11_verify_allocation.dir/allocation_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/allocation_contract.cpp:1:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/../P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/allocation_contract.cpp:13:58: warning: missing field 'clock' initializer [-Wmissing-field-initializers]
+   13 |  RecoveryConfig recovery{4,device->confirmed_state(),true};recovery.confirmed_state.fields[0].value=std::uint32_t{4};const auto before=allocations;
+      |                                                          ^
+2 warnings generated.
+[88/290] Building CXX object tests/verification/P11/CMakeFiles/p11_verify_timed.dir/timed_contract.cpp.o
+[89/290] Building CXX object tests/unit/P12/CMakeFiles/p12_socket.dir/socket.cpp.o
+[90/290] Building CXX object tests/verification/P11/CMakeFiles/p11_verify_late.dir/late_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/late_contract.cpp:1:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/../P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P11/late_contract.cpp:6:42: warning: missing field 'clock' initializer [-Wmissing-field-initializers]
+    6 |  RecoveryConfig recovery{4,confirmed,true};recovery.confirmed_state.fields[0].value=std::uint32_t{4};if(!device->recover(recovery))return 6;
+      |                                          ^
+2 warnings generated.
+[91/290] Building CXX object tests/unit/P12/CMakeFiles/p12_adapter.dir/adapter.cpp.o
+[92/290] Building CXX object tests/verification/P12/CMakeFiles/p12_verify_framing.dir/framing_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/framing_contract.cpp:2:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/../P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+1 warning generated.
+[93/290] Building CXX object tests/unit/P12/CMakeFiles/p12_binding.dir/binding.cpp.o
+[94/290] Building CXX object tests/verification/P12/CMakeFiles/p12_verify_factory.dir/factory_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/factory_contract.cpp:1:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/../P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+1 warning generated.
+[95/290] Building CXX object tests/unit/P12/CMakeFiles/p12_runtime_binding.dir/runtime_binding.cpp.o
+[96/290] Building CXX object tests/verification/P12/CMakeFiles/p12_verify_receive.dir/receive_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/receive_contract.cpp:1:
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/fixture.hpp:3:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/../P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+1 warning generated.
+[97/290] Building CXX object tests/verification/P12/CMakeFiles/p12_verify_socket.dir/socket_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/socket_contract.cpp:1:
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/fixture.hpp:3:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/../P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/socket_contract.cpp:13:258: warning: missing field 'completion_credit' initializer [-Wmissing-field-initializers]
+   13 |   auto txpool=verify_p10::external_pool(64,4);CompletionArena<2> tickets;auto ticket=tickets.reserve(1);if(!ticket)return 7;auto submitted=adapter.try_send({storage(txpool,verify_p12::signal),std::move(*ticket),{7,1},{7,0x01020304,codec::PacketType::signal}});if(!submitted||!adapter.outstanding(*submitted)||tickets.consume(0))return 8;
+      |                                                                                                                                                                                                                                                                  ^
+2 warnings generated.
+[98/290] Building CXX object tests/verification/P12/CMakeFiles/p12_verify_isolation.dir/isolation_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/isolation_contract.cpp:1:
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/fixture.hpp:3:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/../P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/isolation_contract.cpp:5:231: warning: missing field 'completion_credit' initializer [-Wmissing-field-initializers]
+    5 |  for(unsigned i=0;i<6;++i){auto bytes=verify_p12::signal;bytes[1]=std::byte(i);auto ticket=tickets.reserve(i+1);if(!ticket||!adapter.try_send({storage(txpool,bytes),std::move(*ticket),{7,1},{7,0x01020304,codec::PacketType::signal}}))return 3;}
+      |                                                                                                                                                                                                                                       ^
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/isolation_contract.cpp:6:251: warning: missing field 'completion_credit' initializer [-Wmissing-field-initializers]
+    6 |  auto bytes=verify_p12::signal;bytes[1]=std::byte{6};auto rejected_ticket=tickets.reserve(7);if(!rejected_ticket)return 4;auto rejected=adapter.try_send({storage(txpool,bytes),std::move(*rejected_ticket),{7,1},{7,0x01020304,codec::PacketType::signal}});if(rejected||!rejected.error().submission.completion.is_reserved()||rejected.error().submission.storage.byte_size()!=16)return 5;
+      |                                                                                                                                                                                                                                                           ^
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/isolation_contract.cpp:8:229: warning: missing field 'completion_credit' initializer [-Wmissing-field-initializers]
+    8 |  for(bool cancel:{false,true}){auto ticket=tickets.reserve(cancel?9:8);auto bytes=command(cancel,cancel?1:0);if(!ticket||!adapter.try_send({storage(txpool,bytes),std::move(*ticket),{7,1},{7,0x01020304,codec::PacketType::command}}))return 7;}
+      |                                                                                                                                                                                                                                     ^
+4 warnings generated.
+[99/290] Building CXX object tests/verification/P12/CMakeFiles/p12_verify_mtu.dir/mtu_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/mtu_contract.cpp:1:
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/fixture.hpp:3:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/../P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/mtu_contract.cpp:5:216: warning: missing field 'completion_credit' initializer [-Wmissing-field-initializers]
+    5 |  set_length(maximum+4);auto ticket=tickets.reserve(1);if(!ticket)return 4;auto rejected=adapter.try_send({storage(pool,Bytes{bytes}.first(maximum+4)),std::move(*ticket),{7,1},{7,0x01020304,codec::PacketType::signal}});if(rejected||rejected.error().error.code!=ErrorCode::short_output||!rejected.error().submission.completion.is_reserved()||admission.used(Resource::completion))return 5;
+      |                                                                                                                                                                                                                        ^
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/mtu_contract.cpp:9:239: warning: missing field 'completion_credit' initializer [-Wmissing-field-initializers]
+    9 |  set_length(maximum);auto accepted_ticket=tickets.reserve(2);if(!accepted_ticket)return 7;auto accepted=adapter.try_send({storage(pool,Bytes{bytes}.first(maximum)),std::move(*accepted_ticket),{7,1},{7,0x01020304,codec::PacketType::signal}});if(!accepted)return 8;for(unsigned n=0;n<6&&adapter.outstanding(*accepted);++n)if(!adapter.progress_next())return 9;
+      |                                                                                                                                                                                                                                               ^
+3 warnings generated.
+[100/290] Building CXX object tests/verification/P12/CMakeFiles/p12_verify_rx_isolation.dir/rx_isolation.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/rx_isolation.cpp:1:
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/fixture.hpp:3:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/../P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+1 warning generated.
+[101/290] Building CXX object tests/verification/P12/CMakeFiles/p12_verify_cycle.dir/cycle_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/cycle_contract.cpp:1:
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/fixture.hpp:3:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/../P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/cycle_contract.cpp:4:235: warning: missing field 'completion_credit' initializer [-Wmissing-field-initializers]
+    4 |  for(unsigned n=0;n<65;++n){auto bytes=verify_p12::signal;bytes[1]=std::byte(n%16);auto ticket=tickets.reserve(n+1);if(!ticket||!adapter.try_send({storage(txpool,bytes),std::move(*ticket),{7,1},{7,0x01020304,codec::PacketType::signal}}))return 3;}
+      |                                                                                                                                                                                                                                           ^
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/cycle_contract.cpp:5:495: warning: missing field 'completion_credit' initializer [-Wmissing-field-initializers]
+    5 |  for(unsigned n=0;n<33;++n){const bool cancel=n%2;std::array<std::byte,20> bytes{};bytes[0]=std::byte(cancel?0x61:0x60);bytes[1]=std::byte(n%16);bytes[3]=std::byte{5};bytes[4]=std::byte{1};bytes[5]=std::byte{2};bytes[6]=std::byte{3};bytes[7]=std::byte{4};bytes[8]=std::byte(cancel?9:1);bytes[9]=std::byte(cancel?8:0);bytes[15]=std::byte{42};auto ticket=tickets.reserve(n+66);if(!ticket||!adapter.try_send({storage(txpool,bytes),std::move(*ticket),{7,1},{7,0x01020304,codec::PacketType::command}}))return 4;}
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ^
+3 warnings generated.
+[102/290] Building CXX object tests/verification/P12/CMakeFiles/p12_verify_allocation.dir/allocation_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/allocation_contract.cpp:1:
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/fixture.hpp:3:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/../P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/allocation_contract.cpp:13:255: warning: missing field 'completion_credit' initializer [-Wmissing-field-initializers]
+   13 |  for(unsigned n=0;n<100;++n){auto bytes=verify_p12::signal;bytes[1]=std::byte(n%16);auto ticket=tickets.reserve(n+1);if(!ticket)return 3;auto token=(*made)->try_send({storage(txpool,bytes),std::move(*ticket),{7,1},{7,0x01020304,codec::PacketType::signal}});if(!token)return 4;(*made)->begin_cycle();for(unsigned j=0;j<6&&(*made)->outstanding(*token);++j)if(!(*made)->progress_next())return 5;auto completed=tickets.consume(0);if(!completed||completed->result.status!=CompletionStatus::succeeded)return 6;std::array<std::byte,64> received{};if(peer.receive(received)!=16)return 7;}
+      |                                                                                                                                                                                                                                                               ^
+2 warnings generated.
+[103/290] Building CXX object tests/verification/P12/CMakeFiles/p12_verify_callback.dir/callback_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/callback_contract.cpp:1:
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/fixture.hpp:3:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/../P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/callback_contract.cpp:6:460: warning: missing field 'completion_credit' initializer [-Wmissing-field-initializers]
+    6 |  static void receive(void*p,const codec::PacketView&,const memory::RxEnvelope&)noexcept{auto& c=*static_cast<Callback*>(p);c.called=true;auto nested=c.adapter->progress_next();c.nested_rejected=!nested&&nested.error().code==ErrorCode::would_deadlock;c.adapter->begin_cycle();auto token=c.ticket.reserve(1);if(!token)return;auto accepted=c.adapter->try_send({storage(c.txpool,verify_p12::signal),std::move(*token),{7,1},{7,0x01020304,codec::PacketType::signal}});c.queued=bool(accepted);}
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ^
+2 warnings generated.
+[104/290] Building CXX object tests/unit/P13/CMakeFiles/p13_hooks.dir/hooks.cpp.o
+[105/290] Building CXX object tests/verification/P12/CMakeFiles/p12_verify_runtime.dir/runtime_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/runtime_contract.cpp:1:
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/fixture.hpp:3:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P12/../P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+1 warning generated.
+[106/290] Building CXX object tests/unit/P13/CMakeFiles/p13_peer_capture.dir/peer_capture.cpp.o
+[107/290] Building CXX object tests/unit/P13/CMakeFiles/p13_retention_occupancy.dir/retention_occupancy.cpp.o
+[108/290] Building CXX object tests/unit/P13/CMakeFiles/p13_payload_modes.dir/payload_modes.cpp.o
+[109/290] Building CXX object tests/verification/P13/CMakeFiles/p13_verify_ring.dir/ring_contract.cpp.o
+[110/290] Building CXX object tests/verification/P13/CMakeFiles/p13_verify_ingress.dir/ingress_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P13/ingress_contract.cpp:1:
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P13/../P12/fixture.hpp:3:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P13/../P12/../P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+1 warning generated.
+[111/290] Building CXX object tests/verification/P13/CMakeFiles/p13_verify_trace.dir/trace_contract.cpp.o
+[112/290] Building CXX object tests/verification/P13/CMakeFiles/p13_verify_retention_index.dir/retention_index_contract.cpp.o
+[113/290] Building CXX object tests/verification/P13/CMakeFiles/p13_verify_late_capture.dir/late_capture_contract.cpp.o
+[114/290] Building CXX object tests/verification/P13/CMakeFiles/p13_verify_runtime_trace.dir/runtime_trace.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P13/runtime_trace.cpp:1:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P13/../P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+1 warning generated.
+[115/290] Building CXX object tests/verification/P13/CMakeFiles/p13_verify_payload.dir/payload_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P13/payload_contract.cpp:3:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P13/../P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+1 warning generated.
+[116/290] Building CXX object tests/verification/P13/CMakeFiles/p13_verify_pressure.dir/pressure_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P13/pressure_contract.cpp:1:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P13/../P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+1 warning generated.
+[117/290] Building CXX object tests/verification/P13/CMakeFiles/p13_verify_receiver_wire.dir/receiver_wire_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P13/receiver_wire_contract.cpp:1:
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P13/../P12/fixture.hpp:3:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P13/../P12/../P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+1 warning generated.
+[118/290] Building CXX object tests/verification/P13/CMakeFiles/p13_verify_receiver_core.dir/receiver_core_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P13/receiver_core_contract.cpp:3:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P13/../P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+1 warning generated.
+[119/290] Building CXX object tests/unit/P14/CMakeFiles/p14_public_usage.dir/public_usage.cpp.o
+[120/290] Building CXX object tests/unit/P14/CMakeFiles/p14_scalars.dir/scalars.cpp.o
+[121/290] Building CXX object tests/verification/P13/CMakeFiles/p13_verify_payload_runtime.dir/payload_runtime_contract.cpp.o
+In file included from /Users/rklinkhammer/workspace/vrt_framework/tests/verification/P13/payload_runtime_contract.cpp:3:
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P13/../P10/runtime_fixture.hpp:10:251: warning: missing field 'large' initializer [-Wmissing-field-initializers]
+   10 | inline vita::ExternalPools external_pools(){return{external_pool(64,64),external_pool(2048,64),external_pool(64,64),external_pool(8192,32),external_pool(8192,8),external_pool(2048,64),external_pool(8192,32),external_pool(8192,8),external_pool(8192,8)};}
+      |                                                                                                                                                                                                                                                           ^
+1 warning generated.
+[122/290] Building CXX object tests/unit/P14/CMakeFiles/p14_structures.dir/structures.cpp.o
+[123/290] Building CXX object tests/unit/P14/CMakeFiles/p14_structured_wire.dir/structured_wire.cpp.o
+[124/290] Building CXX object tests/unit/P14/CMakeFiles/p14_cif1_fixed.dir/cif1_fixed.cpp.o
+[125/290] Building CXX object tests/unit/P14/CMakeFiles/p14_cif2_identifiers.dir/cif2_identifiers.cpp.o
+[126/290] Building CXX object tests/unit/P14/CMakeFiles/p14_cif2_uuid.dir/cif2_uuid.cpp.o
+[127/290] Building CXX object tests/unit/P14/CMakeFiles/p14_cif3.dir/cif3.cpp.o
+[128/290] Building CXX object tests/verification/P14/CMakeFiles/p14_verify_allocation.dir/allocation_contract.cpp.o
+[129/290] Building CXX object tests/verification/P14/CMakeFiles/p14_verify_structured_wire.dir/structured_wire_contract.cpp.o
+[130/290] Building CXX object tests/verification/P14/CMakeFiles/p14_verify_scalars.dir/scalar_contract.cpp.o
+[131/290] Building CXX object tests/verification/P14/CMakeFiles/p14_verify_native.dir/native_contract.cpp.o
+[132/290] Building CXX object tests/verification/P14/CMakeFiles/p14_verify_structured_limits.dir/structured_limits_contract.cpp.o
+[133/290] Building CXX object tests/verification/P14/CMakeFiles/p14_verify_native_allocation.dir/native_allocation_contract.cpp.o
+[134/290] Building CXX object tests/verification/P14/CMakeFiles/p14_verify_structured_mutations.dir/structured_fuzz_contract.cpp.o
+[135/290] Building CXX object tests/verification/P14/CMakeFiles/p14_verify_cif1_fixed.dir/cif1_fixed_contract.cpp.o
+[136/290] Building CXX object tests/verification/P14/CMakeFiles/p14_verify_cif1_boundary.dir/cif1_boundary_contract.cpp.o
+[137/290] Building CXX object tests/verification/P14/CMakeFiles/p14_verify_cif2_native.dir/cif2_native_contract.cpp.o
+[138/290] Building CXX object tests/verification/P14/CMakeFiles/p14_verify_cif2_wire.dir/cif2_wire_contract.cpp.o
+[139/290] Building CXX object tests/verification/P14/CMakeFiles/p14_verify_cif2_boundaries.dir/cif2_boundaries_contract.cpp.o
+[140/290] Building CXX object tests/verification/P14/CMakeFiles/p14_verify_cif3_scalars.dir/cif3_scalar_contract.cpp.o
+[141/290] Building CXX object tests/verification/P14/CMakeFiles/p14_verify_cif3_details.dir/cif3_details_contract.cpp.o
+[142/290] Building CXX object tests/verification/P14/CMakeFiles/p14_verify_cif3_duration.dir/cif3_duration_contract.cpp.o
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P14/cif3_duration_contract.cpp:8:354: warning: comparison of integers of different signs: 'size_type' (aka 'unsigned long') and 'int' [-Wsign-compare]
+    8 | int main(){for(unsigned tsi=0;tsi<4;++tsi)for(unsigned tsf=0;tsf<4;++tsf){auto raw=packet(tsi,tsf);auto p=decode_packet(raw);if(!tsi&&!tsf){assert(!p);continue;}assert(p&&p->fields.size()==2);const auto t=(tsi?1:0)+(tsf?2:0);for(unsigned i=0;i<2;++i){assert(p->fields[i].id==(FieldId{3,static_cast<std::uint8_t>(17-i)}));assert(p->fields[i].bytes.size()==t*4);auto value=p->fields[i].duration();assert(value&&value->tsi==tsi&&value->tsf==tsf&&value->seconds==(tsi?0xabcdef00u+i:0)&&value->fractional==(tsf?0xfedcba9876543210ull+i:0));}
+      |                                                                                                                                                                                                                                                                                                                                         ~~~~~~~~~~~~~~~~~~~~~~~~~^ ~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/assert.h:72:25: note: expanded from macro 'assert'
+   72 |     (__builtin_expect(!(e), 0) ? __assert_rtn(__func__, __ASSERT_FILE_NAME, __LINE__, #e) : (void)0)
+      |                         ^
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P14/cif3_duration_contract.cpp:9:358: warning: comparison of integers of different signs: 'std::size_t' (aka 'unsigned long') and 'int' [-Wsign-compare]
+    9 |  NativeContextPacket<64> builder;assert(builder.bind_timestamp_format(tsi,tsf));for(unsigned i=0;i<2;++i)assert(p->fields[i].materialize_into(builder));auto snapshot=builder.freeze();auto m=measure(snapshot);auto idx=index_layout<4>(snapshot);assert(m&&idx&&idx->size()==2&&(*idx)[0].offset==8&&(*idx)[0].bytes==4*t&&(*idx)[1].offset==8+4*t&&(*idx)[1].bytes==4*t);Envelope env;env.type=PacketType::context;env.stream_id=1;env.timestamp={static_cast<Tsi>(tsi),static_cast<Tsf>(tsf),99,17};std::array<std::byte,64> output{};auto encoded=encode_packet(env,snapshot,output);assert(encoded&&*encoded==raw.size()&&std::equal(raw.begin(),raw.end(),output.begin()));
+      |                                                                                                                                                                                                                                                                                                                                                       ~~~~~~~~~~~~~~~^ ~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/assert.h:72:25: note: expanded from macro 'assert'
+   72 |     (__builtin_expect(!(e), 0) ? __assert_rtn(__func__, __ASSERT_FILE_NAME, __LINE__, #e) : (void)0)
+      |                         ^
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P14/cif3_duration_contract.cpp:9:334: warning: comparison of integers of different signs: 'std::size_t' (aka 'unsigned long') and 'int' [-Wsign-compare]
+    9 |  NativeContextPacket<64> builder;assert(builder.bind_timestamp_format(tsi,tsf));for(unsigned i=0;i<2;++i)assert(p->fields[i].materialize_into(builder));auto snapshot=builder.freeze();auto m=measure(snapshot);auto idx=index_layout<4>(snapshot);assert(m&&idx&&idx->size()==2&&(*idx)[0].offset==8&&(*idx)[0].bytes==4*t&&(*idx)[1].offset==8+4*t&&(*idx)[1].bytes==4*t);Envelope env;env.type=PacketType::context;env.stream_id=1;env.timestamp={static_cast<Tsi>(tsi),static_cast<Tsf>(tsf),99,17};std::array<std::byte,64> output{};auto encoded=encode_packet(env,snapshot,output);assert(encoded&&*encoded==raw.size()&&std::equal(raw.begin(),raw.end(),output.begin()));
+      |                                                                                                                                                                                                                                                                                                                              ~~~~~~~~~~~~~~~~^ ~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/assert.h:72:25: note: expanded from macro 'assert'
+   72 |     (__builtin_expect(!(e), 0) ? __assert_rtn(__func__, __ASSERT_FILE_NAME, __LINE__, #e) : (void)0)
+      |                         ^
+/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P14/cif3_duration_contract.cpp:9:311: warning: comparison of integers of different signs: 'std::size_t' (aka 'unsigned long') and 'int' [-Wsign-compare]
+    9 |  NativeContextPacket<64> builder;assert(builder.bind_timestamp_format(tsi,tsf));for(unsigned i=0;i<2;++i)assert(p->fields[i].materialize_into(builder));auto snapshot=builder.freeze();auto m=measure(snapshot);auto idx=index_layout<4>(snapshot);assert(m&&idx&&idx->size()==2&&(*idx)[0].offset==8&&(*idx)[0].bytes==4*t&&(*idx)[1].offset==8+4*t&&(*idx)[1].bytes==4*t);Envelope env;env.type=PacketType::context;env.stream_id=1;env.timestamp={static_cast<Tsi>(tsi),static_cast<Tsf>(tsf),99,17};std::array<std::byte,64> output{};auto encoded=encode_packet(env,snapshot,output);assert(encoded&&*encoded==raw.size()&&std::equal(raw.begin(),raw.end(),output.begin()));
+      |                                                                                                                                                                                                                                                                                                        ~~~~~~~~~~~~~~~^ ~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/assert.h:72:25: note: expanded from macro 'assert'
+   72 |     (__builtin_expect(!(e), 0) ? __assert_rtn(__func__, __ASSERT_FILE_NAME, __LINE__, #e) : (void)0)
+      |                         ^
+4 warnings generated.
+[143/290] Building CXX object tests/verification/P14/CMakeFiles/p14_verify_cif3_allocation.dir/cif3_allocation_contract.cpp.o
+[144/290] Linking CXX executable bench/vita_benchmark
+[145/290] Linking CXX executable bench/vita_receiver_benchmark
+[146/290] Linking CXX executable bench/vita_replay_sender
+[147/290] Linking CXX executable fuzz/vita_fuzz_replay
+[148/290] Linking CXX executable tests/unit/P01/p01_semantics
+[149/290] Linking CXX executable tests/verification/P01/p01_verify_semantics
+[150/290] Linking CXX executable tests/verification/P01/p01_verify_allocations
+[151/290] Linking CXX executable tests/unit/P02/p02_codec
+[152/290] Linking CXX executable tests/unit/P02/p02_prologue
+[153/290] Linking CXX executable tests/unit/P02/p02_ack_timing
+[154/290] Linking CXX executable tests/verification/P02/p02_verify_wire
+[155/290] Linking CXX executable tests/verification/P02/p02_verify_packet
+[156/290] Linking CXX executable tests/verification/P02/p02_verify_samples
+[157/290] Linking CXX executable tests/verification/P02/p02_verify_prologue
+[158/290] Linking CXX executable tests/unit/P05/p05_loopback
+[159/290] Linking CXX executable tests/unit/P05/p05_isolation
+[160/290] Linking CXX executable tests/unit/P05/p05_budget
+[161/290] Linking CXX executable tests/verification/P05/p05_verify_chain
+[162/290] Linking CXX executable tests/verification/P05/p05_verify_routes
+[163/290] Linking CXX executable tests/verification/P05/p05_verify_faults
+[164/290] Linking CXX executable tests/verification/P05/p05_verify_budget
+[165/290] Linking CXX executable tests/integration/P05/p05_m1_chain
+[166/290] Linking CXX executable tests/unit/P06/p06_engine
+[167/290] Linking CXX executable tests/unit/P06/p06_outcomes
+[168/290] Linking CXX executable tests/verification/P06/p06_verify_cam
+[169/290] Linking CXX executable tests/verification/P06/p06_verify_async
+[170/290] Linking CXX executable tests/verification/P06/p06_verify_factors
+[171/290] Linking CXX executable tests/verification/P06/p06_verify_scenarios
+[172/290] Linking CXX executable tests/verification/P06/p06_verify_controller
+[173/290] Linking CXX executable tests/verification/P06/p06_verify_timing
+[174/290] Linking CXX executable tests/verification/P06/p06_verify_admission
+[175/290] Linking CXX executable tests/verification/P06/p06_verify_outcomes
+[176/290] Linking CXX executable tests/verification/P06/p06_verify_allocation
+[177/290] Linking CXX executable tests/verification/P06/p06_verify_query
+[178/290] Linking CXX executable tests/integration/P06/p06_loopback_transaction
+[179/290] Linking CXX executable tests/unit/P07/p07_transactions
+[180/290] Linking CXX executable tests/unit/P07/p07_timing
+[181/290] Linking CXX executable tests/unit/P07/p07_controller
+[182/290] Linking CXX executable tests/verification/P07/p07_verify_retention
+[183/290] Linking CXX executable tests/verification/P07/p07_verify_keys
+[184/290] Linking CXX executable tests/verification/P07/p07_verify_manager
+[185/290] Linking CXX executable tests/verification/P07/p07_verify_controller
+[186/290] Linking CXX executable tests/verification/P07/p07_verify_guard_race
+[187/290] Linking CXX executable tests/verification/P07/p07_verify_timed_cancel
+[188/290] Linking CXX executable tests/verification/P07/p07_verify_admission
+[189/290] Linking CXX executable tests/integration/P07/p07_loopback
+[190/290] Linking CXX executable tests/unit/P09/p09_context
+[191/290] Linking CXX executable tests/unit/P09/p09_receiver
+[192/290] Linking CXX executable tests/verification/P09/p09_verify_history
+[193/290] Linking CXX executable tests/verification/P09/p09_verify_revisions
+[194/290] Linking CXX executable tests/verification/P09/p09_verify_receiver
+[195/290] Linking CXX executable tests/verification/P09/p09_verify_publisher
+[196/290] Linking CXX executable tests/verification/P09/p09_verify_effects
+[197/290] Linking CXX executable tests/verification/P09/p09_verify_allocation
+[198/290] Linking CXX executable tests/verification/P09/p09_verify_context_wire
+[199/290] Linking CXX executable tests/verification/P09/p09_verify_budget
+[200/290] Linking CXX executable tests/integration/P09/p09_effects
+[201/290] Linking CXX executable tests/unit/P10/p10_source
+[202/290] Linking CXX executable tests/unit/P10/p10_lab
+[203/290] Linking CXX executable tests/unit/P10/p10_runtime
+[204/290] Linking CXX executable tests/unit/P10/p10_budget
+[205/290] Linking CXX executable tests/verification/P10/p10_verify_credit
+[206/290] Linking CXX executable tests/verification/P10/p10_verify_source
+[207/290] Linking CXX executable tests/verification/P10/p10_verify_packetization
+[208/290] Linking CXX executable tests/verification/P10/p10_verify_pacing
+[209/290] Linking CXX executable tests/verification/P10/p10_verify_mapping
+[210/290] Linking CXX executable tests/verification/P10/p10_verify_ownership
+[211/290] Linking CXX executable tests/verification/P10/p10_verify_allocation
+[212/290] Linking CXX executable tests/verification/P10/p10_verify_clock_scenarios
+[213/290] Linking CXX executable tests/verification/P10/p10_verify_rate
+[214/290] Linking CXX executable tests/verification/P10/p10_verify_provider
+[215/290] Linking CXX executable tests/verification/P10/p10_verify_callback
+[216/290] Linking CXX executable tests/verification/P10/p10_verify_reference
+[217/290] Linking CXX executable tests/verification/P10/p10_verify_wait
+[218/290] Linking CXX executable tests/unit/P11/p11_runtime
+[219/290] Linking CXX executable tests/unit/P11/p11_transactions
+[220/290] Linking CXX executable tests/verification/P11/p11_verify_engine
+[221/290] Linking CXX executable tests/verification/P11/p11_verify_manager
+[222/290] Linking CXX executable tests/verification/P11/p11_verify_recovery
+[223/290] Building CXX object examples/CMakeFiles/vita_controllee_example.dir/controllee.cpp.o
+[224/290] Linking CXX executable tests/verification/P11/p11_verify_scenarios
+[225/290] Linking CXX executable tests/verification/P11/p11_verify_banks
+[226/290] Building CXX object examples/CMakeFiles/vita_controller_example.dir/controller.cpp.o
+[227/290] Linking CXX executable tests/verification/P11/p11_verify_continuity
+[228/290] Linking CXX executable tests/verification/P11/p11_verify_leases
+[229/290] Linking CXX executable tests/verification/P11/p11_verify_shutdown
+[230/290] Linking CXX executable tests/verification/P11/p11_verify_allocation
+[231/290] Linking CXX executable tests/verification/P11/p11_verify_late
+[232/290] Linking CXX executable tests/verification/P11/p11_verify_timed
+[233/290] Linking CXX executable tests/unit/P12/p12_binding
+[234/290] Linking CXX executable tests/unit/P12/p12_socket
+[235/290] Linking CXX executable tests/unit/P12/p12_adapter
+[236/290] Linking CXX executable tests/unit/P12/p12_runtime_binding
+[237/290] Linking CXX executable tests/verification/P12/p12_verify_factory
+[238/290] Linking CXX executable tests/verification/P12/p12_verify_framing
+[239/290] Linking CXX executable tests/verification/P12/p12_verify_socket
+[240/290] Linking CXX executable tests/verification/P12/p12_verify_isolation
+[241/290] Linking CXX executable tests/verification/P12/p12_verify_receive
+[242/290] Linking CXX executable tests/verification/P12/p12_verify_mtu
+[243/290] Linking CXX executable tests/verification/P12/p12_verify_cycle
+[244/290] Linking CXX executable tests/verification/P12/p12_verify_rx_isolation
+[245/290] Building CXX object examples/CMakeFiles/vita_combined_example.dir/combined.cpp.o
+[246/290] Linking CXX executable tests/verification/P12/p12_verify_runtime
+[247/290] Linking CXX executable tests/verification/P12/p12_verify_callback
+[248/290] Linking CXX executable tests/verification/P12/p12_verify_allocation
+[249/290] Linking CXX executable tests/unit/P13/p13_hooks
+[250/290] Linking CXX executable tests/unit/P13/p13_retention_occupancy
+[251/290] Linking CXX executable tests/unit/P13/p13_payload_modes
+[252/290] Linking CXX executable tests/unit/P13/p13_peer_capture
+[253/290] Linking CXX executable tests/verification/P13/p13_verify_trace
+[254/290] Linking CXX executable tests/verification/P13/p13_verify_runtime_trace
+[255/290] Linking CXX executable tests/verification/P13/p13_verify_ring
+[256/290] Linking CXX executable tests/verification/P13/p13_verify_ingress
+[257/290] Linking CXX executable tests/verification/P13/p13_verify_retention_index
+[258/290] Linking CXX executable tests/verification/P13/p13_verify_pressure
+[259/290] Linking CXX executable tests/verification/P13/p13_verify_late_capture
+[260/290] Linking CXX executable tests/verification/P13/p13_verify_payload
+[261/290] Linking CXX executable tests/verification/P13/p13_verify_payload_runtime
+[262/290] Linking CXX executable tests/verification/P13/p13_verify_receiver_wire
+[263/290] Linking CXX executable tests/unit/P14/p14_scalars
+[264/290] Linking CXX executable tests/verification/P13/p13_verify_receiver_core
+[265/290] Linking CXX executable tests/unit/P14/p14_public_usage
+[266/290] Linking CXX executable tests/unit/P14/p14_structures
+[267/290] Linking CXX executable tests/unit/P14/p14_cif1_fixed
+[268/290] Linking CXX executable tests/unit/P14/p14_structured_wire
+[269/290] Linking CXX executable tests/unit/P14/p14_cif2_identifiers
+[270/290] Linking CXX executable tests/unit/P14/p14_cif2_uuid
+[271/290] Linking CXX executable tests/unit/P14/p14_cif3
+[272/290] Linking CXX executable tests/verification/P14/p14_verify_scalars
+[273/290] Linking CXX executable tests/verification/P14/p14_verify_allocation
+[274/290] Linking CXX executable tests/verification/P14/p14_verify_structured_wire
+[275/290] Linking CXX executable tests/verification/P14/p14_verify_native
+[276/290] Linking CXX executable tests/verification/P14/p14_verify_structured_limits
+[277/290] Linking CXX executable tests/verification/P14/p14_verify_native_allocation
+[278/290] Linking CXX executable tests/verification/P14/p14_verify_structured_mutations
+[279/290] Linking CXX executable tests/verification/P14/p14_verify_cif1_boundary
+[280/290] Linking CXX executable tests/verification/P14/p14_verify_cif1_fixed
+[281/290] Linking CXX executable tests/verification/P14/p14_verify_cif2_wire
+[282/290] Linking CXX executable tests/verification/P14/p14_verify_cif2_native
+[283/290] Linking CXX executable tests/verification/P14/p14_verify_cif2_boundaries
+[284/290] Linking CXX executable tests/verification/P14/p14_verify_cif3_scalars
+[285/290] Linking CXX executable tests/verification/P14/p14_verify_cif3_duration
+[286/290] Linking CXX executable tests/verification/P14/p14_verify_cif3_details
+[287/290] Linking CXX executable examples/vita_controller_example
+[288/290] Linking CXX executable tests/verification/P14/p14_verify_cif3_allocation
+[289/290] Linking CXX executable examples/vita_controllee_example
+[290/290] Linking CXX executable examples/vita_combined_example

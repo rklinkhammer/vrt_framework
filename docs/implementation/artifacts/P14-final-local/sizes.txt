@@ -1,0 +1,1 @@
+ArrayView=120 ArrayBudget=96 ArrayPath=36 ArrayElement=72 Descriptor=72 SegmentedSamples8=304 SectorRecord=160 NativeSectorView=16

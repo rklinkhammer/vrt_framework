@@ -50,6 +50,7 @@ struct Route {
   Result<void> (*validate_extension)(
       void *, const codec::EnvelopeView &) noexcept = nullptr;
   std::size_t minimum_payload_bytes = 0, maximum_payload_bytes = 65535 * 4;
+  void (*before_decode)(void*,const codec::Envelope&) noexcept=nullptr;
 };
 template <std::size_t N = 64> class RouteRegistry {
   std::array<std::optional<Route>, N> routes_{};
@@ -116,6 +117,7 @@ public:
       if (route && route->context == context) {
         route->context = nullptr;
         route->request_context = nullptr;
+        route->before_decode = nullptr;
         route->receive = [](void *, const codec::PacketView &,
                             const memory::RxEnvelope &) noexcept {};
       }

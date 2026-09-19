@@ -1,6 +1,6 @@
 # VITA 49.2 implementation plan with implementer and verifier agents
 
-Prepared 2026-09-18. Status: P00–P11 execution through M3 completed after acceptance of cancellation decision D-P07-1; see [package status and verification evidence](implementation/status.md). The starting-point descriptions below record the pre-implementation baseline.
+Prepared 2026-09-18. Current execution status: M0–M3 complete; M4 functional software gates passed and P13 receiver characterization remains non-blocking. Execution throughM6 is authorized. P14 available-input continuation passes198/198 Release and195/195 ASan/UBSan checks with69 headers: nonrecursive fields, attributes, samples/extensions and explicit structural-only I9 are integrated. P14/M5 remains partial because I9 native/peer semantic integration and full qualification lack required agreement/evidence. P15/M6 remains blocked on selected hardware/device/SDK inputs. D-P07-1 and D-P14-1/2/3/general raw-code policy remain accepted. See [package status and evidence](implementation/status.md); starting-point descriptions below record the pre-implementation baseline.
 
 Authority: [framework architecture](vita49_framework_architecture.md), [protocol design](vita49_protocol_design.md), and [accepted profile](iq_generator_profile_proposal.md). Preserve architecture Decisions 1–10 and the September 18 clock, completion, recovery, budget, and ODR clarifications. This plan allocates implementation and verification work; it does not reopen those decisions or convert proposed performance into demonstrated capability.
 
@@ -82,10 +82,13 @@ flowchart TD
   P09 --> P10[P10 Generator and public examples]
   P10 --> P11[P11 Recovery and shutdown integration]
   P11 --> P12[P12 POSIX UDP]
-  P12 --> P13[P13 Qualification and benchmarks]
+  P12 --> P13[P13 Receiver performance model]
   P02 --> P14[P14 General codecs and conversions]
-  P13 --> P15[P15 Optional hardware adapters]
+  P12 --> P15[P15 Optional hardware adapters]
+  P13 -. sizing evidence .-> P15
 ```
+
+The dashed P13 link supplies performance-sizing evidence; it is not a hard software prerequisite.
 
 Useful parallel work: P01 with P03 after P00; P08 after its clock/value interfaces freeze while P06/P07 progress; P14 after stable traversal while M3/M4 progress. Do not parallelize P06/P07 edits to the same transaction headers or P09/P11 edits to lifecycle contracts. P13 may prepare measurement tooling early, but cannot qualify an unfinished runtime. P14 is required for M5 even though the diagram does not put it on the initial IQ baseline's critical path.
 
@@ -137,14 +140,14 @@ P08 clock foundations are pulled forward for P07 scheduled-cancellation verifica
 
 P08 clock capabilities can be injected for deterministic tests without GPS hardware. P11 tests peer readiness through an explicit application test double, not an invented wire reset message. Normal start/resume must not bypass unknown-state recovery.
 
-### M4: external transport and measured baseline qualification
+### M4: external transport and receiver performance characterization
 
 | Package / agents | Deps / production ownership | Implementer deliverable | Verifier acceptance evidence |
 |---|---|---|---|
 | P12 / I-P12, V-P12 | P11; compiled `adapters/posix_udp` | IPv4/IPv6 sockets, asynchronous ownership contract, gathered TX, contiguous RX, MTU/no-fragment policy, fair control/data service, bounded error handling | Real socket integration and independent packet decode; one packet/datagram; transport completion is not delivery; whole-send rejection/failure cases; flood does not consume completion/control reserves; smaller MTU cannot truncate; shutdown and deferred callbacks |
-| P13 / I-P13, V-P13 | P12; `bench/`, budget reporting, qualification docs | Actual sizeof/alignment/stack budget report; allocation instrumentation; named virtual-register backend latency harness; metrics/traces, sustained load and overload tooling; peer capture procedure | Reconcile all allocations with 64MiB partition including headroom transfers; four-stream30min run; p99 validation<=1ms and receive-to-recorded<=2ms with specified backend and timestamps; 120% overload remains bounded; host/adapter/clock/packet parameters retained; independent peer evidence when available |
+| P13 / I-P13, V-P13 | P12; `bench/`, budget reporting, performance-model docs | Receiver-only harness with a separate production sender; stage counters/traces; packet/byte/sample-rate, CPU, memory and latency models; reproducible load sweeps and uncertainty | Independently reconcile offered traffic, receive/delivery/consumption and observed drops; validate byte/ownership/Context paths and budget/allocation contracts; repeat representative loads and validate model predictions; report limits and unknown loss attribution. Historical 30-minute/no-drop and 1 ms/2 ms Control points are characterization references, not hard software gates |
 
-M4 has two statuses: software integration passed, and deployment qualification passed. Missing authorized OUI, clock binding, peer, or hardware blocks the applicable external qualification, not deterministic implementation work. Use optional-field-omitting generic codec vectors in isolated tests or explicitly supplied lab configuration; never invent a production OUI. Loopback/localhost traffic alone cannot pass independent-peer interoperability. 100MS/s is a separate reported stress qualification, not a substitute for the normal benchmark.
+M4 tracks software integration, receiver characterization/model coverage, and deployment qualification separately. Production IQ generation is on another machine; local generator skips do not block software integration or prove receiver loss. P13 remains ongoing characterization rather than a prerequisite zero-drop benchmark on the development host. Hardware is selected to satisfy application requirements using the resulting receiver model. See [accepted direction and receiver experiment plan](implementation/P13-receiver-performance-model.md). Missing authorized OUI, clock binding, peer, or hardware blocks the applicable external qualification, not deterministic implementation work. Use optional-field-omitting generic codec vectors in isolated tests or explicitly supplied lab configuration; never invent a production OUI. Loopback/localhost traffic alone cannot pass independent-peer interoperability. 100MS/s is a separate reported stress qualification, not a substitute for the normal benchmark.
 
 ### M5 and M6: complete generic coverage and optional devices
 

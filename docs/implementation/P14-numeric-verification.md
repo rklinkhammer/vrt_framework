@@ -1,0 +1,9 @@
+# P14 exact fixed/VRT numerical verification
+
+Independent isolated and live gates PASS. Combined CIF7/numeric integration passed183/183 optimized checks and180/180 ASan/UBSan checks, including the complete259,784-case oracle against the live header. [Independent report](../../drafts/P14-sample-numeric/verification/report.md) and its source manifest identify the frozen candidate promoted without production edits into `codec/numeric_samples.hpp`. [Producer report](../../drafts/P14-sample-numeric/report.md) defines exact values, required policies, algorithms and limits.
+
+A separate Python Fraction oracle enumerated representable sets and selected neighboring values, rather than invoking production decode or copying its exponent-search algorithm. Optimized and ASan/UBSan drivers passed259,784 cases:5,592 decodes and254,192 encodes across98 small format specifications plus64-bit/extreme-exponent anchors. Independent boundary tests additionally exercised6,400 allocation-free conversion cycles with positive ordinary/aligned C++ allocation probes.
+
+Covered scope: signed/unsigned normalized and non-normalized fixed point, VRT exponent widths1–6, exact64-bit magnitude/sign representation, four explicit rounding directions, exact-only or rounding-allowed precision, error or saturation overflow, and canonical lowest-exponent VRT selection. No implicit floating intermediate, class calibration, tag transformation or polar trigonometry is performed.
+
+This module does not itself interpret the Data Payload Format descriptor or validate every signal-class eligibility rule. IEEE numerical conversion is a separate batch; the reference-input readiness is documented [here](P14-ieee-reference-readiness.md). Full M5 remains incomplete. The copied independent driver/oracle/boundary tests are in `tests/verification/P14/` and ran against the live header in the complete integration gate.

@@ -44,7 +44,7 @@ constexpr bool is_command(PacketType t) noexcept{return static_cast<unsigned>(t)
 constexpr bool is_extension(PacketType t) noexcept{return t==PacketType::extension_without_sid||t==PacketType::extension_data||t==PacketType::extension_context||t==PacketType::extension_command;}
 constexpr Result<void> validate_cam(const Envelope& e) noexcept {
     const auto cam=e.command->cam;
-    const auto reserved=(1u<<21)|(1u<<15)|(e.ack?0x300u:0xf00u)|(e.type==PacketType::extension_command?0u:0xffu);
+    const auto reserved=(1u<<21)|(1u<<15)|(e.ack?0x300u:0xf00u)|(e.type==PacketType::extension_command?1u:0xffu);
     if(cam&reserved)return std::unexpected(Error{ErrorCode::invalid_argument});
     if(((cam>>23)&3)==3)return std::unexpected(Error{ErrorCode::invalid_argument});
     auto timing=(cam>>12)&7;

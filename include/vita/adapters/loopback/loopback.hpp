@@ -1,4 +1,5 @@
 #pragma once
+#include <vita/runtime/transport/types.hpp>
 #include <vita/runtime/stream/routing.hpp>
 #include <vita/runtime/stream/counters.hpp>
 #include <vita/runtime/execution/admission.hpp>
@@ -8,24 +9,11 @@
 #include <limits>
 #include <cstring>
 namespace vita::adapters::loopback {
-struct Fault {
-    bool synchronous_reject=false,lose=false,duplicate=false,fail_completion=false,hold_quiescence=false;
-};
-struct TxSubmission {
-    memory::TxStorage storage;
-    runtime::CompletionToken completion;
-    runtime::PeerSession source;
-    runtime::CounterKey counter;
-    Fault fault{};
-    runtime::AdmissionBundle completion_credit;
-};
-struct TxToken { std::size_t slot=0;std::uint64_t generation=0;friend bool operator==(TxToken,TxToken)=default; };
-struct RejectedSubmission { Error error;TxSubmission submission; };
-struct Capabilities {
-    std::size_t max_packet_bytes=65535*4,max_tx_segments=3,max_rx_fragments=16;
-    bool cpu_required=true,copies_to_receive_pool=true,completion_is_delivery=false;
-    std::size_t reserved_control_slots=1,reserved_cancellation_slots=1,per_stream_data_limit=256;
-};
+using runtime::transport::Fault;
+using runtime::transport::TxSubmission;
+using runtime::transport::TxToken;
+using runtime::transport::RejectedSubmission;
+using runtime::transport::Capabilities;
 // Caller-driven deterministic transport. Methods require one serialized execution domain.
 // Callbacks may submit more work, but recursively progressing the same token is rejected.
 template<std::size_t N=32,std::size_t Routes=64,std::size_t Counters=64> class Loopback {
@@ -49,9 +37,10 @@ template<std::size_t N=32,std::size_t Routes=64,std::size_t Counters=64> class L
         slot.receive.reset();slot.submission.reset();slot.credits.reset();slot.processing=false;slot.quarantined=false;
         if(slot.generation==std::numeric_limits<std::uint64_t>::max())slot.retired=true;else ++slot.generation;
     }
-    Result<codec::PacketView> parse(runtime::PeerSession source,Bytes bytes) const noexcept {
+    Result<codec::PacketView> parse(runtime::PeerSession source,Bytes bytes,bool ingress=false) const noexcept {
         auto header=codec::decode_envelope(bytes);if(!header)return std::unexpected(header.error());
         auto route=routes_.lookup(source,header->envelope);if(!route)return std::unexpected(route.error());
+        if(ingress&&(*route)->before_decode)(*route)->before_decode((*route)->context,header->envelope);
         if(header->payload.size()<(*route)->minimum_payload_bytes||header->payload.size()>(*route)->maximum_payload_bytes)return std::unexpected(Error{ErrorCode::unsupported_capability});
         if(codec::is_extension(header->envelope.type)){auto valid=(*route)->validate_extension((*route)->context,*header);if(!valid)return std::unexpected(valid.error());}
         codec::DecodeOptions options{};
@@ -130,7 +119,7 @@ public:
         if(!submission.fault.fail_completion&&!submission.fault.lose) {
             auto bytes=slot.receive.bytes();
             if(!bytes){slot.processing=false;return std::unexpected(bytes.error());}
-            auto parsed=parse(submission.source,*bytes);
+            auto parsed=parse(submission.source,*bytes,true);
             if(!parsed){completion.status=runtime::CompletionStatus::failed;completion.error=parsed.error();}
             else {
                 auto route=routes_.lookup(submission.source,parsed->envelope.envelope);

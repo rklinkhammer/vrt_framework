@@ -1,0 +1,8 @@
+[1/8] Building CXX object tests/verification/P01/CMakeFiles/p01_verify_semantics.dir/semantic_contract.cpp.o
+[2/8] Building CXX object tests/unit/P01/CMakeFiles/p01_semantics.dir/semantics.cpp.o
+[3/8] Linking CXX executable tests/verification/P01/p01_verify_semantics
+[4/8] Linking CXX executable tests/unit/P01/p01_semantics
+[5/8] Building CXX object tests/verification/P14/CMakeFiles/p14_verify_cif1_boundary.dir/cif1_boundary_contract.cpp.o
+[6/8] Linking CXX executable tests/verification/P14/p14_verify_cif1_boundary
+[7/8] Building CXX object tests/verification/P14/CMakeFiles/p14_verify_cif1_fixed.dir/cif1_fixed_contract.cpp.o
+[8/8] Linking CXX executable tests/verification/P14/p14_verify_cif1_fixed

@@ -1,0 +1,3 @@
+6686b70e79498c218b3946652266b7e6ea71275aaec9093efbfe37a2dc1c4b82  include/vita/codec/extensions.hpp
+3289e63b481e774b444132e57a5bb9a7ee9bfe442180ac53cc625d587772a646  include/vita/codec/wire.hpp
+fc25bc4ea51caaaaa8e5623664b5d60d6ce519d760e399af6fc26272b63a06ca  tests/verification/P14/extensions_contract.cpp

@@ -1,0 +1,13 @@
+# P13 receiver replay implementation
+
+Status: implemented, functional gate passed, ten repeated local trials complete. The user authorized local replay; production IQ generation remains external.
+
+`bench/receiver_main.cpp` and `receiver_core.hpp` compose the production UDP adapter, route registry, checked codec and ContextReceiver with a synchronous known-payload consumer. Three UDP lanes and source endpoints are explicit; dynamic local ports are published only after successful setup. Receive storage uses fixed setup-owned pools. A bounded SPSC ring transfers timestamp records to a separate CSV writer. Receiver and writer use explicit 1 MiB pthread stacks; thread results are read after joins. Startup timeout, capture overflow and IO failure are explicit failures. Pool/drop/metadata counters and instrumented critical C/C++ allocations are reported separately from performance observations.
+
+`bench/replay_main.cpp` sends precomputed 256-pair IQ16 payloads with dynamic packet counts/sample timestamps and initial/periodic Context. Its isolated lab OUI is 0xabcdef, not a production assignment. Protocol time identifies sample ordinals and is not used as the receiver latency clock. Sender pacing skips, retryable sends and accepted traffic have separate counters. This workload does not generate IQ values inside the timed replay loop.
+
+`bench/run_receiver_replay.py` launches separate local processes, waits for receiver readiness, records exact commands and endpoints, bounds startup/runtime waits, and cleans up only its own children. Each invocation requires a fresh output directory. Both native executables are built under `udp-release` with benchmark tooling enabled. `bench/analyze_receiver.py` performs bounded, disk-backed trace validation and paired percentile calculation; its contract and tests are documented in [analyzer report](P13-receiver-analysis.md).
+
+Implementation was split between an implementer agent and the coordinator, who completed worker stack/CPU accounting and local orchestration after the implementer agent was interrupted. A separate verifier maintained independent literal-wire, metadata-pressure and raw-analysis tests and reviewed the final results. No production library API or packet-size change was needed for this composition.
+
+Validation: full optimized CTest 146/146; sanitizer and independent raw audit in [verification report](P13-receiver-verification.md). Ten local trials and reproducible artifact links are in [receiver validation](P13-receiver-validation.md). The 265-entry measured source/binary manifest remained unchanged. No independent-host capacity, 1,024-pair support, full-facade transaction/DSP performance or final lease-release latency is claimed.

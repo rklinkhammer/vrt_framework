@@ -1,0 +1,4 @@
+8de2137c2855acd1553bf317eac57b40fcc25438aa9430f46458dbb781860f72  drafts/P14-array-cif/include/vita/codec/array_cif.hpp
+71eede1eafbca3342da4d2640df506e500eb04979b0905c70a81f2ff544b70b6  drafts/P14-array-cif/include/vita/codec/layout.hpp
+ac775e4d9dfdafac151fd28c5f50bc41cfda6911c3595db2bb6b60a14f36e67a  drafts/P14-array-cif/tests/array_cif.cpp
+b4a1dd34ceeea576afb1cfc658e2c35f43e6bc2c0695faf443e2a7d2986c005c  drafts/P14-array-cif/layout-resolver.patch

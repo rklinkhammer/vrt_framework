@@ -1,0 +1,3 @@
+fe2135fcc877698d9e7dcfe99a418ec8ba761a08d85506cf4fe43fc3e513c730  drafts/P14-sample-descriptors/include/vita/codec/sample_descriptors.hpp
+92290bd5e884343d9db2d47fb982d59df3806bebd791cf4a22aae7e69a3cd62d  drafts/P14-sample-descriptors/include/vita/codec/segmented_samples.hpp
+124f86552995347eb0b51364205039ed06bc9c63580aa4ec069db523efcedfd5  drafts/P14-sample-descriptors/tests/descriptors.cpp

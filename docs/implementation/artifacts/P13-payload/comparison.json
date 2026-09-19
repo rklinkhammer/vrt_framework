@@ -1,0 +1,82 @@
+{
+  "duration_seconds": 60,
+  "trials_per_mode": 1,
+  "order": [
+    "generated",
+    "precomputed-copy",
+    "prefilled-pool"
+  ],
+  "source_files": 270,
+  "source_manifest_sha256": "b400b6a6ce06a2eb14f69a8755d8ca15f54710d40c41d497e923b4cc3435b00a",
+  "results": [
+    {
+      "mode": "generated",
+      "commands": 6064,
+      "skipped_packets_per_stream": [
+        68,
+        68,
+        68,
+        68
+      ],
+      "peer_missing_samples_per_stream": [
+        17472,
+        17472,
+        17472,
+        17472
+      ],
+      "p99_validation_ns": 18917,
+      "p99_recorded_ns": 1293542,
+      "source_calls_total": 1015328,
+      "payload_write_bytes_total": 1039695872,
+      "payload_copy_calls_total": 0,
+      "measurement_valid": true,
+      "acceptance_passed": false
+    },
+    {
+      "mode": "precomputed-copy",
+      "commands": 6064,
+      "skipped_packets_per_stream": [
+        35,
+        35,
+        35,
+        35
+      ],
+      "peer_missing_samples_per_stream": [
+        8960,
+        8960,
+        8960,
+        8960
+      ],
+      "p99_validation_ns": 20708,
+      "p99_recorded_ns": 1378625,
+      "source_calls_total": 1015472,
+      "payload_write_bytes_total": 1039843328,
+      "payload_copy_calls_total": 1015472,
+      "measurement_valid": true,
+      "acceptance_passed": false
+    },
+    {
+      "mode": "prefilled-pool",
+      "commands": 6064,
+      "skipped_packets_per_stream": [
+        33,
+        33,
+        33,
+        33
+      ],
+      "peer_missing_samples_per_stream": [
+        8448,
+        8448,
+        8448,
+        8448
+      ],
+      "p99_validation_ns": 19292,
+      "p99_recorded_ns": 1288042,
+      "source_calls_total": 1015488,
+      "payload_write_bytes_total": 0,
+      "payload_copy_calls_total": 0,
+      "measurement_valid": true,
+      "acceptance_passed": false
+    }
+  ]
+}

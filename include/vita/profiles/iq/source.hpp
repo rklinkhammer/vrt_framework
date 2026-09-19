@@ -113,6 +113,16 @@ public:
         written_[index / 64] |= std::uint64_t{1} << (index % 64);
         return {};
     }
+    // A provider declares that the entire wire extent is initialized, either by
+    // a bulk write or by reuse of previously initialized bytes. Validate semantic
+    // wire values before marking coverage; failure leaves coverage unchanged.
+    Result<void> complete_from_wire() noexcept {
+        auto valid = validate_samples(format_, wire_);
+        if (!valid) return valid;
+        for (std::size_t i = 0; i < count_; ++i)
+            written_[i / 64] |= std::uint64_t{1} << (i % 64);
+        return {};
+    }
     Result<void> validate_complete() const noexcept {
         for (std::size_t i = 0; i < count_; ++i) {
             if (!(written_[i / 64] & (std::uint64_t{1} << (i % 64))))

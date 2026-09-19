@@ -1,0 +1,3 @@
+Independent direct optimized gate; both commands completed with exit0, assertions active:
+clang++ -std=c++23 -O3 -UNDEBUG -fno-exceptions -fno-rtti -Iinclude tests/verification/P14/cif1_fixed_contract.cpp -o /tmp/p14-cif1-fixed-release && /tmp/p14-cif1-fixed-release
+clang++ -std=c++23 -O3 -UNDEBUG -fno-exceptions -fno-rtti -Iinclude tests/verification/P14/cif1_boundary_contract.cpp -o /tmp/p14-cif1-boundary-release && /tmp/p14-cif1-boundary-release

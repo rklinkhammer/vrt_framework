@@ -1,0 +1,26 @@
+{
+  "scope": "Independent receiver raw-CSV audit outputs; no timing rerun",
+  "source_manifest": "artifacts/P13/receiver-validation/manifest.json",
+  "source_manifest_sha256": "7f960620d596d59cb46bd64680eccbe4e444b17ffb4b9afe0ca74a5806e7c32a",
+  "paired_quantiles_compared": 120,
+  "throughput_values_compared": 10,
+  "files": {
+    "host.json": "d41607a915bb4361f74e9c708f20e0e724cd4b2ac8ea3b306b6fd36285bd3d6a",
+    "manifest-recheck.json": "10e7ac62632f038a406b8b50c30d4da05c075824472760091ab4e3328eb622fb",
+    "manifest.json": "7f960620d596d59cb46bd64680eccbe4e444b17ffb4b9afe0ca74a5806e7c32a",
+    "p13-receiver-verifier-manifest.txt": "3d579a0caf3859c1b97a2c89f2c3ff32c5ca7c3c62545ca3e8e8357311dd2661",
+    "rate-1000000-trial-1-independent.json": "a06be2d81cca0a0490c0390552e93b11dffead8b83d9fe2f873e16db5d27fa45",
+    "rate-1000000-trial-2-independent.json": "d9053c767b4539231c732c58b5af2f5b0ef62f84351f2f45c0c023ef7dbdbe61",
+    "rate-2000000-trial-1-independent.json": "8de4c2c7da92ead1447ff7303c51c0da8f46a012a4442250a12d2126bec1b4eb",
+    "rate-2000000-trial-2-independent.json": "62764bd97b33c55cb58bee494df599c938d7a965742d08d1d32bb486454382a6",
+    "rate-250000-trial-1-independent.json": "39855fd42f8139be04216fbc05381c07f2b41ed9791ca18cb1fb3ae25366eaa4",
+    "rate-250000-trial-2-independent.json": "6bb7473dd55a1f2b035b8b0b7234dab410bed0a18e38187a8bc35c6882020f25",
+    "rate-4000000-trial-1-independent.json": "b7f9989eea2a9dc7d55d374bc5b19405a99c7a0cb5a9a83d6069f927efa95e51",
+    "rate-4000000-trial-2-independent.json": "cb2fc9e697e3b8e123c3b8bb527cbbd8e1b2200899b1e2fc8d0f030ce572b9c4",
+    "rate-500000-trial-1-independent.json": "0a7b29da34a6f30215e96bd033a4e5b9c8ede9119ac96ab3009002cf6e141082",
+    "rate-500000-trial-2-independent.json": "28366c3c3758928a55542db14aeaafcc7e752d6cb6b374d727d197529c7b99ba",
+    "release-tests.log": "9cbb9c9a676c6f141d356a63f74e194d1d56180c11f46fb24586b8eda701c3fe",
+    "results.json": "42754cf0766e0451ca6ce409388ed830fefc8b12a0a0eed1aadf59944f24e00e",
+    "sweep-execution.json": "ea79d0d7cddd839d1b703a87b8b3097b4c3eb3bf4a038f9e41a894c6d2a5e2e6"
+  }
+}

@@ -1,19 +1,150 @@
 {
   "version": 6,
-  "cmakeMinimumRequired": {"major": 3, "minor": 25, "patch": 0},
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 25,
+    "patch": 0
+  },
   "configurePresets": [
-    {"name": "dev", "generator": "Ninja", "binaryDir": "${sourceDir}/build/dev", "cacheVariables": {"CMAKE_BUILD_TYPE": "Debug", "BUILD_TESTING": "ON", "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"}},
-    {"name": "asan-ubsan", "inherits": "dev", "binaryDir": "${sourceDir}/build/asan-ubsan", "cacheVariables": {"VITA_SANITIZER": "address-undefined"}},
-    {"name": "tsan", "inherits": "dev", "binaryDir": "${sourceDir}/build/tsan", "cacheVariables": {"VITA_SANITIZER": "thread"}}
+    {
+      "name": "dev",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/dev",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "BUILD_TESTING": "ON",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+    {
+      "name": "asan-ubsan",
+      "inherits": "dev",
+      "binaryDir": "${sourceDir}/build/asan-ubsan",
+      "cacheVariables": {
+        "VITA_SANITIZER": "address-undefined"
+      }
+    },
+    {
+      "name": "tsan",
+      "inherits": "dev",
+      "binaryDir": "${sourceDir}/build/tsan",
+      "cacheVariables": {
+        "VITA_SANITIZER": "thread"
+      }
+    },
+    {
+      "name": "udp-dev",
+      "inherits": "dev",
+      "binaryDir": "${sourceDir}/build/udp-dev",
+      "cacheVariables": {
+        "VITA_BUILD_POSIX_UDP": "ON"
+      }
+    },
+    {
+      "name": "udp-asan-ubsan",
+      "inherits": "asan-ubsan",
+      "binaryDir": "${sourceDir}/build/udp-asan-ubsan",
+      "cacheVariables": {
+        "VITA_BUILD_POSIX_UDP": "ON"
+      }
+    },
+    {
+      "name": "udp-tsan",
+      "inherits": "tsan",
+      "binaryDir": "${sourceDir}/build/udp-tsan",
+      "cacheVariables": {
+        "VITA_BUILD_POSIX_UDP": "ON"
+      }
+    },
+    {
+      "name": "udp-release",
+      "inherits": "udp-dev",
+      "binaryDir": "${sourceDir}/build/udp-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "VITA_BUILD_BENCHMARKS": "ON"
+      }
+    }
   ],
   "buildPresets": [
-    {"name": "dev", "configurePreset": "dev"},
-    {"name": "asan-ubsan", "configurePreset": "asan-ubsan"},
-    {"name": "tsan", "configurePreset": "tsan"}
+    {
+      "name": "dev",
+      "configurePreset": "dev"
+    },
+    {
+      "name": "asan-ubsan",
+      "configurePreset": "asan-ubsan"
+    },
+    {
+      "name": "tsan",
+      "configurePreset": "tsan"
+    },
+    {
+      "name": "udp-dev",
+      "configurePreset": "udp-dev"
+    },
+    {
+      "name": "udp-asan-ubsan",
+      "configurePreset": "udp-asan-ubsan"
+    },
+    {
+      "name": "udp-tsan",
+      "configurePreset": "udp-tsan"
+    },
+    {
+      "name": "udp-release",
+      "configurePreset": "udp-release"
+    }
   ],
   "testPresets": [
-    {"name": "dev", "configurePreset": "dev", "output": {"outputOnFailure": true}},
-    {"name": "asan-ubsan", "configurePreset": "asan-ubsan", "output": {"outputOnFailure": true}},
-    {"name": "tsan", "configurePreset": "tsan", "output": {"outputOnFailure": true}}
+    {
+      "name": "dev",
+      "configurePreset": "dev",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "asan-ubsan",
+      "configurePreset": "asan-ubsan",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "tsan",
+      "configurePreset": "tsan",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "udp-dev",
+      "configurePreset": "udp-dev",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "udp-asan-ubsan",
+      "configurePreset": "udp-asan-ubsan",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "udp-tsan",
+      "configurePreset": "udp-tsan",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "udp-release",
+      "configurePreset": "udp-release",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
   ]
 }

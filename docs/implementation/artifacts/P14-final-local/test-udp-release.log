@@ -1,0 +1,432 @@
+Test project /Users/rklinkhammer/workspace/vrt_framework/build/udp-release
+        Start   1: p00_core_multitu
+  1/198 Test   #1: p00_core_multitu .....................   Passed    0.00 sec
+        Start   2: p00_cxx23
+  2/198 Test   #2: p00_cxx23 ............................   Passed    0.00 sec
+        Start   3: public_headers_standalone
+  3/198 Test   #3: public_headers_standalone ............   Passed   19.72 sec
+        Start   4: architecture_fixtures
+  4/198 Test   #4: architecture_fixtures ................   Passed    0.03 sec
+        Start   5: p13_allocation_probe
+  5/198 Test   #5: p13_allocation_probe .................   Passed    0.01 sec
+        Start   6: p13_runner_smoke
+  6/198 Test   #6: p13_runner_smoke .....................   Passed    1.53 sec
+        Start   7: malformed_packet_mutation_replay
+  7/198 Test   #7: malformed_packet_mutation_replay .....   Passed    0.34 sec
+        Start   8: malformed_packet_capacity_contract
+  8/198 Test   #8: malformed_packet_capacity_contract ...   Passed    0.05 sec
+        Start   9: p00_verify_features
+  9/198 Test   #9: p00_verify_features ..................   Passed    0.00 sec
+        Start  10: p00_verify_multi_tu
+ 10/198 Test  #10: p00_verify_multi_tu ..................   Passed    0.00 sec
+        Start  11: p00_verify_bad_library
+ 11/198 Test  #11: p00_verify_bad_library ...............   Passed    0.42 sec
+        Start  12: p00_verify_core_only
+ 12/198 Test  #12: p00_verify_core_only .................   Passed    0.64 sec
+        Start  13: p01_semantics
+ 13/198 Test  #13: p01_semantics ........................   Passed    0.06 sec
+        Start  14: p01_verify_core
+ 14/198 Test  #14: p01_verify_core ......................   Passed    0.00 sec
+        Start  15: p01_verify_semantics
+ 15/198 Test  #15: p01_verify_semantics .................   Passed    0.06 sec
+        Start  16: p01_verify_allocations
+ 16/198 Test  #16: p01_verify_allocations ...............   Passed    0.06 sec
+        Start  17: p02_codec
+ 17/198 Test  #17: p02_codec ............................   Passed    0.06 sec
+        Start  18: p02_prologue
+ 18/198 Test  #18: p02_prologue .........................   Passed    0.03 sec
+        Start  19: p02_ack_timing
+ 19/198 Test  #19: p02_ack_timing .......................   Passed    0.02 sec
+        Start  20: p02_verify_wire
+ 20/198 Test  #20: p02_verify_wire ......................   Passed    0.02 sec
+        Start  21: p02_verify_packet
+ 21/198 Test  #21: p02_verify_packet ....................   Passed    0.06 sec
+        Start  22: p02_verify_samples
+ 22/198 Test  #22: p02_verify_samples ...................   Passed    0.05 sec
+        Start  23: p02_verify_prologue
+ 23/198 Test  #23: p02_verify_prologue ..................   Passed    0.02 sec
+        Start  24: p03_memory
+ 24/198 Test  #24: p03_memory ...........................   Passed    0.00 sec
+        Start  25: p03_verify_pool
+ 25/198 Test  #25: p03_verify_pool ......................   Passed    0.00 sec
+        Start  26: p03_verify_envelope
+ 26/198 Test  #26: p03_verify_envelope ..................   Passed    0.00 sec
+        Start  27: p03_verify_edges
+ 27/198 Test  #27: p03_verify_edges .....................   Passed    0.00 sec
+        Start  28: p04_runtime
+ 28/198 Test  #28: p04_runtime ..........................   Passed    0.00 sec
+        Start  29: p04_verify_tickets
+ 29/198 Test  #29: p04_verify_tickets ...................   Passed    0.00 sec
+        Start  30: p04_verify_admission_executor
+ 30/198 Test  #30: p04_verify_admission_executor ........   Passed    0.00 sec
+        Start  31: p04_verify_quiescence_budget
+ 31/198 Test  #31: p04_verify_quiescence_budget .........   Passed    0.00 sec
+        Start  32: p04_verify_coupled_admission
+ 32/198 Test  #32: p04_verify_coupled_admission .........   Passed    0.00 sec
+        Start  33: p05_loopback
+ 33/198 Test  #33: p05_loopback .........................   Passed    0.05 sec
+        Start  34: p05_isolation
+ 34/198 Test  #34: p05_isolation ........................   Passed    0.05 sec
+        Start  35: p05_budget
+ 35/198 Test  #35: p05_budget ...........................   Passed    0.03 sec
+        Start  36: p05_verify_chain
+ 36/198 Test  #36: p05_verify_chain .....................   Passed    0.05 sec
+        Start  37: p05_verify_routes
+ 37/198 Test  #37: p05_verify_routes ....................   Passed    0.02 sec
+        Start  38: p05_verify_faults
+ 38/198 Test  #38: p05_verify_faults ....................   Passed    0.06 sec
+        Start  39: p05_verify_budget
+ 39/198 Test  #39: p05_verify_budget ....................   Passed    0.02 sec
+        Start  40: p05_m1_chain
+ 40/198 Test  #40: p05_m1_chain .........................   Passed    0.06 sec
+        Start  41: p06_engine
+ 41/198 Test  #41: p06_engine ...........................   Passed    0.06 sec
+        Start  42: p06_outcomes
+ 42/198 Test  #42: p06_outcomes .........................   Passed    0.06 sec
+        Start  43: p06_verify_cam
+ 43/198 Test  #43: p06_verify_cam .......................   Passed    0.02 sec
+        Start  44: p06_verify_async
+ 44/198 Test  #44: p06_verify_async .....................   Passed    0.02 sec
+        Start  45: p06_verify_factors
+ 45/198 Test  #45: p06_verify_factors ...................   Passed    0.06 sec
+        Start  46: p06_verify_scenarios
+ 46/198 Test  #46: p06_verify_scenarios .................   Passed    0.05 sec
+        Start  47: p06_verify_controller
+ 47/198 Test  #47: p06_verify_controller ................   Passed    0.05 sec
+        Start  48: p06_verify_timing
+ 48/198 Test  #48: p06_verify_timing ....................   Passed    0.06 sec
+        Start  49: p06_verify_admission
+ 49/198 Test  #49: p06_verify_admission .................   Passed    0.06 sec
+        Start  50: p06_verify_outcomes
+ 50/198 Test  #50: p06_verify_outcomes ..................   Passed    0.06 sec
+        Start  51: p06_verify_allocation
+ 51/198 Test  #51: p06_verify_allocation ................   Passed    0.07 sec
+        Start  52: p06_verify_query
+ 52/198 Test  #52: p06_verify_query .....................   Passed    0.06 sec
+        Start  53: p06_loopback_transaction
+ 53/198 Test  #53: p06_loopback_transaction .............   Passed    0.06 sec
+        Start  54: p07_transactions
+ 54/198 Test  #54: p07_transactions .....................   Passed    0.06 sec
+        Start  55: p07_timing
+ 55/198 Test  #55: p07_timing ...........................   Passed    0.06 sec
+        Start  56: p07_controller
+ 56/198 Test  #56: p07_controller .......................   Passed    0.05 sec
+        Start  57: p07_verify_retention
+ 57/198 Test  #57: p07_verify_retention .................   Passed    0.05 sec
+        Start  58: p07_verify_keys
+ 58/198 Test  #58: p07_verify_keys ......................   Passed    0.06 sec
+        Start  59: p07_verify_manager
+ 59/198 Test  #59: p07_verify_manager ...................   Passed    0.06 sec
+        Start  60: p07_verify_controller
+ 60/198 Test  #60: p07_verify_controller ................   Passed    0.06 sec
+        Start  61: p07_verify_guard_race
+ 61/198 Test  #61: p07_verify_guard_race ................   Passed    0.06 sec
+        Start  62: p07_verify_timed_cancel
+ 62/198 Test  #62: p07_verify_timed_cancel ..............   Passed    0.06 sec
+        Start  63: p07_verify_admission
+ 63/198 Test  #63: p07_verify_admission .................   Passed    0.06 sec
+        Start  64: p07_loopback
+ 64/198 Test  #64: p07_loopback .........................   Passed    0.06 sec
+        Start  65: p08_timing
+ 65/198 Test  #65: p08_timing ...........................   Passed    0.00 sec
+        Start  66: p08_verify_timeline
+ 66/198 Test  #66: p08_verify_timeline ..................   Passed    0.00 sec
+        Start  67: p08_verify_clock
+ 67/198 Test  #67: p08_verify_clock .....................   Passed    0.00 sec
+        Start  68: p08_verify_scheduling
+ 68/198 Test  #68: p08_verify_scheduling ................   Passed    0.00 sec
+        Start  69: p09_context
+ 69/198 Test  #69: p09_context ..........................   Passed    0.05 sec
+        Start  70: p09_receiver
+ 70/198 Test  #70: p09_receiver .........................   Passed    0.03 sec
+        Start  71: p09_verify_history
+ 71/198 Test  #71: p09_verify_history ...................   Passed    0.02 sec
+        Start  72: p09_verify_revisions
+ 72/198 Test  #72: p09_verify_revisions .................   Passed    0.02 sec
+        Start  73: p09_verify_receiver
+ 73/198 Test  #73: p09_verify_receiver ..................   Passed    0.02 sec
+        Start  74: p09_verify_publisher
+ 74/198 Test  #74: p09_verify_publisher .................   Passed    0.02 sec
+        Start  75: p09_verify_effects
+ 75/198 Test  #75: p09_verify_effects ...................   Passed    0.06 sec
+        Start  76: p09_verify_allocation
+ 76/198 Test  #76: p09_verify_allocation ................   Passed    0.06 sec
+        Start  77: p09_verify_context_wire
+ 77/198 Test  #77: p09_verify_context_wire ..............   Passed    0.05 sec
+        Start  78: p09_verify_budget
+ 78/198 Test  #78: p09_verify_budget ....................   Passed    0.02 sec
+        Start  79: p09_effects
+ 79/198 Test  #79: p09_effects ..........................   Passed    0.07 sec
+        Start  80: p10_source
+ 80/198 Test  #80: p10_source ...........................   Passed    0.03 sec
+        Start  81: p10_lab
+ 81/198 Test  #81: p10_lab ..............................   Passed    0.02 sec
+        Start  82: p10_runtime
+ 82/198 Test  #82: p10_runtime ..........................   Passed    0.07 sec
+        Start  83: p10_budget
+ 83/198 Test  #83: p10_budget ...........................   Passed    0.06 sec
+        Start  84: p10_verify_credit
+ 84/198 Test  #84: p10_verify_credit ....................   Passed    0.05 sec
+        Start  85: p10_verify_source
+ 85/198 Test  #85: p10_verify_source ....................   Passed    0.02 sec
+        Start  86: p10_verify_packetization
+ 86/198 Test  #86: p10_verify_packetization .............   Passed    0.03 sec
+        Start  87: p10_verify_pacing
+ 87/198 Test  #87: p10_verify_pacing ....................   Passed    0.06 sec
+        Start  88: p10_verify_mapping
+ 88/198 Test  #88: p10_verify_mapping ...................   Passed    0.06 sec
+        Start  89: p10_verify_ownership
+ 89/198 Test  #89: p10_verify_ownership .................   Passed    0.06 sec
+        Start  90: p10_verify_allocation
+ 90/198 Test  #90: p10_verify_allocation ................   Passed    0.06 sec
+        Start  91: p10_verify_clock_scenarios
+ 91/198 Test  #91: p10_verify_clock_scenarios ...........   Passed    0.06 sec
+        Start  92: p10_verify_rate
+ 92/198 Test  #92: p10_verify_rate ......................   Passed    0.06 sec
+        Start  93: p10_verify_provider
+ 93/198 Test  #93: p10_verify_provider ..................   Passed    0.06 sec
+        Start  94: p10_verify_callback
+ 94/198 Test  #94: p10_verify_callback ..................   Passed    0.06 sec
+        Start  95: p10_verify_reference
+ 95/198 Test  #95: p10_verify_reference .................   Passed    0.06 sec
+        Start  96: p10_verify_wait
+ 96/198 Test  #96: p10_verify_wait ......................   Passed    0.06 sec
+        Start  97: p11_runtime
+ 97/198 Test  #97: p11_runtime ..........................   Passed    0.06 sec
+        Start  98: p11_transactions
+ 98/198 Test  #98: p11_transactions .....................   Passed    0.06 sec
+        Start  99: p11_verify_engine
+ 99/198 Test  #99: p11_verify_engine ....................   Passed    0.06 sec
+        Start 100: p11_verify_manager
+100/198 Test #100: p11_verify_manager ...................   Passed    0.06 sec
+        Start 101: p11_verify_recovery
+101/198 Test #101: p11_verify_recovery ..................   Passed    0.06 sec
+        Start 102: p11_verify_scenarios
+102/198 Test #102: p11_verify_scenarios .................   Passed    0.06 sec
+        Start 103: p11_verify_banks
+103/198 Test #103: p11_verify_banks .....................   Passed    0.06 sec
+        Start 104: p11_verify_continuity
+104/198 Test #104: p11_verify_continuity ................   Passed    0.06 sec
+        Start 105: p11_verify_shutdown
+105/198 Test #105: p11_verify_shutdown ..................   Passed    0.06 sec
+        Start 106: p11_verify_leases
+106/198 Test #106: p11_verify_leases ....................   Passed    0.07 sec
+        Start 107: p11_verify_allocation
+107/198 Test #107: p11_verify_allocation ................   Passed    0.07 sec
+        Start 108: p11_verify_late
+108/198 Test #108: p11_verify_late ......................   Passed    0.06 sec
+        Start 109: p11_verify_timed
+109/198 Test #109: p11_verify_timed .....................   Passed    0.06 sec
+        Start 110: p12_binding
+110/198 Test #110: p12_binding ..........................   Passed    0.06 sec
+        Start 111: p12_socket
+111/198 Test #111: p12_socket ...........................   Passed    0.02 sec
+        Start 112: p12_adapter
+112/198 Test #112: p12_adapter ..........................   Passed    0.06 sec
+        Start 113: p12_runtime_binding
+113/198 Test #113: p12_runtime_binding ..................   Passed    0.06 sec
+        Start 114: p12_verify_factory
+114/198 Test #114: p12_verify_factory ...................   Passed    0.05 sec
+        Start 115: p12_verify_framing
+115/198 Test #115: p12_verify_framing ...................   Passed    0.02 sec
+        Start 116: p12_verify_socket
+116/198 Test #116: p12_verify_socket ....................   Passed    0.05 sec
+        Start 117: p12_verify_receive
+117/198 Test #117: p12_verify_receive ...................   Passed    0.07 sec
+        Start 118: p12_verify_isolation
+118/198 Test #118: p12_verify_isolation .................   Passed    0.05 sec
+        Start 119: p12_verify_mtu
+119/198 Test #119: p12_verify_mtu .......................   Passed    0.05 sec
+        Start 120: p12_verify_rx_isolation
+120/198 Test #120: p12_verify_rx_isolation ..............   Passed    0.06 sec
+        Start 121: p12_verify_syscall
+121/198 Test #121: p12_verify_syscall ...................   Passed    0.00 sec
+        Start 122: p12_verify_cycle
+122/198 Test #122: p12_verify_cycle .....................   Passed    0.05 sec
+        Start 123: p12_verify_runtime
+123/198 Test #123: p12_verify_runtime ...................   Passed    0.06 sec
+        Start 124: p12_verify_allocation
+124/198 Test #124: p12_verify_allocation ................   Passed    0.06 sec
+        Start 125: p12_verify_callback
+125/198 Test #125: p12_verify_callback ..................   Passed    0.06 sec
+        Start 126: p13_hooks
+126/198 Test #126: p13_hooks ............................   Passed    0.06 sec
+        Start 127: p13_retention_occupancy
+127/198 Test #127: p13_retention_occupancy ..............   Passed    0.09 sec
+        Start 128: p13_peer_capture
+128/198 Test #128: p13_peer_capture .....................   Passed    0.05 sec
+        Start 129: p13_payload_modes
+129/198 Test #129: p13_payload_modes ....................   Passed    0.03 sec
+        Start 130: p13_receiver_analysis
+130/198 Test #130: p13_receiver_analysis ................   Passed    1.00 sec
+        Start 131: p13_verify_trace
+131/198 Test #131: p13_verify_trace .....................   Passed    0.06 sec
+        Start 132: p13_verify_runtime_trace
+132/198 Test #132: p13_verify_runtime_trace .............   Passed    0.07 sec
+        Start 133: p13_verify_ingress
+133/198 Test #133: p13_verify_ingress ...................   Passed    0.05 sec
+        Start 134: p13_verify_ring
+134/198 Test #134: p13_verify_ring ......................   Passed    0.02 sec
+        Start 135: p13_verify_allocation_probe
+135/198 Test #135: p13_verify_allocation_probe ..........   Passed    0.01 sec
+        Start 136: p13_verify_oracle
+136/198 Test #136: p13_verify_oracle ....................   Passed    0.04 sec
+        Start 137: p13_verify_retention_index
+137/198 Test #137: p13_verify_retention_index ...........   Passed    0.08 sec
+        Start 138: p13_verify_pressure
+138/198 Test #138: p13_verify_pressure ..................   Passed    0.06 sec
+        Start 139: p13_verify_late_capture
+139/198 Test #139: p13_verify_late_capture ..............   Passed    0.06 sec
+        Start 140: p13_verify_payload
+140/198 Test #140: p13_verify_payload ...................   Passed    0.02 sec
+        Start 141: p13_verify_payload_runtime
+141/198 Test #141: p13_verify_payload_runtime ...........   Passed    0.06 sec
+        Start 142: p13_verify_receiver_wire
+142/198 Test #142: p13_verify_receiver_wire .............   Passed    0.06 sec
+        Start 143: p13_verify_receiver_core
+143/198 Test #143: p13_verify_receiver_core .............   Passed    0.06 sec
+        Start 144: p13_verify_receiver_analysis
+144/198 Test #144: p13_verify_receiver_analysis .........   Passed    0.79 sec
+        Start 145: p14_scalars
+145/198 Test #145: p14_scalars ..........................   Passed    0.06 sec
+        Start 146: p14_public_usage
+146/198 Test #146: p14_public_usage .....................   Passed    0.06 sec
+        Start 147: p14_structures
+147/198 Test #147: p14_structures .......................   Passed    0.06 sec
+        Start 148: p14_structured_wire
+148/198 Test #148: p14_structured_wire ..................   Passed    0.06 sec
+        Start 149: p14_cif1_fixed
+149/198 Test #149: p14_cif1_fixed .......................   Passed    0.06 sec
+        Start 150: p14_cif2_identifiers
+150/198 Test #150: p14_cif2_identifiers .................   Passed    0.06 sec
+        Start 151: p14_cif2_uuid
+151/198 Test #151: p14_cif2_uuid ........................   Passed    0.05 sec
+        Start 152: p14_cif3
+152/198 Test #152: p14_cif3 .............................   Passed    0.06 sec
+        Start 153: p14_raw_samples
+153/198 Test #153: p14_raw_samples ......................   Passed    0.00 sec
+        Start 154: p14_extensions
+154/198 Test #154: p14_extensions .......................   Passed    0.03 sec
+        Start 155: p14_cif7
+155/198 Test #155: p14_cif7 .............................   Passed    0.06 sec
+        Start 156: p14_numeric_samples
+156/198 Test #156: p14_numeric_samples ..................   Passed    0.01 sec
+        Start 157: p14_cif7_bounds
+157/198 Test #157: p14_cif7_bounds ......................   Passed    0.06 sec
+        Start 158: p14_ieee_samples
+158/198 Test #158: p14_ieee_samples .....................   Passed    0.00 sec
+        Start 159: p14_sample_descriptors
+159/198 Test #159: p14_sample_descriptors ...............   Passed    0.02 sec
+        Start 160: p14_cif1_structures
+160/198 Test #160: p14_cif1_structures ..................   Passed    0.05 sec
+        Start 161: p14_cif1_structure_bounds
+161/198 Test #161: p14_cif1_structure_bounds ............   Passed    0.05 sec
+        Start 162: p14_array_cif
+162/198 Test #162: p14_array_cif ........................   Passed    0.05 sec
+        Start 163: p14_verify_scalars
+163/198 Test #163: p14_verify_scalars ...................   Passed    0.05 sec
+        Start 164: p14_verify_allocation
+164/198 Test #164: p14_verify_allocation ................   Passed    0.05 sec
+        Start 165: p14_verify_structured_wire
+165/198 Test #165: p14_verify_structured_wire ...........   Passed    0.08 sec
+        Start 166: p14_verify_native
+166/198 Test #166: p14_verify_native ....................   Passed    0.06 sec
+        Start 167: p14_verify_structured_limits
+167/198 Test #167: p14_verify_structured_limits .........   Passed    0.05 sec
+        Start 168: p14_verify_native_allocation
+168/198 Test #168: p14_verify_native_allocation .........   Passed    0.06 sec
+        Start 169: p14_verify_structured_mutations
+169/198 Test #169: p14_verify_structured_mutations ......   Passed    0.07 sec
+        Start 170: p14_verify_cif1_fixed
+170/198 Test #170: p14_verify_cif1_fixed ................   Passed    0.07 sec
+        Start 171: p14_verify_cif1_boundary
+171/198 Test #171: p14_verify_cif1_boundary .............   Passed    0.06 sec
+        Start 172: p14_verify_cif2_wire
+172/198 Test #172: p14_verify_cif2_wire .................   Passed    0.06 sec
+        Start 173: p14_verify_cif2_native
+173/198 Test #173: p14_verify_cif2_native ...............   Passed    0.06 sec
+        Start 174: p14_verify_cif2_boundaries
+174/198 Test #174: p14_verify_cif2_boundaries ...........   Passed    0.05 sec
+        Start 175: p14_verify_cif3_scalars
+175/198 Test #175: p14_verify_cif3_scalars ..............   Passed    0.06 sec
+        Start 176: p14_verify_cif3_duration
+176/198 Test #176: p14_verify_cif3_duration .............   Passed    0.06 sec
+        Start 177: p14_verify_cif3_details
+177/198 Test #177: p14_verify_cif3_details ..............   Passed    0.05 sec
+        Start 178: p14_verify_cif3_allocation
+178/198 Test #178: p14_verify_cif3_allocation ...........   Passed    0.06 sec
+        Start 179: p14_verify_raw_samples
+179/198 Test #179: p14_verify_raw_samples ...............   Passed    0.00 sec
+        Start 180: p14_verify_extensions
+180/198 Test #180: p14_verify_extensions ................   Passed    0.03 sec
+        Start 181: p14_verify_numeric_boundaries
+181/198 Test #181: p14_verify_numeric_boundaries ........   Passed    0.01 sec
+        Start 182: p14_verify_numeric_oracle
+182/198 Test #182: p14_verify_numeric_oracle ............   Passed    0.78 sec
+        Start 183: p14_verify_cif7_wire
+183/198 Test #183: p14_verify_cif7_wire .................   Passed    0.13 sec
+        Start 184: p14_verify_cif7_bounds
+184/198 Test #184: p14_verify_cif7_bounds ...............   Passed    0.05 sec
+        Start 185: p14_verify_cif7_native
+185/198 Test #185: p14_verify_cif7_native ...............   Passed    0.06 sec
+        Start 186: p14_verify_cif7_profile
+186/198 Test #186: p14_verify_cif7_profile ..............   Passed    0.05 sec
+        Start 187: p14_verify_ieee
+187/198 Test #187: p14_verify_ieee ......................   Passed    0.00 sec
+        Start 188: p14_verify_sample_descriptors
+188/198 Test #188: p14_verify_sample_descriptors ........   Passed    0.02 sec
+        Start 189: p14_verify_segmented_samples
+189/198 Test #189: p14_verify_segmented_samples .........   Passed    0.02 sec
+        Start 190: p14_verify_cif1_structures_wire
+190/198 Test #190: p14_verify_cif1_structures_wire ......   Passed    0.05 sec
+        Start 191: p14_verify_cif1_structures_native
+191/198 Test #191: p14_verify_cif1_structures_native ....   Passed    0.06 sec
+        Start 192: p14_verify_cif1_structures_time
+192/198 Test #192: p14_verify_cif1_structures_time ......   Passed    0.05 sec
+        Start 193: p14_verify_cif1_structures_bounds
+193/198 Test #193: p14_verify_cif1_structures_bounds ....   Passed    0.06 sec
+        Start 194: p14_verify_cif1_structures_profile
+194/198 Test #194: p14_verify_cif1_structures_profile ...   Passed    0.06 sec
+        Start 195: p14_verify_array_cif
+195/198 Test #195: p14_verify_array_cif .................   Passed    0.06 sec
+        Start 196: p10_example_controller
+196/198 Test #196: p10_example_controller ...............   Passed    0.06 sec
+        Start 197: p10_example_controllee
+197/198 Test #197: p10_example_controllee ...............   Passed    0.06 sec
+        Start 198: p10_example_combined
+198/198 Test #198: p10_example_combined .................   Passed    0.06 sec
+
+100% tests passed out of 198
+
+Label Time Summary:
+P14              =   0.69 sec*proc (13 tests)
+allocation       =   0.03 sec*proc (1 test)
+benchmark        =   1.53 sec*proc (1 test)
+budget           =   0.94 sec*proc (20 tests)
+cancellation     =   0.23 sec*proc (4 tests)
+clock            =   0.22 sec*proc (4 tests)
+codec            =   1.70 sec*proc (30 tests)
+compile          =  21.02 sec*proc (12 tests)
+concurrency      =   0.09 sec*proc (6 tests)
+context          =   0.16 sec*proc (3 tests)
+controller       =   0.05 sec*proc (1 test)
+documentation    =   0.03 sec*proc (1 test)
+examples         =   0.18 sec*proc (3 tests)
+functional       =   1.53 sec*proc (1 test)
+fuzz             =   0.39 sec*proc (2 tests)
+identity         =   0.11 sec*proc (2 tests)
+integration      =   1.29 sec*proc (23 tests)
+lifecycle        =   0.12 sec*proc (2 tests)
+oracle           =   0.13 sec*proc (3 tests)
+ownership        =   0.49 sec*proc (19 tests)
+profile          =   0.12 sec*proc (3 tests)
+retention        =   0.05 sec*proc (1 test)
+revision         =   0.05 sec*proc (1 test)
+source           =   0.03 sec*proc (1 test)
+timing           =   0.13 sec*proc (6 tests)
+trace            =   0.06 sec*proc (1 test)
+transaction      =   1.59 sec*proc (28 tests)
+transport        =   0.21 sec*proc (4 tests)
+udp              =   0.15 sec*proc (3 tests)
+
+Total Test time (real) =  33.92 sec

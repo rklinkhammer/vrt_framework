@@ -1,0 +1,72 @@
+[
+  {
+    "rate": 250000,
+    "trial": 1,
+    "exit": 0,
+    "output": "{\"output\": \"/Users/rklinkhammer/workspace/vrt_framework/artifacts/P13/receiver-validation/rate-250000-trial-1\", \"sender_exit\": 0, \"receiver_exit\": 0}\n",
+    "error": ""
+  },
+  {
+    "rate": 250000,
+    "trial": 2,
+    "exit": 0,
+    "output": "{\"output\": \"/Users/rklinkhammer/workspace/vrt_framework/artifacts/P13/receiver-validation/rate-250000-trial-2\", \"sender_exit\": 0, \"receiver_exit\": 0}\n",
+    "error": ""
+  },
+  {
+    "rate": 500000,
+    "trial": 1,
+    "exit": 0,
+    "output": "{\"output\": \"/Users/rklinkhammer/workspace/vrt_framework/artifacts/P13/receiver-validation/rate-500000-trial-1\", \"sender_exit\": 0, \"receiver_exit\": 0}\n",
+    "error": ""
+  },
+  {
+    "rate": 500000,
+    "trial": 2,
+    "exit": 0,
+    "output": "{\"output\": \"/Users/rklinkhammer/workspace/vrt_framework/artifacts/P13/receiver-validation/rate-500000-trial-2\", \"sender_exit\": 0, \"receiver_exit\": 0}\n",
+    "error": ""
+  },
+  {
+    "rate": 1000000,
+    "trial": 1,
+    "exit": 0,
+    "output": "{\"output\": \"/Users/rklinkhammer/workspace/vrt_framework/artifacts/P13/receiver-validation/rate-1000000-trial-1\", \"sender_exit\": 0, \"receiver_exit\": 0}\n",
+    "error": ""
+  },
+  {
+    "rate": 1000000,
+    "trial": 2,
+    "exit": 0,
+    "output": "{\"output\": \"/Users/rklinkhammer/workspace/vrt_framework/artifacts/P13/receiver-validation/rate-1000000-trial-2\", \"sender_exit\": 0, \"receiver_exit\": 0}\n",
+    "error": ""
+  },
+  {
+    "rate": 2000000,
+    "trial": 1,
+    "exit": 0,
+    "output": "{\"output\": \"/Users/rklinkhammer/workspace/vrt_framework/artifacts/P13/receiver-validation/rate-2000000-trial-1\", \"sender_exit\": 0, \"receiver_exit\": 0}\n",
+    "error": ""
+  },
+  {
+    "rate": 2000000,
+    "trial": 2,
+    "exit": 0,
+    "output": "{\"output\": \"/Users/rklinkhammer/workspace/vrt_framework/artifacts/P13/receiver-validation/rate-2000000-trial-2\", \"sender_exit\": 0, \"receiver_exit\": 0}\n",
+    "error": ""
+  },
+  {
+    "rate": 4000000,
+    "trial": 1,
+    "exit": 0,
+    "output": "{\"output\": \"/Users/rklinkhammer/workspace/vrt_framework/artifacts/P13/receiver-validation/rate-4000000-trial-1\", \"sender_exit\": 0, \"receiver_exit\": 0}\n",
+    "error": ""
+  },
+  {
+    "rate": 4000000,
+    "trial": 2,
+    "exit": 0,
+    "output": "{\"output\": \"/Users/rklinkhammer/workspace/vrt_framework/artifacts/P13/receiver-validation/rate-4000000-trial-2\", \"sender_exit\": 0, \"receiver_exit\": 0}\n",
+    "error": ""
+  }
+]

@@ -49,7 +49,7 @@ int main() {
     auto before=bounded.freeze();
     if(bounded.set<ReferencePoint>(5) || bounded.generation()!=before.generation() || bounded.freeze().fields().size()!=1)return 19;
     QueryPacket unknown;
-    if(!unknown.select(FieldId{1,30}))return 20;
+    if(!unknown.select(FieldId{3,0}))return 20;
     auto unsupported=measure(unknown.freeze());
     if(unsupported || unsupported.error().code!=ErrorCode::unsupported_layout)return 21;
     if(query.select(FieldId{9,31}) || query.select(FieldId{0,32}))return 22;

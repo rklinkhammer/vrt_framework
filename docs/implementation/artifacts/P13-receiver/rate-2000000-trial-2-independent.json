@@ -1,0 +1,55 @@
+{
+  "errors": [],
+  "rows": 156816,
+  "phase_status_counts": [
+    [
+      31252,
+      0,
+      0,
+      0
+    ],
+    [
+      124938,
+      0,
+      0,
+      0
+    ],
+    [
+      626,
+      0,
+      0,
+      0
+    ]
+  ],
+  "latency": {
+    "rx_to_validated": {
+      "count": 124938,
+      "p50_ns": 125,
+      "p99_ns": 167,
+      "max_ns": 23500
+    },
+    "validated_to_app": {
+      "count": 124938,
+      "p50_ns": 41,
+      "p99_ns": 42,
+      "max_ns": 20084
+    },
+    "app_to_consumed": {
+      "count": 124938,
+      "p50_ns": 1334,
+      "p99_ns": 1709,
+      "max_ns": 45084
+    },
+    "rx_to_consumed": {
+      "count": 124938,
+      "p50_ns": 1500,
+      "p99_ns": 1917,
+      "max_ns": 45250
+    }
+  },
+  "measurement_ingress_samples_per_second": 7996032.0,
+  "consumption_window_samples_per_second": 7996032.0,
+  "critical_cpp_allocations": 0,
+  "critical_c_allocations": 0,
+  "accounted_bytes": 4218560
+}

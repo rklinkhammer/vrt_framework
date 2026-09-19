@@ -1,0 +1,4 @@
+f80735aaf4aea2c86db4777722ceeb351a664c15093ae377f7cea6522dee536b  include/vita/fields/types.hpp
+9dec442873f27e422251eb5ed8a708bbbc1351defc539493178a16f7d091a253  include/vita/fields/cif1.hpp
+9cf7dbecf3b0527a496685b7bbbbfb95de7648271450b3bace66b0f1b23504a2  include/vita/codec/packet.hpp
+87d741c8a03e8e2daf06fae0431e351f87e9f36044b847d3afe5cfc9c92a0264  include/vita/codec/scalar.hpp

@@ -1,0 +1,4 @@
+1288e659b6131ab10ba0a808f05544d9f4286de3a3e1a28e0a08dcff538faef9  drafts/P14-sample-ieee/include/vita/codec/ieee_samples.hpp
+4d4275a4c719d512fba5681815d6921c5a2c81d0af4d47ba13a9f36e10ad6173  drafts/P14-sample-ieee/tests/ieee_samples.cpp
+78f269403c7647f6a8d56357964764abeef7c53563d2e1a6025c0a693c445805  drafts/P14-sample-ieee/tests/oracle.cpp
+1a841c04dfc1dd1b90c29ed7cff417047d467464d134b56308283492dc2d691e  drafts/P14-sample-ieee/tests/run_oracle.py

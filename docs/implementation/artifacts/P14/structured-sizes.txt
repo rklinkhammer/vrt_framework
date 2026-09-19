@@ -1,0 +1,1 @@
+SemanticValue=16 scalar_snapshot=5312 native_snapshot=13512 StateSnapshot=136 Geolocation=80 Ephemeris=96

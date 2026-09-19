@@ -1,0 +1,37 @@
+Test project /Users/rklinkhammer/workspace/vrt_framework/build/udp-asan-ubsan
+      Start 141: p14_scalars
+ 1/14 Test #141: p14_scalars .......................   Passed    0.11 sec
+      Start 142: p14_public_usage
+ 2/14 Test #142: p14_public_usage ..................   Passed    0.09 sec
+      Start 143: p14_structures
+ 3/14 Test #143: p14_structures ....................   Passed    0.11 sec
+      Start 144: p14_structured_wire
+ 4/14 Test #144: p14_structured_wire ...............   Passed    0.10 sec
+      Start 145: p14_cif1_fixed
+ 5/14 Test #145: p14_cif1_fixed ....................   Passed    0.12 sec
+      Start 146: p14_verify_scalars
+ 6/14 Test #146: p14_verify_scalars ................   Passed    0.11 sec
+      Start 147: p14_verify_allocation
+ 7/14 Test #147: p14_verify_allocation .............   Passed    0.26 sec
+      Start 148: p14_verify_structured_wire
+ 8/14 Test #148: p14_verify_structured_wire ........   Passed    0.11 sec
+      Start 149: p14_verify_native
+ 9/14 Test #149: p14_verify_native .................   Passed    0.10 sec
+      Start 150: p14_verify_structured_limits
+10/14 Test #150: p14_verify_structured_limits ......   Passed    0.11 sec
+      Start 151: p14_verify_native_allocation
+11/14 Test #151: p14_verify_native_allocation ......   Passed    0.21 sec
+      Start 152: p14_verify_structured_mutations
+12/14 Test #152: p14_verify_structured_mutations ...   Passed    0.25 sec
+      Start 153: p14_verify_cif1_fixed
+13/14 Test #153: p14_verify_cif1_fixed .............   Passed    0.75 sec
+      Start 154: p14_verify_cif1_boundary
+14/14 Test #154: p14_verify_cif1_boundary ..........   Passed    0.10 sec
+
+100% tests passed out of 14
+
+Label Time Summary:
+P14      =   0.53 sec*proc (5 tests)
+codec    =   0.53 sec*proc (5 tests)
+
+Total Test time (real) =   2.56 sec

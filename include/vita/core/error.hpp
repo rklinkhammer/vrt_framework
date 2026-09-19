@@ -17,6 +17,7 @@ struct Error {
     bool retryable = false;
     EffectState effect = EffectState::none;
     ErrorStage stage = ErrorStage::none;
+    std::int32_t native_error = 0; // Native API status; offset remains a byte position.
     friend constexpr bool operator==(const Error&, const Error&) = default;
 };
 template<class T> using Result = std::expected<T, Error>;

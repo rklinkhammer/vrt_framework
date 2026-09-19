@@ -1,0 +1,552 @@
+[
+  {
+    "run": "rate-250000-trial-1",
+    "offered_pairs_per_stream": 250000,
+    "packets_per_second": 3906.0,
+    "payload_bytes_per_second": 3999744.0,
+    "complex_samples_per_second": 999936.0,
+    "latency": {
+      "rx_to_validated": {
+        "samples": 15624,
+        "p50_ns": 125,
+        "p90_ns": 167,
+        "p99_ns": 292,
+        "max_ns": 8333
+      },
+      "validated_to_app": {
+        "samples": 15624,
+        "p50_ns": 0,
+        "p90_ns": 42,
+        "p99_ns": 83,
+        "max_ns": 666
+      },
+      "app_to_consumed": {
+        "samples": 15624,
+        "p50_ns": 1333,
+        "p90_ns": 1625,
+        "p99_ns": 1708,
+        "max_ns": 11709
+      },
+      "rx_to_consumed": {
+        "samples": 15624,
+        "p50_ns": 1458,
+        "p90_ns": 1833,
+        "p99_ns": 1917,
+        "max_ns": 11834
+      }
+    },
+    "interior_gap_samples": 0,
+    "sender_skipped_samples": 0,
+    "receiver_busy_core_fraction": 0.9994432105768576,
+    "writer_core_fraction": 0.023995780686506787,
+    "accounted_bytes": 4218560,
+    "valid": true,
+    "adapter": {
+      "rx_delivered": 19636,
+      "rx_malformed": 0,
+      "rx_truncated": 0,
+      "rx_unauthorized": 0,
+      "rx_pool_drop": 0,
+      "rx_lane_drop": 0,
+      "rx_mtu_drop": 0,
+      "socket_errors": 0
+    },
+    "critical_cpp_allocations": 0,
+    "critical_c_allocations": 0
+  },
+  {
+    "run": "rate-250000-trial-2",
+    "offered_pairs_per_stream": 250000,
+    "packets_per_second": 3906.0,
+    "payload_bytes_per_second": 3999744.0,
+    "complex_samples_per_second": 999936.0,
+    "latency": {
+      "rx_to_validated": {
+        "samples": 15624,
+        "p50_ns": 125,
+        "p90_ns": 166,
+        "p99_ns": 250,
+        "max_ns": 9833
+      },
+      "validated_to_app": {
+        "samples": 15624,
+        "p50_ns": 0,
+        "p90_ns": 42,
+        "p99_ns": 83,
+        "max_ns": 7875
+      },
+      "app_to_consumed": {
+        "samples": 15624,
+        "p50_ns": 1333,
+        "p90_ns": 1625,
+        "p99_ns": 1708,
+        "max_ns": 10042
+      },
+      "rx_to_consumed": {
+        "samples": 15624,
+        "p50_ns": 1458,
+        "p90_ns": 1833,
+        "p99_ns": 1917,
+        "max_ns": 11167
+      }
+    },
+    "interior_gap_samples": 0,
+    "sender_skipped_samples": 0,
+    "receiver_busy_core_fraction": 0.9995311047059232,
+    "writer_core_fraction": 0.023489731180026247,
+    "accounted_bytes": 4218560,
+    "valid": true,
+    "adapter": {
+      "rx_delivered": 19636,
+      "rx_malformed": 0,
+      "rx_truncated": 0,
+      "rx_unauthorized": 0,
+      "rx_pool_drop": 0,
+      "rx_lane_drop": 0,
+      "rx_mtu_drop": 0,
+      "socket_errors": 0
+    },
+    "critical_cpp_allocations": 0,
+    "critical_c_allocations": 0
+  },
+  {
+    "run": "rate-500000-trial-1",
+    "offered_pairs_per_stream": 500000,
+    "packets_per_second": 7811.0,
+    "payload_bytes_per_second": 7998464.0,
+    "complex_samples_per_second": 1999616.0,
+    "latency": {
+      "rx_to_validated": {
+        "samples": 31244,
+        "p50_ns": 125,
+        "p90_ns": 167,
+        "p99_ns": 250,
+        "max_ns": 2500
+      },
+      "validated_to_app": {
+        "samples": 31244,
+        "p50_ns": 0,
+        "p90_ns": 42,
+        "p99_ns": 42,
+        "max_ns": 4959
+      },
+      "app_to_consumed": {
+        "samples": 31244,
+        "p50_ns": 1333,
+        "p90_ns": 1625,
+        "p99_ns": 1708,
+        "max_ns": 28917
+      },
+      "rx_to_consumed": {
+        "samples": 31244,
+        "p50_ns": 1458,
+        "p90_ns": 1833,
+        "p99_ns": 1917,
+        "max_ns": 29042
+      }
+    },
+    "interior_gap_samples": 1024,
+    "sender_skipped_samples": 1024,
+    "receiver_busy_core_fraction": 0.9988700463699821,
+    "writer_core_fraction": 0.02542439949070778,
+    "accounted_bytes": 4218560,
+    "valid": true,
+    "adapter": {
+      "rx_delivered": 39240,
+      "rx_malformed": 0,
+      "rx_truncated": 0,
+      "rx_unauthorized": 0,
+      "rx_pool_drop": 0,
+      "rx_lane_drop": 0,
+      "rx_mtu_drop": 0,
+      "socket_errors": 0
+    },
+    "critical_cpp_allocations": 0,
+    "critical_c_allocations": 0
+  },
+  {
+    "run": "rate-500000-trial-2",
+    "offered_pairs_per_stream": 500000,
+    "packets_per_second": 7812.0,
+    "payload_bytes_per_second": 7999488.0,
+    "complex_samples_per_second": 1999872.0,
+    "latency": {
+      "rx_to_validated": {
+        "samples": 31248,
+        "p50_ns": 125,
+        "p90_ns": 167,
+        "p99_ns": 250,
+        "max_ns": 9875
+      },
+      "validated_to_app": {
+        "samples": 31248,
+        "p50_ns": 0,
+        "p90_ns": 42,
+        "p99_ns": 42,
+        "max_ns": 5583
+      },
+      "app_to_consumed": {
+        "samples": 31248,
+        "p50_ns": 1333,
+        "p90_ns": 1625,
+        "p99_ns": 1667,
+        "max_ns": 20750
+      },
+      "rx_to_consumed": {
+        "samples": 31248,
+        "p50_ns": 1458,
+        "p90_ns": 1833,
+        "p99_ns": 1875,
+        "max_ns": 20916
+      }
+    },
+    "interior_gap_samples": 0,
+    "sender_skipped_samples": 0,
+    "receiver_busy_core_fraction": 0.9994125918177417,
+    "writer_core_fraction": 0.02535744269428894,
+    "accounted_bytes": 4218560,
+    "valid": true,
+    "adapter": {
+      "rx_delivered": 39244,
+      "rx_malformed": 0,
+      "rx_truncated": 0,
+      "rx_unauthorized": 0,
+      "rx_pool_drop": 0,
+      "rx_lane_drop": 0,
+      "rx_mtu_drop": 0,
+      "socket_errors": 0
+    },
+    "critical_cpp_allocations": 0,
+    "critical_c_allocations": 0
+  },
+  {
+    "run": "rate-1000000-trial-1",
+    "offered_pairs_per_stream": 1000000,
+    "packets_per_second": 15625.0,
+    "payload_bytes_per_second": 16000000.0,
+    "complex_samples_per_second": 4000000.0,
+    "latency": {
+      "rx_to_validated": {
+        "samples": 62500,
+        "p50_ns": 125,
+        "p90_ns": 166,
+        "p99_ns": 167,
+        "max_ns": 8459
+      },
+      "validated_to_app": {
+        "samples": 62500,
+        "p50_ns": 0,
+        "p90_ns": 42,
+        "p99_ns": 42,
+        "max_ns": 500
+      },
+      "app_to_consumed": {
+        "samples": 62500,
+        "p50_ns": 1333,
+        "p90_ns": 1625,
+        "p99_ns": 1667,
+        "max_ns": 14250
+      },
+      "rx_to_consumed": {
+        "samples": 62500,
+        "p50_ns": 1458,
+        "p90_ns": 1792,
+        "p99_ns": 1875,
+        "max_ns": 14500
+      }
+    },
+    "interior_gap_samples": 0,
+    "sender_skipped_samples": 0,
+    "receiver_busy_core_fraction": 0.9994656180338294,
+    "writer_core_fraction": 0.02771615716553101,
+    "accounted_bytes": 4218560,
+    "valid": true,
+    "adapter": {
+      "rx_delivered": 78464,
+      "rx_malformed": 0,
+      "rx_truncated": 0,
+      "rx_unauthorized": 0,
+      "rx_pool_drop": 0,
+      "rx_lane_drop": 0,
+      "rx_mtu_drop": 0,
+      "socket_errors": 0
+    },
+    "critical_cpp_allocations": 0,
+    "critical_c_allocations": 0
+  },
+  {
+    "run": "rate-1000000-trial-2",
+    "offered_pairs_per_stream": 1000000,
+    "packets_per_second": 15624.0,
+    "payload_bytes_per_second": 15998976.0,
+    "complex_samples_per_second": 3999744.0,
+    "latency": {
+      "rx_to_validated": {
+        "samples": 62496,
+        "p50_ns": 125,
+        "p90_ns": 166,
+        "p99_ns": 208,
+        "max_ns": 14500
+      },
+      "validated_to_app": {
+        "samples": 62496,
+        "p50_ns": 0,
+        "p90_ns": 42,
+        "p99_ns": 42,
+        "max_ns": 12750
+      },
+      "app_to_consumed": {
+        "samples": 62496,
+        "p50_ns": 1333,
+        "p90_ns": 1625,
+        "p99_ns": 1708,
+        "max_ns": 550458
+      },
+      "rx_to_consumed": {
+        "samples": 62496,
+        "p50_ns": 1458,
+        "p90_ns": 1792,
+        "p99_ns": 1875,
+        "max_ns": 550833
+      }
+    },
+    "interior_gap_samples": 1024,
+    "sender_skipped_samples": 1024,
+    "receiver_busy_core_fraction": 0.9986086029991604,
+    "writer_core_fraction": 0.02843048632578212,
+    "accounted_bytes": 4218560,
+    "valid": true,
+    "adapter": {
+      "rx_delivered": 78460,
+      "rx_malformed": 0,
+      "rx_truncated": 0,
+      "rx_unauthorized": 0,
+      "rx_pool_drop": 0,
+      "rx_lane_drop": 0,
+      "rx_mtu_drop": 0,
+      "socket_errors": 0
+    },
+    "critical_cpp_allocations": 0,
+    "critical_c_allocations": 0
+  },
+  {
+    "run": "rate-2000000-trial-1",
+    "offered_pairs_per_stream": 2000000,
+    "packets_per_second": 31239.0,
+    "payload_bytes_per_second": 31988736.0,
+    "complex_samples_per_second": 7997184.0,
+    "latency": {
+      "rx_to_validated": {
+        "samples": 124956,
+        "p50_ns": 125,
+        "p90_ns": 167,
+        "p99_ns": 167,
+        "max_ns": 16125
+      },
+      "validated_to_app": {
+        "samples": 124956,
+        "p50_ns": 41,
+        "p90_ns": 42,
+        "p99_ns": 42,
+        "max_ns": 13667
+      },
+      "app_to_consumed": {
+        "samples": 124956,
+        "p50_ns": 1334,
+        "p90_ns": 1667,
+        "p99_ns": 1667,
+        "max_ns": 146167
+      },
+      "rx_to_consumed": {
+        "samples": 124956,
+        "p50_ns": 1500,
+        "p90_ns": 1834,
+        "p99_ns": 1875,
+        "max_ns": 146542
+      }
+    },
+    "interior_gap_samples": 11264,
+    "sender_skipped_samples": 11264,
+    "receiver_busy_core_fraction": 0.9983146406358623,
+    "writer_core_fraction": 0.03205538364787066,
+    "accounted_bytes": 4218560,
+    "valid": true,
+    "adapter": {
+      "rx_delivered": 156860,
+      "rx_malformed": 0,
+      "rx_truncated": 0,
+      "rx_unauthorized": 0,
+      "rx_pool_drop": 0,
+      "rx_lane_drop": 0,
+      "rx_mtu_drop": 0,
+      "socket_errors": 0
+    },
+    "critical_cpp_allocations": 0,
+    "critical_c_allocations": 0
+  },
+  {
+    "run": "rate-2000000-trial-2",
+    "offered_pairs_per_stream": 2000000,
+    "packets_per_second": 31234.5,
+    "payload_bytes_per_second": 31984128.0,
+    "complex_samples_per_second": 7996032.0,
+    "latency": {
+      "rx_to_validated": {
+        "samples": 124938,
+        "p50_ns": 125,
+        "p90_ns": 167,
+        "p99_ns": 167,
+        "max_ns": 23500
+      },
+      "validated_to_app": {
+        "samples": 124938,
+        "p50_ns": 41,
+        "p90_ns": 42,
+        "p99_ns": 42,
+        "max_ns": 20084
+      },
+      "app_to_consumed": {
+        "samples": 124938,
+        "p50_ns": 1334,
+        "p90_ns": 1667,
+        "p99_ns": 1709,
+        "max_ns": 45084
+      },
+      "rx_to_consumed": {
+        "samples": 124938,
+        "p50_ns": 1500,
+        "p90_ns": 1834,
+        "p99_ns": 1917,
+        "max_ns": 45250
+      }
+    },
+    "interior_gap_samples": 16384,
+    "sender_skipped_samples": 16384,
+    "receiver_busy_core_fraction": 0.998111437000011,
+    "writer_core_fraction": 0.03166513487481318,
+    "accounted_bytes": 4218560,
+    "valid": true,
+    "adapter": {
+      "rx_delivered": 156840,
+      "rx_malformed": 0,
+      "rx_truncated": 0,
+      "rx_unauthorized": 0,
+      "rx_pool_drop": 0,
+      "rx_lane_drop": 0,
+      "rx_mtu_drop": 0,
+      "socket_errors": 0
+    },
+    "critical_cpp_allocations": 0,
+    "critical_c_allocations": 0
+  },
+  {
+    "run": "rate-4000000-trial-1",
+    "offered_pairs_per_stream": 4000000,
+    "packets_per_second": 62491.0,
+    "payload_bytes_per_second": 63990784.0,
+    "complex_samples_per_second": 15997696.0,
+    "latency": {
+      "rx_to_validated": {
+        "samples": 249964,
+        "p50_ns": 125,
+        "p90_ns": 167,
+        "p99_ns": 167,
+        "max_ns": 28792
+      },
+      "validated_to_app": {
+        "samples": 249964,
+        "p50_ns": 41,
+        "p90_ns": 42,
+        "p99_ns": 42,
+        "max_ns": 22667
+      },
+      "app_to_consumed": {
+        "samples": 249964,
+        "p50_ns": 1334,
+        "p90_ns": 1667,
+        "p99_ns": 1708,
+        "max_ns": 49334
+      },
+      "rx_to_consumed": {
+        "samples": 249964,
+        "p50_ns": 1500,
+        "p90_ns": 1834,
+        "p99_ns": 1875,
+        "max_ns": 49500
+      }
+    },
+    "interior_gap_samples": 9216,
+    "sender_skipped_samples": 10240,
+    "receiver_busy_core_fraction": 0.9983525971887629,
+    "writer_core_fraction": 0.04036569147948959,
+    "accounted_bytes": 4218560,
+    "valid": true,
+    "adapter": {
+      "rx_delivered": 313740,
+      "rx_malformed": 0,
+      "rx_truncated": 0,
+      "rx_unauthorized": 0,
+      "rx_pool_drop": 0,
+      "rx_lane_drop": 0,
+      "rx_mtu_drop": 0,
+      "socket_errors": 0
+    },
+    "critical_cpp_allocations": 0,
+    "critical_c_allocations": 0
+  },
+  {
+    "run": "rate-4000000-trial-2",
+    "offered_pairs_per_stream": 4000000,
+    "packets_per_second": 62490.0,
+    "payload_bytes_per_second": 63989760.0,
+    "complex_samples_per_second": 15997440.0,
+    "latency": {
+      "rx_to_validated": {
+        "samples": 249960,
+        "p50_ns": 125,
+        "p90_ns": 167,
+        "p99_ns": 167,
+        "max_ns": 13000
+      },
+      "validated_to_app": {
+        "samples": 249960,
+        "p50_ns": 41,
+        "p90_ns": 42,
+        "p99_ns": 42,
+        "max_ns": 6417
+      },
+      "app_to_consumed": {
+        "samples": 249960,
+        "p50_ns": 1334,
+        "p90_ns": 1667,
+        "p99_ns": 1709,
+        "max_ns": 41584
+      },
+      "rx_to_consumed": {
+        "samples": 249960,
+        "p50_ns": 1500,
+        "p90_ns": 1834,
+        "p99_ns": 1875,
+        "max_ns": 41750
+      }
+    },
+    "interior_gap_samples": 10240,
+    "sender_skipped_samples": 10240,
+    "receiver_busy_core_fraction": 0.998398406982973,
+    "writer_core_fraction": 0.04053196166613115,
+    "accounted_bytes": 4218560,
+    "valid": true,
+    "adapter": {
+      "rx_delivered": 313740,
+      "rx_malformed": 0,
+      "rx_truncated": 0,
+      "rx_unauthorized": 0,
+      "rx_pool_drop": 0,
+      "rx_lane_drop": 0,
+      "rx_mtu_drop": 0,
+      "socket_errors": 0
+    },
+    "critical_cpp_allocations": 0,
+    "critical_c_allocations": 0
+  }
+]

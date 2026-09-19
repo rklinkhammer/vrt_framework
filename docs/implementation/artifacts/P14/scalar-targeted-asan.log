@@ -1,0 +1,17 @@
+Test project /Users/rklinkhammer/workspace/vrt_framework/build/udp-asan-ubsan
+    Start 141: p14_scalars
+1/4 Test #141: p14_scalars ......................   Passed    0.16 sec
+    Start 142: p14_public_usage
+2/4 Test #142: p14_public_usage .................   Passed    0.10 sec
+    Start 143: p14_verify_scalars
+3/4 Test #143: p14_verify_scalars ...............   Passed    0.12 sec
+    Start 144: p14_verify_allocation
+4/4 Test #144: p14_verify_allocation ............   Passed    0.26 sec
+
+100% tests passed out of 4
+
+Label Time Summary:
+P14      =   0.26 sec*proc (2 tests)
+codec    =   0.26 sec*proc (2 tests)
+
+Total Test time (real) =   0.65 sec

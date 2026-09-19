@@ -1,0 +1,4 @@
+#include <vita/codec/numeric_samples.hpp>
+#include <cstdio>
+using namespace vita::codec::numeric;
+int main(){unsigned mode,k,n,f,e,negative,precision,rounding,overflow;int exponent;unsigned long long bits;while(std::scanf("%u %u %u %u %u %llu",&mode,&k,&n,&f,&e,&bits)==6){NumericSpec s{static_cast<Kind>(k),n,f,e};if(mode==0){auto r=decode_exact(s,bits);if(!r)std::puts("X");else std::printf("D %llu %d %u\n",static_cast<unsigned long long>(r->magnitude),int(r->exponent),unsigned(r->negative));}else{if(std::scanf("%d %u %u %u %u",&exponent,&negative,&precision,&rounding,&overflow)!=5)return 2;auto r=encode_numeric(s,{bits,static_cast<std::int16_t>(exponent),bool(negative)},{static_cast<Precision>(precision),static_cast<Rounding>(rounding),static_cast<Overflow>(overflow),VrtEncoding::lowest_exponent});if(!r)std::puts("X");else std::printf("E %llu %u %u\n",static_cast<unsigned long long>(r->bits),unsigned(r->rounded),unsigned(r->saturated));}}}

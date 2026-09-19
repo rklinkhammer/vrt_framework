@@ -61,7 +61,7 @@ struct RetentionAdmission {
 template <std::size_t Entries = 4096,
           std::size_t ByteCapacity = 8 * 1024 * 1024>
 class RetentionStore {
-  static_assert(Entries > 0 && ByteCapacity > 0 &&
+  static_assert(Entries > 0 && Entries <= UINT32_MAX / 2 && ByteCapacity > 0 &&
                 std::is_trivially_copyable_v<AckRecord>);
   struct Record {
     bool used = false, active = false, terminal = false;
@@ -80,6 +80,9 @@ class RetentionStore {
   struct Storage {
     std::array<Entry, Entries> entries;
     std::array<std::byte, ByteCapacity> bytes;
+    // Sorted by byte offset; records and their retained byte spans never move.
+    std::array<std::uint32_t, Entries * 2> occupied{};
+    std::size_t occupied_count = 0, placement_probes = 0;
   };
   std::unique_ptr<Storage> storage_ = std::make_unique<Storage>();
   AdmissionPool &admission_;
@@ -92,9 +95,24 @@ class RetentionStore {
                ? &e
                : nullptr;
   }
+  Record& indexed_record(std::uint32_t id) noexcept {
+    return storage_->entries[id / 2].records[id % 2];
+  }
+  void remove_extent(Record& record) noexcept {
+    if (!record.used) return;
+    for (std::size_t i = 0; i < storage_->occupied_count; ++i) {
+      if (&indexed_record(storage_->occupied[i]) != &record) continue;
+      for (std::size_t next = i + 1; next < storage_->occupied_count; ++next)
+        storage_->occupied[next - 1] = storage_->occupied[next];
+      --storage_->occupied_count;
+      return;
+    }
+  }
   void erase(Entry &e) noexcept {
-    for (auto &r : e.records)
+    for (auto &r : e.records) {
+      remove_extent(r);
       r = Record{};
+    }
     e.references = 0;
     e.expires = {};
     ++e.generation;
@@ -105,6 +123,10 @@ public:
   static constexpr std::uint64_t minimum_retention_ns = 30'000'000'000ull;
   static constexpr std::size_t storage_bytes() noexcept {
     return sizeof(Storage);
+  }
+  // Work counter for reproducible complexity checks, independent of host timing.
+  std::size_t last_placement_probes() const noexcept {
+    return storage_->placement_probes;
   }
   bool association_retained(const TransactionKey& relationship) const noexcept {
     for(const auto& entry:storage_->entries)if(entry.records[0].used&&same_association(entry.key,relationship))return true;
@@ -169,29 +191,18 @@ public:
         }
     if (slot == Entries)
       return std::unexpected(Error{ErrorCode::capacity_exhausted});
-    std::size_t offset = 0;
-    bool found = false;
-    for (std::size_t attempt = 0; attempt <= Entries * 2; ++attempt) {
-      if (offset > ByteCapacity - required)
-        break;
-      bool overlap = false;
-      for (const auto &e : storage_->entries) {
-        for (const auto &r : e.records)
-          if (r.used && offset < r.offset + r.bytes &&
-              r.offset < offset + required) {
-            offset = r.offset + r.bytes;
-            overlap = true;
-            break;
-          }
-        if (overlap)
-          break;
-      }
-      if (!overlap) {
-        found = true;
-        break;
-      }
+    std::size_t offset = 0, insertion = 0;
+    storage_->placement_probes = 0;
+    // In offset order the first fitting gap can be found in one traversal.
+    // Every successful record has a positive canonical size, so at most 2N
+    // occupied extents exist and insertion always has a preallocated index slot.
+    for (; insertion < storage_->occupied_count; ++insertion) {
+      ++storage_->placement_probes;
+      const auto& prior = indexed_record(storage_->occupied[insertion]);
+      if (required <= prior.offset - offset) break;
+      offset = prior.offset + prior.bytes;
     }
-    if (!found)
+    if (offset > ByteCapacity - required)
       return std::unexpected(Error{ErrorCode::capacity_exhausted});
     AdmissionRequest request;
     request.need(Resource::duplicate_entry, cancellation ? 0 : 1)
@@ -211,6 +222,10 @@ public:
     ++e.references;
     r.active = r.terminal = false;
     r.credits = std::move(*credits);
+    for (auto i = storage_->occupied_count; i > insertion; --i)
+      storage_->occupied[i] = storage_->occupied[i - 1];
+    storage_->occupied[insertion] = static_cast<std::uint32_t>(slot * 2 + cancellation);
+    ++storage_->occupied_count;
     for (std::size_t b = 0; b < canonical; ++b)
       storage_->bytes[offset + b] = canonical_command_byte(packet, b);
     return RetentionAdmission{{slot, e.generation, cancellation},
@@ -312,6 +327,7 @@ public:
     auto &r = e->records[token.cancellation];
     if (r.active || r.terminal)
       return std::unexpected(Error{ErrorCode::invalid_state});
+    remove_extent(r);
     r = Record{};
     --e->references;
     if (!token.cancellation)

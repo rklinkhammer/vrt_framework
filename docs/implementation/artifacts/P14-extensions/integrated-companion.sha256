@@ -1,0 +1,4 @@
+95e96ed9a1e07f4f71b1a8fb61436f72284fc6ed9413aa72243d9f7b536ae52e  tests/unit/P14/extensions.cpp
+2212ec16a69ef3e5879be233f6a14aee11dbf483caf8058c3879dbcb8c786614  tests/unit/P14/raw_samples.cpp
+127a2af832f8ff9727a6821143c09a4815929469e30b7ed21a048b178fb54bc3  tests/verification/P14/raw_samples_contract.cpp
+9017770d341547de041a93f11a47a2815cd65ee30bb558cace73429f0ce47597  include/vita/codec/general_samples.hpp

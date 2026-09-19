@@ -1,0 +1,23 @@
+--- include/vita/codec/layout.hpp	2026-09-19 09:39:26
++++ drafts/P14-array-cif/include/vita/codec/layout.hpp	2026-09-19 09:41:33
+@@ -118,15 +118,17 @@
+ 
+ // One ordering/offset/work policy for native semantic and checked wire providers.
+ // Providers validate complete field extents before this core classifies work exhaustion.
+-template<BodyKind Body,bool VisitSelectors=false,class Snapshot,class Provider,class Visitor>
++struct GlobalFieldDescriptor { constexpr const FieldDescriptor* operator()(FieldId id) const noexcept { return descriptor(id); } };
++
++template<BodyKind Body,bool VisitSelectors=false,class Snapshot,class Provider,class Visitor,class DescriptorResolver=GlobalFieldDescriptor>
+ constexpr Result<LayoutMeasure> walk_field_layout(const Snapshot& packet,Provider&& extent_provider,
+-        Visitor&& visitor,std::size_t start_offset=0,TraversalLimits limits={},std::size_t* shared_work=nullptr) noexcept {
++        Visitor&& visitor,std::size_t start_offset=0,TraversalLimits limits={},std::size_t* shared_work=nullptr,DescriptorResolver resolve={}) noexcept {
+     std::size_t words=1;
+     for(unsigned i=1;i<8;++i)if(packet.layout().cif[0]&(1u<<i))++words;
+     auto head=checked_add(start_offset,words*4);if(!head)return std::unexpected(head.error());
+     std::size_t offset=*head,work=shared_work?*shared_work:0;
+     for(const auto& field:packet.fields()) {
+-        const auto* d=descriptor(field.id);
++        const auto* d=resolve(field.id);
+         if(!d)return std::unexpected(Error{ErrorCode::unsupported_layout,offset});
+         const auto attributes=packet.layout().attributes?packet.layout().attributes:attribute_bit(Attribute::current);
+         if(attributes&~d->attributes)return std::unexpected(Error{ErrorCode::unsupported_layout,offset});
