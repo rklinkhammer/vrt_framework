@@ -1,0 +1,70 @@
+#pragma once
+#include <vita/runtime/transaction/engine.hpp>
+#include <vita/runtime/stream/routing.hpp>
+#include <cstring>
+#include <type_traits>
+namespace vita::runtime::transaction {
+struct TransactionKey {
+    std::uint64_t binding_generation=0;PeerSession peer{};
+    std::optional<std::uint32_t> stream_id;codec::Identifier controller{},controllee{};std::uint32_t message_id=0;
+};
+inline bool same_key(const TransactionKey& a,const TransactionKey& b) noexcept {
+    return a.binding_generation==b.binding_generation&&a.peer==b.peer&&a.stream_id==b.stream_id&&a.message_id==b.message_id&&same_identifier(a.controller,b.controller)&&same_identifier(a.controllee,b.controllee);
+}
+inline Result<TransactionKey> transaction_key(const codec::PacketView& packet,std::uint64_t generation,PeerSession peer) noexcept {
+    const auto& e=packet.envelope.envelope;if(!generation||!peer.generation||!codec::is_command(e.type)||!e.command)return std::unexpected(Error{ErrorCode::invalid_argument});
+    return TransactionKey{generation,peer,e.stream_id,e.command->controller,e.command->controllee,e.command->message_id};
+}
+enum class DuplicateKind { fresh,active,replay };
+struct RetentionToken {std::size_t slot=0;std::uint64_t generation=0;friend bool operator==(RetentionToken,RetentionToken)=default;};
+struct RetentionAdmission {RetentionToken token;DuplicateKind kind;};
+// One instance is shared by the runtime's bindings. All methods run in its serialized domain.
+template<std::size_t Entries=4096,std::size_t ByteCapacity=8*1024*1024> class RetentionStore {
+    static_assert(Entries>0&&ByteCapacity>0&&std::is_trivially_copyable_v<AckRecord>);
+    struct Entry {
+        bool used=false,active=false,terminal=false;std::uint64_t generation=1;TransactionKey key{};
+        std::size_t offset=0,bytes=0,canonical=0,response_capacity=0,response_count=0,references=0;
+        timing::MonoTime expires{};std::optional<Handle> engine;AdmissionBundle credits;
+    };
+    struct Storage {std::array<Entry,Entries> entries;std::array<std::byte,ByteCapacity> bytes;};
+    std::unique_ptr<Storage> storage_=std::make_unique<Storage>();AdmissionPool& admission_;
+    Entry* entry(RetentionToken token) noexcept {if(token.slot>=Entries)return nullptr;auto& e=storage_->entries[token.slot];return e.used&&e.generation==token.generation?&e:nullptr;}
+    static std::byte canonical_byte(const codec::PacketView& packet,std::size_t offset) noexcept {
+        auto b=packet.envelope.wire[offset];if(offset==1)b&=std::byte{0xf0};
+        if(!packet.envelope.envelope.cancel&&offset==packet.envelope.payload_offset)b&=std::byte{0x7f};return b;
+    }
+    void erase(Entry& e) noexcept {e.credits.reset();e.used=e.active=e.terminal=false;e.engine.reset();++e.generation;}
+public:
+    explicit RetentionStore(AdmissionPool& admission):admission_(admission){}
+    static constexpr std::uint64_t minimum_retention_ns=30'000'000'000ull;
+    static constexpr std::size_t storage_bytes() noexcept{return sizeof(Storage);}
+    Result<RetentionAdmission> reserve(const TransactionKey& key,const codec::PacketView& packet,std::size_t responses=3) noexcept {
+        if(!key.binding_generation||!key.peer.generation||packet.envelope.wire.size()<4||responses>3||packet.envelope.envelope.ack||packet.envelope.envelope.cancel)return std::unexpected(Error{ErrorCode::invalid_argument});
+        auto derived=transaction_key(packet,key.binding_generation,key.peer);if(!derived||!same_key(key,*derived))return std::unexpected(Error{ErrorCode::invalid_argument});
+        for(std::size_t i=0;i<Entries;++i){auto& e=storage_->entries[i];if(!e.used||!same_key(e.key,key))continue;
+            if(e.canonical!=packet.envelope.wire.size())return std::unexpected(Error{ErrorCode::identity_conflict});
+            for(std::size_t b=0;b<e.canonical;++b)if(storage_->bytes[e.offset+b]!=canonical_byte(packet,b))return std::unexpected(Error{ErrorCode::identity_conflict});
+            ++e.references;return RetentionAdmission{{i,e.generation},e.terminal?DuplicateKind::replay:DuplicateKind::active};
+        }
+        const auto canonical=packet.envelope.wire.size();if(canonical>ByteCapacity||responses>(ByteCapacity-canonical)/sizeof(AckRecord))return std::unexpected(Error{ErrorCode::capacity_exhausted});
+        const auto required=canonical+responses*sizeof(AckRecord);std::size_t slot=Entries;
+        for(std::size_t i=0;i<Entries;++i)if(!storage_->entries[i].used&&storage_->entries[i].generation!=UINT64_MAX){slot=i;break;}
+        if(slot==Entries)return std::unexpected(Error{ErrorCode::capacity_exhausted});
+        std::size_t offset=0;bool found=false;
+        for(std::size_t attempt=0;attempt<=Entries;++attempt){if(offset>ByteCapacity-required)break;bool overlap=false;for(const auto& e:storage_->entries)if(e.used&&offset<e.offset+e.bytes&&e.offset<offset+required){offset=e.offset+e.bytes;overlap=true;break;}if(!overlap){found=true;break;}}
+        if(!found)return std::unexpected(Error{ErrorCode::capacity_exhausted});
+        AdmissionRequest request;request.need(Resource::duplicate_entry).need(Resource::duplicate_bytes,required);auto credits=admission_.acquire(request);if(!credits)return std::unexpected(credits.error());
+        auto& e=storage_->entries[slot];e.used=true;e.key=key;e.offset=offset;e.bytes=required;e.canonical=canonical;e.response_capacity=responses;e.response_count=0;e.references=1;e.active=e.terminal=false;e.credits=std::move(*credits);
+        for(std::size_t b=0;b<canonical;++b)storage_->bytes[offset+b]=canonical_byte(packet,b);
+        return RetentionAdmission{{slot,e.generation},DuplicateKind::fresh};
+    }
+    Result<void> bind(RetentionToken token,Handle handle) noexcept {auto* e=entry(token);if(!e||e->active||e->terminal)return std::unexpected(Error{ErrorCode::invalid_state});e->active=true;e->engine=handle;return {};}
+    Result<std::optional<Handle>> engine_handle(RetentionToken token) noexcept {auto* e=entry(token);if(!e)return std::unexpected(Error{ErrorCode::stale_generation});return e->engine;}
+    Result<void> append(RetentionToken token,const AckRecord& ack) noexcept {auto* e=entry(token);if(!e||!e->active||e->terminal)return std::unexpected(Error{ErrorCode::invalid_state});if(e->response_count==e->response_capacity)return std::unexpected(Error{ErrorCode::capacity_exhausted});std::memcpy(storage_->bytes.data()+e->offset+e->canonical+e->response_count*sizeof(AckRecord),&ack,sizeof ack);++e->response_count;return {};}
+    Result<std::optional<AckRecord>> response(RetentionToken token,std::size_t index) noexcept {auto* e=entry(token);if(!e)return std::unexpected(Error{ErrorCode::stale_generation});if(index>=e->response_count)return std::optional<AckRecord>{};AckRecord ack;std::memcpy(&ack,storage_->bytes.data()+e->offset+e->canonical+index*sizeof(AckRecord),sizeof ack);return std::optional<AckRecord>{ack};}
+    Result<void> complete(RetentionToken token,timing::MonoTime now) noexcept {auto* e=entry(token);if(!e||!e->active||e->terminal)return std::unexpected(Error{ErrorCode::invalid_state});auto end=timing::deadline(now,minimum_retention_ns);if(!end)return std::unexpected(end.error());e->expires=*end;e->terminal=true;e->active=false;e->engine.reset();return {};}
+    Result<void> release(RetentionToken token) noexcept {auto* e=entry(token);if(!e||!e->references)return std::unexpected(Error{ErrorCode::stale_generation});--e->references;if(!e->references&&!e->active&&!e->terminal)erase(*e);return {};}
+    void expire(timing::MonoTime now) noexcept {for(auto& e:storage_->entries)if(e.used&&e.terminal&&!e.references&&now>=e.expires)erase(e);}
+    std::size_t size() const noexcept {std::size_t count=0;for(const auto& e:storage_->entries)count+=e.used;return count;}
+};
+} // namespace vita::runtime::transaction

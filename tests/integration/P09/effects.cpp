@@ -1,0 +1,25 @@
+#include <vita/runtime/context/publisher.hpp>
+#include <vita/runtime/transaction/engine.hpp>
+#include <cassert>
+#include <cstdlib>
+#include <new>
+using namespace vita;using namespace vita::runtime;using namespace vita::runtime::context;using namespace vita::runtime::transaction;
+static std::size_t allocations=0;
+void* operator new(std::size_t n){++allocations;if(auto p=std::malloc(n?n:1))return p;std::abort();}void* operator new[](std::size_t n){return ::operator new(n);}void operator delete(void* p) noexcept{std::free(p);}void operator delete[](void* p) noexcept{std::free(p);}
+void* operator new(std::size_t n,std::align_val_t a){++allocations;void* p=nullptr;if(!posix_memalign(&p,static_cast<std::size_t>(a),n?n:1))return p;std::abort();}void* operator new[](std::size_t n,std::align_val_t a){return ::operator new(n,a);}void operator delete(void* p,std::align_val_t) noexcept{std::free(p);}void operator delete[](void* p,std::align_val_t) noexcept{std::free(p);}
+StateSnapshot known(){StateSnapshot s;for(auto& f:s.fields)f.validity=Validity::known;s.fields[0].value=std::uint32_t{1};s.fields[1].value=*Hertz::from_integer(1000000);s.fields[2].value=valid_data_enable|valid_data_indicator;s.fields[3].value=PayloadFormat{0x200003cf00000000ULL};return s;}
+struct WireSink{bool reject=false;std::array<ContextFrame,8> frames{};std::size_t count=0;static Result<void> send(void* p,const ContextFrame& f) noexcept{auto& self=*static_cast<WireSink*>(p);if(self.reject)return std::unexpected(Error{ErrorCode::capacity_exhausted});self.frames[self.count++]=f;return {};}static Result<void> data(void*,memory::TxStorage&,const RevisionHandle&) noexcept{return {};}};
+int main(){
+ AdmissionPool pool(AdmissionPool::reference_capacities());RevisionStore<4> revisions;auto credits=pool.acquire(AdmissionRequest{}.need(Resource::revision).need(Resource::context_publication));assert(credits);EffectiveEvent initial;initial.state=known();initial.association_generation=1;initial.time_known=initial.ordinal_known=true;initial.actual_time={100,0};assert(revisions.initial(initial,std::move(*credits)));
+ WireSink output;ContextPublisher<4> publisher(revisions,{&output,WireSink::send,WireSink::data});assert(publisher.start({0}));assert(publisher.progress({0},{100,0},codec::Tsi::gps,true));auto old=revisions.current();assert(old);
+ VirtualBackend<> backend;Engine<2> engine(pool,backend.binding(),known(),EngineOptions{Profile::generic_virtual_test,revisions.binding()});
+ const auto allocation_baseline=allocations;
+ codec::Envelope env;env.type=codec::PacketType::command;env.stream_id=1;env.command=codec::Command{0x09080000,1};ControlPacket control;assert(control.set<ReferencePoint>(2));assert(control.set<SampleRate>(*Hertz::from_integer(2000000)));std::array<std::byte,512> wire;auto n=codec::encode_packet(env,control.freeze(),wire);assert(n);auto request=codec::decode_packet(Bytes{wire}.first(*n));assert(request);OperationContext now;now.operation=1;now.clock={timing::ClockState::locked,{101,0},0,1,true,true,timing::Epoch::gps};auto transaction=engine.accept(*request,now);assert(transaction);assert(engine.progress(now));
+ FieldOutcome first;first.id=ReferencePoint::id;first.value=std::uint32_t{2};first.validity=Validity::known;first.status=FieldStatus::executed;first.actual_time={101,0};first.time_known=first.ordinal_known=true;first.sample_ordinal=1000;assert(backend.complete_next(first));assert(engine.progress(now));
+ FieldOutcome second;second.id=SampleRate::id;second.value=*Hertz::from_integer(2000000);second.validity=Validity::known;second.status=FieldStatus::executed;second.actual_time={102,0};second.time_known=second.ordinal_known=true;second.sample_ordinal=2000;assert(backend.complete_next(second));now.clock.time={102,0};assert(engine.progress(now));assert(*engine.complete(*transaction));
+ output.reject=true;assert(!publisher.progress({1},{102,0},codec::Tsi::gps,true));auto response=engine.take_response(*transaction);assert(response&&*response&&(**response).kind==AckKind::execution&&(**response).scheduled_or_executed);assert(engine.release(*transaction));assert(pool.used(Resource::revision)==3); // physical revisions own transferred credits after engine release
+ output.reject=false;assert(publisher.progress({2},{102,0},codec::Tsi::gps,true));assert(output.count==3&&output.frames[1].time.seconds==101&&output.frames[2].time.seconds==102);assert(std::get<Hertz>(old->event().state.fields[1].value)==*Hertz::from_integer(1000000));
+ revisions.collect();assert(pool.used(Resource::revision)==2);old->operator=(RevisionHandle{});revisions.collect();assert(pool.used(Resource::revision)==1);
+ // Reserving all remaining physical slots rejects a new command before begin.
+ auto reserved=revisions.reserve(3);assert(reserved);auto before=backend.begins();now.operation=2;env.command->message_id=2;n=codec::encode_packet(env,control.freeze(),wire);request=codec::decode_packet(Bytes{wire}.first(*n));assert(!engine.accept(*request,now));assert(backend.begins()==before);assert(allocations==allocation_baseline);
+}

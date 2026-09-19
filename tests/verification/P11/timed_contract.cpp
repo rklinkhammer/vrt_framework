@@ -1,0 +1,9 @@
+#include <vita/runtime/transaction/engine.hpp>
+#include "../P07/packets.hpp"
+using namespace vita;using namespace vita::runtime;using namespace vita::runtime::transaction;using namespace verify_p07;
+int main(){AdmissionPool pool(AdmissionPool::reference_capacities());VirtualBackend<> backend;StateSnapshot state;state.fields[1].validity=Validity::known;state.fields[1].value=*Hertz::from_integer(1);EngineOptions options;options.profile=Profile::generic_virtual_test;Engine<2> engine(pool,backend.binding(),state,options);
+ auto original=make(false,42,2);auto view=original.view();auto envelope=view.envelope.envelope;envelope.command->cam|=1u<<12;envelope.timestamp={codec::Tsi::gps,codec::Tsf::picoseconds,101,0};Packet timed;auto size=codec::encode_envelope(envelope,view.envelope.payload,std::nullopt,timed.bytes);if(!size)return 1;timed.size=*size;
+ OperationContext now;now.clock={timing::ClockState::locked,{100,0},0,1,true,true,timing::Epoch::gps};now.timing=timing::TimingCapabilities::deterministic();std::array<timing::Boundary,1> boundaries{{{{101,0},1,1,true,true,0}}};now.boundaries=boundaries;
+ auto handle=engine.accept(timed.view(),now);if(!handle||!engine.progress(now)||backend.begins()||!engine.request_quiesce(now))return 2;
+ bool execution=false;for(unsigned n=0;n<4;++n){auto response=engine.take_response(*handle);if(!response)return 3;if(!*response)break;auto& ack=**response;if(ack.kind==AckKind::execution){execution=true;if(ack.timing!=7||ack.time_known||ack.scheduled_or_executed||!(ack.diagnostics[1].errors&timing_error))return 4;std::array<std::byte,512> wire;auto encoded=encode_response(ack,wire);if(!encoded)return 5;auto decoded=codec::decode_envelope(Bytes{wire}.first(*encoded));if(!decoded||decoded->envelope.timestamp.tsi!=codec::Tsi::none||((decoded->envelope.command->cam>>12)&7)!=7)return 6;}}
+ if(!execution||backend.begins()||!engine.release(*handle))return 7;return 0;}

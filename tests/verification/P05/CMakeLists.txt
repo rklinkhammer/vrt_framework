@@ -1,0 +1,8 @@
+vita_add_test(p05_verify_chain loopback_integration.cpp)
+vita_add_test(p05_verify_routes routes_contract.cpp)
+vita_add_test(p05_verify_faults faults_contract.cpp)
+set_tests_properties(p05_verify_chain PROPERTIES LABELS "integration;ownership;codec")
+set_tests_properties(p05_verify_routes PROPERTIES LABELS "integration")
+set_tests_properties(p05_verify_faults PROPERTIES LABELS "integration;ownership" TIMEOUT 20)
+vita_add_test(p05_verify_budget budget_contract.cpp)
+set_tests_properties(p05_verify_budget PROPERTIES LABELS "budget")

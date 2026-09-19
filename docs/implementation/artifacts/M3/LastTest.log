@@ -1,0 +1,1729 @@
+Start testing: Sep 18 22:08 EDT
+----------------------------------------------------------
+1/108 Testing: p00_core_multitu
+1/108 Test: p00_core_multitu
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/p00_core_multitu"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev
+"p00_core_multitu" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p00_core_multitu" end time: Sep 18 22:08 EDT
+"p00_core_multitu" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/108 Testing: p00_cxx23
+2/108 Test: p00_cxx23
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/p00_cxx23"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev
+"p00_cxx23" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p00_cxx23" end time: Sep 18 22:08 EDT
+"p00_cxx23" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/108 Testing: public_headers_standalone
+3/108 Test: public_headers_standalone
+Command: "/opt/homebrew/Frameworks/Python.framework/Versions/3.14/bin/python3.14" "/Users/rklinkhammer/workspace/vrt_framework/tests/compile/public_headers.py" "/usr/bin/c++" "/Users/rklinkhammer/workspace/vrt_framework/include" ""
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev
+"public_headers_standalone" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+PASS: 47 standalone public headers
+<end of output>
+Test time =   7.96 sec
+----------------------------------------------------------
+Test Passed.
+"public_headers_standalone" end time: Sep 18 22:08 EDT
+"public_headers_standalone" time elapsed: 00:00:07
+----------------------------------------------------------
+
+4/108 Testing: architecture_fixtures
+4/108 Test: architecture_fixtures
+Command: "/opt/homebrew/Frameworks/Python.framework/Versions/3.14/bin/python3.14" "/Users/rklinkhammer/workspace/vrt_framework/docs/fixtures/check_architecture_fixtures.py"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev
+"architecture_fixtures" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+PASS: 190 architecture fixture checks; no framework implementation tested.
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"architecture_fixtures" end time: Sep 18 22:08 EDT
+"architecture_fixtures" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/108 Testing: p00_verify_features
+5/108 Test: p00_verify_features
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P00/p00_verify_features"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P00
+"p00_verify_features" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p00_verify_features" end time: Sep 18 22:08 EDT
+"p00_verify_features" time elapsed: 00:00:00
+----------------------------------------------------------
+
+6/108 Testing: p00_verify_multi_tu
+6/108 Test: p00_verify_multi_tu
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P00/p00_verify_multi_tu"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P00
+"p00_verify_multi_tu" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p00_verify_multi_tu" end time: Sep 18 22:08 EDT
+"p00_verify_multi_tu" time elapsed: 00:00:00
+----------------------------------------------------------
+
+7/108 Testing: p00_verify_bad_library
+7/108 Test: p00_verify_bad_library
+Command: "/opt/homebrew/Frameworks/Python.framework/Versions/3.14/bin/python3.14" "/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P00/check_bad_library.py" "/usr/bin/c++" ""
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P00
+"p00_verify_bad_library" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+-- The CXX compiler identification is AppleClang 21.0.0.21000334
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test VITA_HAS_REQUIRED_CXX23
+-- Performing Test VITA_HAS_REQUIRED_CXX23 - Failed
+CMake Error at CMakeLists.txt:12 (message):
+  VITA requires C++23 with std::expected, std::span, std::bit_cast,
+  std::endian, std::byteswap and concepts.  Select a compiler AND standard
+  library implementing these facilities.  See
+  CMakeFiles/CMakeConfigureLog.yaml.
+
+
+-- Configuring incomplete, errors occurred!
+
+PASS: missing required standard library fails with an actionable diagnostic
+<end of output>
+Test time =   0.39 sec
+----------------------------------------------------------
+Test Passed.
+"p00_verify_bad_library" end time: Sep 18 22:08 EDT
+"p00_verify_bad_library" time elapsed: 00:00:00
+----------------------------------------------------------
+
+8/108 Testing: p00_verify_core_only
+8/108 Test: p00_verify_core_only
+Command: "/opt/homebrew/Frameworks/Python.framework/Versions/3.14/bin/python3.14" "/Users/rklinkhammer/workspace/vrt_framework/tests/verification/P00/check_core_only.py" "/usr/bin/c++" ""
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P00
+"p00_verify_core_only" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+-- The CXX compiler identification is AppleClang 21.0.0.21000334
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test VITA_HAS_REQUIRED_CXX23
+-- Performing Test VITA_HAS_REQUIRED_CXX23 - Success
+-- Configuring done (0.4s)
+-- Generating done (0.0s)
+-- Build files have been written to: /var/folders/8d/6844p_cd23q9bwcmmv3b2x5r0000gn/T/vita-p00-core-only-hm1qlfd4/build
+[ 50%] Building CXX object CMakeFiles/core_consumer.dir/main.cpp.o
+[100%] Linking CXX executable core_consumer
+[100%] Built target core_consumer
+PASS: core-only downstream builds without Python, adapters, RTTI, or exceptions
+<end of output>
+Test time =   0.69 sec
+----------------------------------------------------------
+Test Passed.
+"p00_verify_core_only" end time: Sep 18 22:08 EDT
+"p00_verify_core_only" time elapsed: 00:00:00
+----------------------------------------------------------
+
+9/108 Testing: p01_semantics
+9/108 Test: p01_semantics
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P01/p01_semantics"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P01
+"p01_semantics" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p01_semantics" end time: Sep 18 22:08 EDT
+"p01_semantics" time elapsed: 00:00:00
+----------------------------------------------------------
+
+10/108 Testing: p01_verify_core
+10/108 Test: p01_verify_core
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P01/p01_verify_core"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P01
+"p01_verify_core" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p01_verify_core" end time: Sep 18 22:08 EDT
+"p01_verify_core" time elapsed: 00:00:00
+----------------------------------------------------------
+
+11/108 Testing: p01_verify_semantics
+11/108 Test: p01_verify_semantics
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P01/p01_verify_semantics"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P01
+"p01_verify_semantics" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p01_verify_semantics" end time: Sep 18 22:08 EDT
+"p01_verify_semantics" time elapsed: 00:00:00
+----------------------------------------------------------
+
+12/108 Testing: p01_verify_allocations
+12/108 Test: p01_verify_allocations
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P01/p01_verify_allocations"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P01
+"p01_verify_allocations" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"p01_verify_allocations" end time: Sep 18 22:08 EDT
+"p01_verify_allocations" time elapsed: 00:00:00
+----------------------------------------------------------
+
+13/108 Testing: p02_codec
+13/108 Test: p02_codec
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P02/p02_codec"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P02
+"p02_codec" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p02_codec" end time: Sep 18 22:08 EDT
+"p02_codec" time elapsed: 00:00:00
+----------------------------------------------------------
+
+14/108 Testing: p02_prologue
+14/108 Test: p02_prologue
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P02/p02_prologue"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P02
+"p02_prologue" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p02_prologue" end time: Sep 18 22:08 EDT
+"p02_prologue" time elapsed: 00:00:00
+----------------------------------------------------------
+
+15/108 Testing: p02_ack_timing
+15/108 Test: p02_ack_timing
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P02/p02_ack_timing"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P02
+"p02_ack_timing" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p02_ack_timing" end time: Sep 18 22:08 EDT
+"p02_ack_timing" time elapsed: 00:00:00
+----------------------------------------------------------
+
+16/108 Testing: p02_verify_wire
+16/108 Test: p02_verify_wire
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P02/p02_verify_wire"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P02
+"p02_verify_wire" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p02_verify_wire" end time: Sep 18 22:08 EDT
+"p02_verify_wire" time elapsed: 00:00:00
+----------------------------------------------------------
+
+17/108 Testing: p02_verify_packet
+17/108 Test: p02_verify_packet
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P02/p02_verify_packet"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P02
+"p02_verify_packet" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"p02_verify_packet" end time: Sep 18 22:08 EDT
+"p02_verify_packet" time elapsed: 00:00:00
+----------------------------------------------------------
+
+18/108 Testing: p02_verify_samples
+18/108 Test: p02_verify_samples
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P02/p02_verify_samples"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P02
+"p02_verify_samples" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"p02_verify_samples" end time: Sep 18 22:08 EDT
+"p02_verify_samples" time elapsed: 00:00:00
+----------------------------------------------------------
+
+19/108 Testing: p02_verify_prologue
+19/108 Test: p02_verify_prologue
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P02/p02_verify_prologue"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P02
+"p02_verify_prologue" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p02_verify_prologue" end time: Sep 18 22:08 EDT
+"p02_verify_prologue" time elapsed: 00:00:00
+----------------------------------------------------------
+
+20/108 Testing: p03_memory
+20/108 Test: p03_memory
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P03/p03_memory"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P03
+"p03_memory" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+P03 ownership checks passed; sizes lease=32 retained=944 rx=1032 tx=176 block=80
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p03_memory" end time: Sep 18 22:08 EDT
+"p03_memory" time elapsed: 00:00:00
+----------------------------------------------------------
+
+21/108 Testing: p03_verify_pool
+21/108 Test: p03_verify_pool
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P03/p03_verify_pool"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P03
+"p03_verify_pool" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p03_verify_pool" end time: Sep 18 22:08 EDT
+"p03_verify_pool" time elapsed: 00:00:00
+----------------------------------------------------------
+
+22/108 Testing: p03_verify_envelope
+22/108 Test: p03_verify_envelope
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P03/p03_verify_envelope"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P03
+"p03_verify_envelope" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p03_verify_envelope" end time: Sep 18 22:08 EDT
+"p03_verify_envelope" time elapsed: 00:00:00
+----------------------------------------------------------
+
+23/108 Testing: p03_verify_edges
+23/108 Test: p03_verify_edges
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P03/p03_verify_edges"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P03
+"p03_verify_edges" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p03_verify_edges" end time: Sep 18 22:08 EDT
+"p03_verify_edges" time elapsed: 00:00:00
+----------------------------------------------------------
+
+24/108 Testing: p04_runtime
+24/108 Test: p04_runtime
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P04/p04_runtime"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P04
+"p04_runtime" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+P04 checks passed; slot=88 completion_arena=90200 plan_arena=2097472 charged=3154328 available_reference_charge=36834216
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p04_runtime" end time: Sep 18 22:08 EDT
+"p04_runtime" time elapsed: 00:00:00
+----------------------------------------------------------
+
+25/108 Testing: p04_verify_tickets
+25/108 Test: p04_verify_tickets
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P04/p04_verify_tickets"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P04
+"p04_verify_tickets" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p04_verify_tickets" end time: Sep 18 22:08 EDT
+"p04_verify_tickets" time elapsed: 00:00:00
+----------------------------------------------------------
+
+26/108 Testing: p04_verify_admission_executor
+26/108 Test: p04_verify_admission_executor
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P04/p04_verify_admission_executor"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P04
+"p04_verify_admission_executor" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p04_verify_admission_executor" end time: Sep 18 22:08 EDT
+"p04_verify_admission_executor" time elapsed: 00:00:00
+----------------------------------------------------------
+
+27/108 Testing: p04_verify_quiescence_budget
+27/108 Test: p04_verify_quiescence_budget
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P04/p04_verify_quiescence_budget"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P04
+"p04_verify_quiescence_budget" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p04_verify_quiescence_budget" end time: Sep 18 22:08 EDT
+"p04_verify_quiescence_budget" time elapsed: 00:00:00
+----------------------------------------------------------
+
+28/108 Testing: p04_verify_coupled_admission
+28/108 Test: p04_verify_coupled_admission
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P04/p04_verify_coupled_admission"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P04
+"p04_verify_coupled_admission" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p04_verify_coupled_admission" end time: Sep 18 22:08 EDT
+"p04_verify_coupled_admission" time elapsed: 00:00:00
+----------------------------------------------------------
+
+29/108 Testing: p05_loopback
+29/108 Test: p05_loopback
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P05/p05_loopback"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P05
+"p05_loopback" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p05_loopback" end time: Sep 18 22:08 EDT
+"p05_loopback" time elapsed: 00:00:00
+----------------------------------------------------------
+
+30/108 Testing: p05_isolation
+30/108 Test: p05_isolation
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P05/p05_isolation"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P05
+"p05_isolation" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p05_isolation" end time: Sep 18 22:08 EDT
+"p05_isolation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+31/108 Testing: p05_budget
+31/108 Test: p05_budget
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P05/p05_budget"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P05
+"p05_budget" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+P05 budget projection: adapter=28816 routes=9224 counters=2632 total=40672
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p05_budget" end time: Sep 18 22:08 EDT
+"p05_budget" time elapsed: 00:00:00
+----------------------------------------------------------
+
+32/108 Testing: p05_verify_chain
+32/108 Test: p05_verify_chain
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P05/p05_verify_chain"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P05
+"p05_verify_chain" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p05_verify_chain" end time: Sep 18 22:08 EDT
+"p05_verify_chain" time elapsed: 00:00:00
+----------------------------------------------------------
+
+33/108 Testing: p05_verify_routes
+33/108 Test: p05_verify_routes
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P05/p05_verify_routes"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P05
+"p05_verify_routes" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p05_verify_routes" end time: Sep 18 22:08 EDT
+"p05_verify_routes" time elapsed: 00:00:00
+----------------------------------------------------------
+
+34/108 Testing: p05_verify_faults
+34/108 Test: p05_verify_faults
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P05/p05_verify_faults"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P05
+"p05_verify_faults" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"p05_verify_faults" end time: Sep 18 22:08 EDT
+"p05_verify_faults" time elapsed: 00:00:00
+----------------------------------------------------------
+
+35/108 Testing: p05_verify_budget
+35/108 Test: p05_verify_budget
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P05/p05_verify_budget"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P05
+"p05_verify_budget" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p05_verify_budget" end time: Sep 18 22:08 EDT
+"p05_verify_budget" time elapsed: 00:00:00
+----------------------------------------------------------
+
+36/108 Testing: p05_m1_chain
+36/108 Test: p05_m1_chain
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/integration/P05/p05_m1_chain"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/integration/P05
+"p05_m1_chain" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p05_m1_chain" end time: Sep 18 22:08 EDT
+"p05_m1_chain" time elapsed: 00:00:00
+----------------------------------------------------------
+
+37/108 Testing: p06_engine
+37/108 Test: p06_engine
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P06/p06_engine"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P06
+"p06_engine" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p06_engine" end time: Sep 18 22:08 EDT
+"p06_engine" time elapsed: 00:00:00
+----------------------------------------------------------
+
+38/108 Testing: p06_outcomes
+38/108 Test: p06_outcomes
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P06/p06_outcomes"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P06
+"p06_outcomes" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p06_outcomes" end time: Sep 18 22:08 EDT
+"p06_outcomes" time elapsed: 00:00:00
+----------------------------------------------------------
+
+39/108 Testing: p06_verify_cam
+39/108 Test: p06_verify_cam
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P06/p06_verify_cam"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P06
+"p06_verify_cam" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p06_verify_cam" end time: Sep 18 22:08 EDT
+"p06_verify_cam" time elapsed: 00:00:00
+----------------------------------------------------------
+
+40/108 Testing: p06_verify_async
+40/108 Test: p06_verify_async
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P06/p06_verify_async"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P06
+"p06_verify_async" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p06_verify_async" end time: Sep 18 22:08 EDT
+"p06_verify_async" time elapsed: 00:00:00
+----------------------------------------------------------
+
+41/108 Testing: p06_verify_factors
+41/108 Test: p06_verify_factors
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P06/p06_verify_factors"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P06
+"p06_verify_factors" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.14 sec
+----------------------------------------------------------
+Test Passed.
+"p06_verify_factors" end time: Sep 18 22:08 EDT
+"p06_verify_factors" time elapsed: 00:00:00
+----------------------------------------------------------
+
+42/108 Testing: p06_verify_scenarios
+42/108 Test: p06_verify_scenarios
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P06/p06_verify_scenarios"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P06
+"p06_verify_scenarios" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p06_verify_scenarios" end time: Sep 18 22:08 EDT
+"p06_verify_scenarios" time elapsed: 00:00:00
+----------------------------------------------------------
+
+43/108 Testing: p06_verify_controller
+43/108 Test: p06_verify_controller
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P06/p06_verify_controller"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P06
+"p06_verify_controller" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p06_verify_controller" end time: Sep 18 22:08 EDT
+"p06_verify_controller" time elapsed: 00:00:00
+----------------------------------------------------------
+
+44/108 Testing: p06_verify_timing
+44/108 Test: p06_verify_timing
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P06/p06_verify_timing"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P06
+"p06_verify_timing" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p06_verify_timing" end time: Sep 18 22:08 EDT
+"p06_verify_timing" time elapsed: 00:00:00
+----------------------------------------------------------
+
+45/108 Testing: p06_verify_admission
+45/108 Test: p06_verify_admission
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P06/p06_verify_admission"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P06
+"p06_verify_admission" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p06_verify_admission" end time: Sep 18 22:08 EDT
+"p06_verify_admission" time elapsed: 00:00:00
+----------------------------------------------------------
+
+46/108 Testing: p06_verify_outcomes
+46/108 Test: p06_verify_outcomes
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P06/p06_verify_outcomes"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P06
+"p06_verify_outcomes" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p06_verify_outcomes" end time: Sep 18 22:08 EDT
+"p06_verify_outcomes" time elapsed: 00:00:00
+----------------------------------------------------------
+
+47/108 Testing: p06_verify_allocation
+47/108 Test: p06_verify_allocation
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P06/p06_verify_allocation"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P06
+"p06_verify_allocation" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.03 sec
+----------------------------------------------------------
+Test Passed.
+"p06_verify_allocation" end time: Sep 18 22:08 EDT
+"p06_verify_allocation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+48/108 Testing: p06_verify_query
+48/108 Test: p06_verify_query
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P06/p06_verify_query"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P06
+"p06_verify_query" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p06_verify_query" end time: Sep 18 22:08 EDT
+"p06_verify_query" time elapsed: 00:00:00
+----------------------------------------------------------
+
+49/108 Testing: p06_loopback_transaction
+49/108 Test: p06_loopback_transaction
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/integration/P06/p06_loopback_transaction"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/integration/P06
+"p06_loopback_transaction" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p06_loopback_transaction" end time: Sep 18 22:08 EDT
+"p06_loopback_transaction" time elapsed: 00:00:00
+----------------------------------------------------------
+
+50/108 Testing: p07_transactions
+50/108 Test: p07_transactions
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P07/p07_transactions"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P07
+"p07_transactions" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p07_transactions" end time: Sep 18 22:08 EDT
+"p07_transactions" time elapsed: 00:00:00
+----------------------------------------------------------
+
+51/108 Testing: p07_timing
+51/108 Test: p07_timing
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P07/p07_timing"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P07
+"p07_timing" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p07_timing" end time: Sep 18 22:08 EDT
+"p07_timing" time elapsed: 00:00:00
+----------------------------------------------------------
+
+52/108 Testing: p07_controller
+52/108 Test: p07_controller
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P07/p07_controller"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P07
+"p07_controller" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+P07 controller record=1480 storage=385024
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p07_controller" end time: Sep 18 22:08 EDT
+"p07_controller" time elapsed: 00:00:00
+----------------------------------------------------------
+
+53/108 Testing: p07_verify_retention
+53/108 Test: p07_verify_retention
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P07/p07_verify_retention"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P07
+"p07_verify_retention" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p07_verify_retention" end time: Sep 18 22:08 EDT
+"p07_verify_retention" time elapsed: 00:00:00
+----------------------------------------------------------
+
+54/108 Testing: p07_verify_keys
+54/108 Test: p07_verify_keys
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P07/p07_verify_keys"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P07
+"p07_verify_keys" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p07_verify_keys" end time: Sep 18 22:08 EDT
+"p07_verify_keys" time elapsed: 00:00:00
+----------------------------------------------------------
+
+55/108 Testing: p07_verify_manager
+55/108 Test: p07_verify_manager
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P07/p07_verify_manager"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P07
+"p07_verify_manager" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p07_verify_manager" end time: Sep 18 22:08 EDT
+"p07_verify_manager" time elapsed: 00:00:00
+----------------------------------------------------------
+
+56/108 Testing: p07_verify_controller
+56/108 Test: p07_verify_controller
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P07/p07_verify_controller"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P07
+"p07_verify_controller" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p07_verify_controller" end time: Sep 18 22:08 EDT
+"p07_verify_controller" time elapsed: 00:00:00
+----------------------------------------------------------
+
+57/108 Testing: p07_verify_guard_race
+57/108 Test: p07_verify_guard_race
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P07/p07_verify_guard_race"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P07
+"p07_verify_guard_race" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"p07_verify_guard_race" end time: Sep 18 22:08 EDT
+"p07_verify_guard_race" time elapsed: 00:00:00
+----------------------------------------------------------
+
+58/108 Testing: p07_verify_timed_cancel
+58/108 Test: p07_verify_timed_cancel
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P07/p07_verify_timed_cancel"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P07
+"p07_verify_timed_cancel" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p07_verify_timed_cancel" end time: Sep 18 22:08 EDT
+"p07_verify_timed_cancel" time elapsed: 00:00:00
+----------------------------------------------------------
+
+59/108 Testing: p07_verify_admission
+59/108 Test: p07_verify_admission
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P07/p07_verify_admission"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P07
+"p07_verify_admission" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p07_verify_admission" end time: Sep 18 22:08 EDT
+"p07_verify_admission" time elapsed: 00:00:00
+----------------------------------------------------------
+
+60/108 Testing: p07_loopback
+60/108 Test: p07_loopback
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/integration/P07/p07_loopback"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/integration/P07
+"p07_loopback" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p07_loopback" end time: Sep 18 22:08 EDT
+"p07_loopback" time elapsed: 00:00:00
+----------------------------------------------------------
+
+61/108 Testing: p08_timing
+61/108 Test: p08_timing
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P08/p08_timing"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P08
+"p08_timing" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+P08 checks passed; clock=88 timeline=56 boundary=48 snapshot=48
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p08_timing" end time: Sep 18 22:08 EDT
+"p08_timing" time elapsed: 00:00:00
+----------------------------------------------------------
+
+62/108 Testing: p08_verify_timeline
+62/108 Test: p08_verify_timeline
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P08/p08_verify_timeline"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P08
+"p08_verify_timeline" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p08_verify_timeline" end time: Sep 18 22:08 EDT
+"p08_verify_timeline" time elapsed: 00:00:00
+----------------------------------------------------------
+
+63/108 Testing: p08_verify_clock
+63/108 Test: p08_verify_clock
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P08/p08_verify_clock"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P08
+"p08_verify_clock" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p08_verify_clock" end time: Sep 18 22:08 EDT
+"p08_verify_clock" time elapsed: 00:00:00
+----------------------------------------------------------
+
+64/108 Testing: p08_verify_scheduling
+64/108 Test: p08_verify_scheduling
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P08/p08_verify_scheduling"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P08
+"p08_verify_scheduling" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p08_verify_scheduling" end time: Sep 18 22:08 EDT
+"p08_verify_scheduling" time elapsed: 00:00:00
+----------------------------------------------------------
+
+65/108 Testing: p09_context
+65/108 Test: p09_context
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P09/p09_context"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P09
+"p09_context" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+revision=432 store=55352 publisher=13704 history=21536 receiver=84080
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p09_context" end time: Sep 18 22:08 EDT
+"p09_context" time elapsed: 00:00:00
+----------------------------------------------------------
+
+66/108 Testing: p09_receiver
+66/108 Test: p09_receiver
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P09/p09_receiver"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P09
+"p09_receiver" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p09_receiver" end time: Sep 18 22:08 EDT
+"p09_receiver" time elapsed: 00:00:00
+----------------------------------------------------------
+
+67/108 Testing: p09_verify_history
+67/108 Test: p09_verify_history
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P09/p09_verify_history"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P09
+"p09_verify_history" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p09_verify_history" end time: Sep 18 22:08 EDT
+"p09_verify_history" time elapsed: 00:00:00
+----------------------------------------------------------
+
+68/108 Testing: p09_verify_revisions
+68/108 Test: p09_verify_revisions
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P09/p09_verify_revisions"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P09
+"p09_verify_revisions" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p09_verify_revisions" end time: Sep 18 22:08 EDT
+"p09_verify_revisions" time elapsed: 00:00:00
+----------------------------------------------------------
+
+69/108 Testing: p09_verify_receiver
+69/108 Test: p09_verify_receiver
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P09/p09_verify_receiver"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P09
+"p09_verify_receiver" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p09_verify_receiver" end time: Sep 18 22:08 EDT
+"p09_verify_receiver" time elapsed: 00:00:00
+----------------------------------------------------------
+
+70/108 Testing: p09_verify_publisher
+70/108 Test: p09_verify_publisher
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P09/p09_verify_publisher"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P09
+"p09_verify_publisher" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p09_verify_publisher" end time: Sep 18 22:08 EDT
+"p09_verify_publisher" time elapsed: 00:00:00
+----------------------------------------------------------
+
+71/108 Testing: p09_verify_effects
+71/108 Test: p09_verify_effects
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P09/p09_verify_effects"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P09
+"p09_verify_effects" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p09_verify_effects" end time: Sep 18 22:08 EDT
+"p09_verify_effects" time elapsed: 00:00:00
+----------------------------------------------------------
+
+72/108 Testing: p09_verify_allocation
+72/108 Test: p09_verify_allocation
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P09/p09_verify_allocation"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P09
+"p09_verify_allocation" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"p09_verify_allocation" end time: Sep 18 22:08 EDT
+"p09_verify_allocation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+73/108 Testing: p09_verify_context_wire
+73/108 Test: p09_verify_context_wire
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P09/p09_verify_context_wire"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P09
+"p09_verify_context_wire" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p09_verify_context_wire" end time: Sep 18 22:08 EDT
+"p09_verify_context_wire" time elapsed: 00:00:00
+----------------------------------------------------------
+
+74/108 Testing: p09_verify_budget
+74/108 Test: p09_verify_budget
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P09/p09_verify_budget"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P09
+"p09_verify_budget" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p09_verify_budget" end time: Sep 18 22:08 EDT
+"p09_verify_budget" time elapsed: 00:00:00
+----------------------------------------------------------
+
+75/108 Testing: p09_effects
+75/108 Test: p09_effects
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/integration/P09/p09_effects"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/integration/P09
+"p09_effects" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p09_effects" end time: Sep 18 22:08 EDT
+"p09_effects" time elapsed: 00:00:00
+----------------------------------------------------------
+
+76/108 Testing: p10_source
+76/108 Test: p10_source
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P10/p10_source"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P10
+"p10_source" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_source" end time: Sep 18 22:08 EDT
+"p10_source" time elapsed: 00:00:00
+----------------------------------------------------------
+
+77/108 Testing: p10_lab
+77/108 Test: p10_lab
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P10/p10_lab"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P10
+"p10_lab" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+lab raw=464896 provider_metadata=23832 pool_frontends=160
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_lab" end time: Sep 18 22:08 EDT
+"p10_lab" time elapsed: 00:00:00
+----------------------------------------------------------
+
+78/108 Testing: p10_runtime
+78/108 Test: p10_runtime
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P10/p10_runtime"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P10
+"p10_runtime" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"p10_runtime" end time: Sep 18 22:08 EDT
+"p10_runtime" time elapsed: 00:00:00
+----------------------------------------------------------
+
+79/108 Testing: p10_budget
+79/108 Test: p10_budget
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P10/p10_budget"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P10
+"p10_budget" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+Reference actual native storage plus declared ownership overhead: 51668752 / 67108864 bytes
+category0 charged30998528 reserved30998528
+category1 charged1568880 reserved2621440
+category2 charged8388608 reserved8388608
+category3 charged2129920 reserved2129920
+category4 charged0 reserved2097152
+category5 charged0 reserved1048576
+category6 charged0 reserved1048576
+category7 charged0 reserved1048576
+category8 charged0 reserved3145728
+category9 charged0 reserved524288
+category10 charged7647744 reserved7647744
+category11 charged0 reserved966656
+category12 charged0 reserved1048576
+category13 charged935072 reserved4194304
+category14 charged0 reserved200192
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"p10_budget" end time: Sep 18 22:08 EDT
+"p10_budget" time elapsed: 00:00:00
+----------------------------------------------------------
+
+80/108 Testing: p10_verify_credit
+80/108 Test: p10_verify_credit
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P10/p10_verify_credit"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P10
+"p10_verify_credit" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_verify_credit" end time: Sep 18 22:08 EDT
+"p10_verify_credit" time elapsed: 00:00:00
+----------------------------------------------------------
+
+81/108 Testing: p10_verify_source
+81/108 Test: p10_verify_source
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P10/p10_verify_source"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P10
+"p10_verify_source" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_verify_source" end time: Sep 18 22:08 EDT
+"p10_verify_source" time elapsed: 00:00:00
+----------------------------------------------------------
+
+82/108 Testing: p10_verify_packetization
+82/108 Test: p10_verify_packetization
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P10/p10_verify_packetization"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P10
+"p10_verify_packetization" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_verify_packetization" end time: Sep 18 22:08 EDT
+"p10_verify_packetization" time elapsed: 00:00:00
+----------------------------------------------------------
+
+83/108 Testing: p10_verify_pacing
+83/108 Test: p10_verify_pacing
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P10/p10_verify_pacing"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P10
+"p10_verify_pacing" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_verify_pacing" end time: Sep 18 22:08 EDT
+"p10_verify_pacing" time elapsed: 00:00:00
+----------------------------------------------------------
+
+84/108 Testing: p10_verify_mapping
+84/108 Test: p10_verify_mapping
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P10/p10_verify_mapping"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P10
+"p10_verify_mapping" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_verify_mapping" end time: Sep 18 22:08 EDT
+"p10_verify_mapping" time elapsed: 00:00:00
+----------------------------------------------------------
+
+85/108 Testing: p10_verify_ownership
+85/108 Test: p10_verify_ownership
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P10/p10_verify_ownership"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P10
+"p10_verify_ownership" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_verify_ownership" end time: Sep 18 22:08 EDT
+"p10_verify_ownership" time elapsed: 00:00:00
+----------------------------------------------------------
+
+86/108 Testing: p10_verify_allocation
+86/108 Test: p10_verify_allocation
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P10/p10_verify_allocation"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P10
+"p10_verify_allocation" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"p10_verify_allocation" end time: Sep 18 22:08 EDT
+"p10_verify_allocation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+87/108 Testing: p10_verify_clock_scenarios
+87/108 Test: p10_verify_clock_scenarios
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P10/p10_verify_clock_scenarios"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P10
+"p10_verify_clock_scenarios" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_verify_clock_scenarios" end time: Sep 18 22:08 EDT
+"p10_verify_clock_scenarios" time elapsed: 00:00:00
+----------------------------------------------------------
+
+88/108 Testing: p10_verify_rate
+88/108 Test: p10_verify_rate
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P10/p10_verify_rate"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P10
+"p10_verify_rate" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_verify_rate" end time: Sep 18 22:08 EDT
+"p10_verify_rate" time elapsed: 00:00:00
+----------------------------------------------------------
+
+89/108 Testing: p10_verify_provider
+89/108 Test: p10_verify_provider
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P10/p10_verify_provider"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P10
+"p10_verify_provider" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_verify_provider" end time: Sep 18 22:08 EDT
+"p10_verify_provider" time elapsed: 00:00:00
+----------------------------------------------------------
+
+90/108 Testing: p10_verify_callback
+90/108 Test: p10_verify_callback
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P10/p10_verify_callback"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P10
+"p10_verify_callback" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_verify_callback" end time: Sep 18 22:08 EDT
+"p10_verify_callback" time elapsed: 00:00:00
+----------------------------------------------------------
+
+91/108 Testing: p10_verify_reference
+91/108 Test: p10_verify_reference
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P10/p10_verify_reference"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P10
+"p10_verify_reference" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+reference raw=30998528 charged=51668752 streams=16
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"p10_verify_reference" end time: Sep 18 22:08 EDT
+"p10_verify_reference" time elapsed: 00:00:00
+----------------------------------------------------------
+
+92/108 Testing: p10_verify_wait
+92/108 Test: p10_verify_wait
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P10/p10_verify_wait"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P10
+"p10_verify_wait" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_verify_wait" end time: Sep 18 22:08 EDT
+"p10_verify_wait" time elapsed: 00:00:00
+----------------------------------------------------------
+
+93/108 Testing: p11_runtime
+93/108 Test: p11_runtime
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P11/p11_runtime"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P11
+"p11_runtime" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p11_runtime" end time: Sep 18 22:08 EDT
+"p11_runtime" time elapsed: 00:00:00
+----------------------------------------------------------
+
+94/108 Testing: p11_transactions
+94/108 Test: p11_transactions
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P11/p11_transactions"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/unit/P11
+"p11_transactions" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p11_transactions" end time: Sep 18 22:08 EDT
+"p11_transactions" time elapsed: 00:00:00
+----------------------------------------------------------
+
+95/108 Testing: p11_verify_engine
+95/108 Test: p11_verify_engine
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P11/p11_verify_engine"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P11
+"p11_verify_engine" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p11_verify_engine" end time: Sep 18 22:08 EDT
+"p11_verify_engine" time elapsed: 00:00:00
+----------------------------------------------------------
+
+96/108 Testing: p11_verify_manager
+96/108 Test: p11_verify_manager
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P11/p11_verify_manager"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P11
+"p11_verify_manager" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p11_verify_manager" end time: Sep 18 22:08 EDT
+"p11_verify_manager" time elapsed: 00:00:00
+----------------------------------------------------------
+
+97/108 Testing: p11_verify_recovery
+97/108 Test: p11_verify_recovery
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P11/p11_verify_recovery"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P11
+"p11_verify_recovery" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p11_verify_recovery" end time: Sep 18 22:08 EDT
+"p11_verify_recovery" time elapsed: 00:00:00
+----------------------------------------------------------
+
+98/108 Testing: p11_verify_scenarios
+98/108 Test: p11_verify_scenarios
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P11/p11_verify_scenarios"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P11
+"p11_verify_scenarios" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p11_verify_scenarios" end time: Sep 18 22:08 EDT
+"p11_verify_scenarios" time elapsed: 00:00:00
+----------------------------------------------------------
+
+99/108 Testing: p11_verify_banks
+99/108 Test: p11_verify_banks
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P11/p11_verify_banks"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P11
+"p11_verify_banks" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p11_verify_banks" end time: Sep 18 22:08 EDT
+"p11_verify_banks" time elapsed: 00:00:00
+----------------------------------------------------------
+
+100/108 Testing: p11_verify_continuity
+100/108 Test: p11_verify_continuity
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P11/p11_verify_continuity"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P11
+"p11_verify_continuity" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p11_verify_continuity" end time: Sep 18 22:08 EDT
+"p11_verify_continuity" time elapsed: 00:00:00
+----------------------------------------------------------
+
+101/108 Testing: p11_verify_shutdown
+101/108 Test: p11_verify_shutdown
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P11/p11_verify_shutdown"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P11
+"p11_verify_shutdown" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p11_verify_shutdown" end time: Sep 18 22:08 EDT
+"p11_verify_shutdown" time elapsed: 00:00:00
+----------------------------------------------------------
+
+102/108 Testing: p11_verify_leases
+102/108 Test: p11_verify_leases
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P11/p11_verify_leases"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P11
+"p11_verify_leases" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p11_verify_leases" end time: Sep 18 22:08 EDT
+"p11_verify_leases" time elapsed: 00:00:00
+----------------------------------------------------------
+
+103/108 Testing: p11_verify_allocation
+103/108 Test: p11_verify_allocation
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P11/p11_verify_allocation"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P11
+"p11_verify_allocation" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"p11_verify_allocation" end time: Sep 18 22:08 EDT
+"p11_verify_allocation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+104/108 Testing: p11_verify_late
+104/108 Test: p11_verify_late
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P11/p11_verify_late"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P11
+"p11_verify_late" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p11_verify_late" end time: Sep 18 22:08 EDT
+"p11_verify_late" time elapsed: 00:00:00
+----------------------------------------------------------
+
+105/108 Testing: p11_verify_timed
+105/108 Test: p11_verify_timed
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P11/p11_verify_timed"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/tests/verification/P11
+"p11_verify_timed" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p11_verify_timed" end time: Sep 18 22:08 EDT
+"p11_verify_timed" time elapsed: 00:00:00
+----------------------------------------------------------
+
+106/108 Testing: p10_example_controller
+106/108 Test: p10_example_controller
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/examples/vita_controller_example"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/examples
+"p10_example_controller" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+Controller observed 1000000 samples/s
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"p10_example_controller" end time: Sep 18 22:08 EDT
+"p10_example_controller" time elapsed: 00:00:00
+----------------------------------------------------------
+
+107/108 Testing: p10_example_controllee
+107/108 Test: p10_example_controllee
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/examples/vita_controllee_example"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/examples
+"p10_example_controllee" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+Controllee emitted 4 packets
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"p10_example_controllee" end time: Sep 18 22:08 EDT
+"p10_example_controllee" time elapsed: 00:00:00
+----------------------------------------------------------
+
+108/108 Testing: p10_example_combined
+108/108 Test: p10_example_combined
+Command: "/Users/rklinkhammer/workspace/vrt_framework/build/dev/examples/vita_combined_example"
+Directory: /Users/rklinkhammer/workspace/vrt_framework/build/dev/examples
+"p10_example_combined" start time: Sep 18 22:08 EDT
+Output:
+----------------------------------------------------------
+Controller received execution evidence
+Combined endpoint emitted 7 packets
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"p10_example_combined" end time: Sep 18 22:08 EDT
+"p10_example_combined" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Sep 18 22:08 EDT
+
+allocation =   0.00 sec*proc
+
+budget =   0.13 sec*proc
+
+cancellation =   0.01 sec*proc
+
+clock =   0.01 sec*proc
+
+codec =   0.07 sec*proc
+
+compile =   9.07 sec*proc
+
+concurrency =   0.02 sec*proc
+
+context =   0.01 sec*proc
+
+controller =   0.00 sec*proc
+
+documentation =   0.02 sec*proc
+
+examples =   0.03 sec*proc
+
+identity =   0.00 sec*proc
+
+integration =   0.13 sec*proc
+
+lifecycle =   0.01 sec*proc
+
+oracle =   0.15 sec*proc
+
+ownership =   0.07 sec*proc
+
+profile =   0.05 sec*proc
+
+retention =   0.00 sec*proc
+
+revision =   0.00 sec*proc
+
+timing =   0.05 sec*proc
+
+transaction =   0.23 sec*proc
+

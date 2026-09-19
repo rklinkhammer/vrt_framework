@@ -1,6 +1,6 @@
 # VITA 49.2 implementation plan with implementer and verifier agents
 
-Prepared 2026-09-18. Status: executable work plan; implementation has not begun under this plan.
+Prepared 2026-09-18. Status: P00–P11 execution through M3 completed after acceptance of cancellation decision D-P07-1; see [package status and verification evidence](implementation/status.md). The starting-point descriptions below record the pre-implementation baseline.
 
 Authority: [framework architecture](vita49_framework_architecture.md), [protocol design](vita49_protocol_design.md), and [accepted profile](iq_generator_profile_proposal.md). Preserve architecture Decisions 1–10 and the September 18 clock, completion, recovery, budget, and ODR clarifications. This plan allocates implementation and verification work; it does not reopen those decisions or convert proposed performance into demonstrated capability.
 

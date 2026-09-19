@@ -1,0 +1,6 @@
+vita_add_test(p03_verify_pool pool_contract.cpp)
+vita_add_test(p03_verify_envelope envelope_contract.cpp)
+set_tests_properties(p03_verify_pool PROPERTIES LABELS "ownership;concurrency" TIMEOUT 20)
+set_tests_properties(p03_verify_envelope PROPERTIES LABELS "ownership" TIMEOUT 20)
+vita_add_test(p03_verify_edges edge_contract.cpp)
+set_tests_properties(p03_verify_edges PROPERTIES LABELS "ownership" TIMEOUT 20)

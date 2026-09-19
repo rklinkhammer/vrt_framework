@@ -1,0 +1,6 @@
+vita_add_test(p05_loopback ${CMAKE_CURRENT_SOURCE_DIR}/loopback.cpp)
+set_tests_properties(p05_loopback PROPERTIES LABELS "ownership;integration")
+vita_add_test(p05_isolation ${CMAKE_CURRENT_SOURCE_DIR}/isolation.cpp)
+set_tests_properties(p05_isolation PROPERTIES LABELS "ownership;integration;budget")
+vita_add_test(p05_budget ${CMAKE_CURRENT_SOURCE_DIR}/budget.cpp)
+set_tests_properties(p05_budget PROPERTIES LABELS "budget;integration")

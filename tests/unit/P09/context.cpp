@@ -1,0 +1,37 @@
+#include <vita/runtime/context/budget.hpp>
+#include <cassert>
+#include <iostream>
+using namespace vita;using namespace vita::runtime;using namespace vita::runtime::context;
+StateSnapshot known(std::uint32_t rate=1000000){StateSnapshot s;for(auto& f:s.fields)f.validity=Validity::known;s.fields[0].value=std::uint32_t{1};s.fields[1].value=*Hertz::from_integer(rate);s.fields[2].value=valid_data_enable|valid_data_indicator;s.fields[3].value=PayloadFormat{0x200003cf00000000ULL};return s;}
+AdmissionBundle credit(AdmissionPool& pool){auto c=pool.acquire(AdmissionRequest{}.need(Resource::revision).need(Resource::context_publication));assert(c);return std::move(*c);}
+EffectiveEvent event(std::uint64_t time,std::uint32_t rate=1000000){EffectiveEvent e;e.state=known(rate);e.actual_time={time,0};e.time_known=e.ordinal_known=true;e.sample_ordinal=time*1000;e.association_generation=1;return e;}
+struct Sink{std::size_t contexts=0,data=0;bool reject=false;ContextFrame latest;static Result<void> context(void* p,const ContextFrame& frame) noexcept{auto& s=*static_cast<Sink*>(p);if(s.reject)return std::unexpected(Error{ErrorCode::capacity_exhausted});s.latest=frame;++s.contexts;return {};}static Result<void> send(void* p,memory::TxStorage& bytes,const RevisionHandle&) noexcept{auto& s=*static_cast<Sink*>(p);assert(s.contexts);bytes=memory::TxStorage{};++s.data;return {};}PublisherBinding binding(){return {this,context,send};}};
+int main(){
+ AdmissionPool pool(AdmissionPool::reference_capacities());RevisionStore<4> store;auto initial=store.initial(event(100),credit(pool));assert(initial);Sink sink;ContextPublisher<4,2> publisher(store,sink.binding());assert(publisher.start({0}));
+ sink.reject=true;assert(publisher.submit(memory::TxStorage{},*initial,{0}));assert(!publisher.progress({0},{100,0},codec::Tsi::gps,true));assert(sink.data==0);
+ sink.reject=false;assert(publisher.progress({1},{100,0},codec::Tsi::gps,true));assert(sink.contexts==1&&sink.data==1&&initial->publication()==Publication::accepted);
+ assert(publisher.progress({1000000001ULL},{101,0},codec::Tsi::gps,true));assert(sink.contexts==2&&sink.latest.refresh&&!sink.latest.change);
+ auto reservation=store.reserve(1);assert(reservation);auto change=event(102,2000000);auto effects=store.binding();effects.record(effects.context,change,*reservation,credit(pool));reservation->reset();auto changed=store.current();assert(changed&&changed->id()!=initial->id());assert(std::get<Hertz>(initial->event().state.fields[1].value)==*Hertz::from_integer(1000000));
+ sink.reject=true;assert(!publisher.progress({2000000000ULL},{102,0},codec::Tsi::gps,true));assert(!publisher.progress({2010000000ULL},{102,0},codec::Tsi::gps,true));assert(publisher.status()==StreamStatus::context_unavailable);
+ auto old=store.reserve(1);assert(old);assert(publisher.detach(2));auto fresh=event(103);fresh.association_generation=2;assert(store.initial(fresh,credit(pool)));effects.record(effects.context,change,*old,credit(pool));assert(!store.faulted());assert(initial->event().association_generation==1);
+ ReceiverHistory<4> history(1,codec::Tsi::gps);assert(history.insert(known(),{100,0},{0}));auto old_snapshot=history.resolve({100,1},{1});assert(old_snapshot.confidence==Confidence::known);
+ assert(history.insert(known(2000000),{102,0},{100}));assert(history.resolve({101,0},{101}).state.fields[1].value==known().fields[1].value);assert(history.resolve({102,0},{101}).state.fields[1].value==known(2000000).fields[1].value);
+ assert(history.insert(known(3000000),{102,0},{102}));assert(history.resolve({102,0},{103}).confidence==Confidence::ambiguous);assert(old_snapshot.state.fields[1].value==known().fields[1].value);
+ assert(history.insert(known(4000000),{105,0},{104}));assert(history.resolve({104,0},{105}).confidence==Confidence::ambiguous);assert(history.resolve({105,0},{105}).confidence==Confidence::known);
+ assert(history.resolve({105,0},{2000000104ULL}).confidence==Confidence::stale);
+ auto emitted=known();emitted.fields[2].value=valid_data_enable|valid_data_indicator|sample_loss_enable|sample_loss_indicator;ContextFrame frame;frame.state=emitted;frame.time={100,0};frame.time_known=true;frame.epoch=codec::Tsi::gps;frame.refresh=true;frame.valid=true;codec::Envelope env;env.type=codec::PacketType::context;env.stream_id=1;std::array<std::byte,256> wire;auto size=encode_context(frame,env,wire);assert(size);auto decoded=codec::decode_packet(Bytes{wire}.first(*size));assert(decoded&&decoded->fields.size()==4);for(std::size_t i=0;i<decoded->fields.size();++i){const auto& field=decoded->fields[i];if(field.id==StateEvent::id)assert(!(std::get<std::uint32_t>(*field.value())&(sample_loss_enable|sample_loss_indicator)));}
+ {
+  RevisionStore<4> grouped;auto first=event(10);assert(grouped.initial(first,credit(pool)));auto reserve=grouped.reserve(1);auto second=event(10,2000000);auto binding=grouped.binding();binding.record(binding.context,second,*reserve,credit(pool));reserve->reset();Sink group_sink;ContextPublisher<4> gate(grouped,group_sink.binding());assert(gate.start({0}));assert(gate.progress({0},{10,0},codec::Tsi::gps,true));assert(group_sink.contexts==1&&group_sink.latest.state.fields[1].value==known(2000000).fields[1].value);
+  gate.pause();assert(gate.start({1}));assert(gate.submit(memory::TxStorage{},*grouped.current(),{1}));assert(group_sink.data==0);assert(gate.progress({1},{11,0},codec::Tsi::gps,true));assert(group_sink.contexts==2&&group_sink.data==1);
+  assert(!gate.progress({1000000001ULL},{9,0},codec::Tsi::gps,true));assert(gate.status()==StreamStatus::temporal_association);gate.pause();assert(!gate.start({1000000002ULL}));
+ }
+ {
+  RevisionStore<4> untimed;auto initial_event=event(0);initial_event.time_known=initial_event.ordinal_known=false;assert(untimed.initial(initial_event,credit(pool)));Sink sink;ContextPublisher<4> gate(untimed,sink.binding());assert(gate.start({0}));timing::ClockSnapshot clock{timing::ClockState::locked,{100,0},0,1,true,true,timing::Epoch::gps};assert(gate.progress({0},clock));assert(sink.latest.observation&&sink.latest.time.seconds==100&&!(*untimed.current()).event().time_known);assert(std::get<std::uint32_t>(sink.latest.state.fields[2].value)&(1u<<19));clock.state=timing::ClockState::holdover;clock.time={101,0};assert(gate.progress({1000000000ULL},clock));assert(!(std::get<std::uint32_t>(sink.latest.state.fields[2].value)&(1u<<19)));
+ }
+ {
+  RevisionStore<2> checked;auto invalid=event(10);invalid.state.fields[1].value=std::uint32_t{1};assert(!checked.initial(invalid,credit(pool)));assert(checked.occupied()==0);invalid.state.fields[1].value=Hertz{-1};assert(!checked.initial(invalid,credit(pool)));assert(checked.occupied()==0);
+  ReceiverHistory<2> checked_history;auto bad=known();bad.fields[3].value=std::uint32_t{0};assert(!checked_history.insert(bad,{1,0},{0}));assert(checked_history.size()==0);bad=known();bad.fields[1].value=Hertz{-1};assert(!checked_history.insert(bad,{1,0},{0}));assert(checked_history.size()==0);
+ }
+ BudgetLedger ledger;assert(charge_context(ledger,16));assert(ledger.row(BudgetCategory::revisions).charged==16*(RevisionStore<>::storage_bytes()+sizeof(RevisionStore<>)));
+ std::cout<<"revision="<<sizeof(Revision)<<" store="<<RevisionStore<>::storage_bytes()<<" publisher="<<ContextPublisher<>::storage_bytes()<<" history="<<ReceiverHistory<>::storage_bytes()<<" receiver="<<ContextReceiver<>::storage_bytes()<<'\n';
+}

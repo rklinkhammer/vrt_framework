@@ -1,0 +1,9 @@
+#include "runtime_fixture.hpp"
+using namespace vita;using namespace vita::runtime;using namespace vita::runtime::context;using namespace vita::runtime::transaction;using namespace verify_p10;
+using Runtime=VitaRuntime<1,4,32,65536>;
+struct Probe{Runtime*r=nullptr;Runtime::Controller*c=nullptr;TransactionHandle handle{};bool called=false,wait_rejected=false,progress_rejected=false,run_rejected=false,submitted=false,validation=false,execution=false,state=false;
+ static void data(void*p,const BorrowedSignalRx&)noexcept{auto&s=*static_cast<Probe*>(p);if(s.called)return;s.called=true;auto wait=s.c->wait(s.handle,0);s.wait_rejected=!wait&&wait.error().code==ErrorCode::would_deadlock;auto progress=s.r->progress(s.r->monotonic_now());s.progress_rejected=!progress&&progress.error().code==ErrorCode::would_deadlock;auto run=s.r->run_for(1);s.run_rejected=!run&&run.error().code==ErrorCode::would_deadlock;s.submitted=bool(s.c->query());}
+ static void observation(void*p,const Observation&o)noexcept{auto&s=*static_cast<Probe*>(p);s.validation|=o.response_kind==ObservationKind::validation;s.execution|=o.response_kind==ObservationKind::execution;s.state|=o.response_kind==ObservationKind::state;}};
+int main(){auto instance=Runtime::create(runtime_config(),external_pools());if(!instance)return 1;auto&r=**instance;Probe probe;probe.r=&r;auto config=stream_config();config.receiver={&probe,Probe::data,nullptr};auto d=r.add_controllee(config);if(!d)return 2;auto c=r.add_controller(*d);if(!c||!r.observe_pps({0},{1000,0}))return 3;probe.c=&*c;auto query=c->query();if(!query)return 4;probe.handle=*query;if(!c->observe(*query,&probe,Probe::observation)||!d->start()||!r.progress({0}))return 5;
+ if(!probe.called||!probe.wait_rejected||!probe.progress_rejected||!probe.run_rejected||!probe.submitted||!probe.validation||!probe.execution||!probe.state)return 6;
+ return 0;}

@@ -1,0 +1,7 @@
+vita_add_test(p02_verify_wire wire_contract.cpp)
+vita_add_test(p02_verify_packet packet_contract.cpp)
+vita_add_test(p02_verify_samples sample_contract.cpp other_tu.cpp)
+set_tests_properties(p02_verify_wire p02_verify_packet PROPERTIES LABELS "codec")
+set_tests_properties(p02_verify_samples PROPERTIES LABELS "codec;compile;budget")
+vita_add_test(p02_verify_prologue prologue_contract.cpp)
+set_tests_properties(p02_verify_prologue PROPERTIES LABELS "codec")

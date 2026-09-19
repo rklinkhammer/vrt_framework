@@ -1,0 +1,99 @@
+#pragma once
+#include <vita/runtime/transaction/cam.hpp>
+#include <vita/runtime/completion/ticket.hpp>
+#include <array>
+#include <memory>
+#include <optional>
+namespace vita::runtime::transaction {
+template<std::size_t N> struct ResultStorage {
+    struct Slot { FieldOutcome outcome{};std::uint64_t generation=0;bool busy=false; };
+    std::array<Slot,N> slots{};
+};
+// Capability pins result storage and ticket arena. The claim always precedes external payload writes.
+class AsyncResult {
+    CompletionPublisher publisher_;
+    std::shared_ptr<void> lifetime_;
+    FieldOutcome* output_=nullptr;
+    std::size_t index_=0;
+public:
+    AsyncResult() noexcept=default;
+    AsyncResult(CompletionPublisher publisher,std::shared_ptr<void> lifetime,FieldOutcome* output,std::size_t index) noexcept:publisher_(std::move(publisher)),lifetime_(std::move(lifetime)),output_(output),index_(index){}
+    bool complete(FieldOutcome outcome) const noexcept {
+        auto writer=publisher_.try_claim();if(!writer)return false;
+        *output_=outcome;
+        CompletionResult ready;ready.value=index_;return writer->finish(ready);
+    }
+    bool same_operation(const AsyncResult& other) const noexcept {return publisher_.slot()==other.publisher_.slot()&&publisher_.generation()==other.publisher_.generation()&&output_==other.output_;}
+    bool reserved() const noexcept {return publisher_.is_reserved();}
+    bool synthetic_failure() const noexcept {CompletionResult failed;failed.status=CompletionStatus::failed;failed.error=Error{ErrorCode::callback_failure};return publisher_.publish(failed);}
+};
+enum class DisarmResult { cancelled,not_cancelled,unknown_effect };
+struct Backend {
+    void* context=nullptr;
+    Validation (*validate)(void*,FieldId,SemanticValue,const StateSnapshot&) noexcept=nullptr;
+    Result<void> (*validate_plan)(void*,const ExecutionPlan&,const StateSnapshot&) noexcept=nullptr;
+    Result<void> (*begin)(void*,const PlannedField&,timing::Boundary,AsyncResult) noexcept=nullptr;
+    FieldOutcome (*simulate)(void*,const PlannedField&,const StateSnapshot&,timing::Boundary) noexcept=nullptr;
+    DisarmResult (*disarm)(void*,const AsyncResult&) noexcept=nullptr;
+};
+struct VirtualRule {
+    bool supported=true,resolvable=true;Diagnostics diagnostics{};
+    std::optional<SemanticValue> adjusted{};std::uint8_t dependencies=0;
+    FieldStatus completion=FieldStatus::executed;
+};
+template<std::size_t Pending=16> class VirtualBackend {
+    struct Work { PlannedField field;timing::Boundary boundary;AsyncResult completion; };
+    std::array<VirtualRule,4> rules_{};
+    std::array<std::optional<Work>,Pending> pending_{};
+    std::size_t begins_=0,writes_=0;bool reversible_=true;
+    static Validation validate_thunk(void* self,FieldId id,SemanticValue value,const StateSnapshot&) noexcept {
+        auto& backend=*static_cast<VirtualBackend*>(self);const auto index=field_index(id);
+        if(index==4)return Validation{value,{0,unsupported},false};const auto& rule=backend.rules_[index];
+        auto diagnostics=rule.diagnostics;if(!rule.supported)diagnostics.errors|=unsupported;
+        return Validation{rule.adjusted.value_or(value),diagnostics,rule.supported&&rule.resolvable,rule.dependencies};
+    }
+    static Result<void> begin_thunk(void* self,const PlannedField& field,timing::Boundary boundary,AsyncResult result) noexcept {
+        auto& backend=*static_cast<VirtualBackend*>(self);
+        for(auto& pending:backend.pending_)if(!pending){pending=Work{field,boundary,std::move(result)};++backend.begins_;return {};}
+        return std::unexpected(Error{ErrorCode::capacity_exhausted});
+    }
+    static FieldOutcome simulate_thunk(void* self,const PlannedField& field,const StateSnapshot&,timing::Boundary boundary) noexcept {
+        auto& backend=*static_cast<VirtualBackend*>(self);return backend.outcome(field,boundary,true);
+    }
+    static DisarmResult disarm_thunk(void* self,const AsyncResult& result) noexcept {
+        auto& backend=*static_cast<VirtualBackend*>(self);if(!backend.reversible_)return DisarmResult::not_cancelled;
+        for(auto& work:backend.pending_)if(work&&work->completion.same_operation(result)){
+            if(!result.reserved())return DisarmResult::not_cancelled;work.reset();return DisarmResult::cancelled;
+        }
+        return DisarmResult::not_cancelled;
+    }
+    FieldOutcome outcome(const PlannedField& field,timing::Boundary boundary,bool simulated) const noexcept {
+        FieldOutcome out;out.id=field.id;out.value=field.adjusted;out.validity=Validity::known;out.actual_time=boundary.time;out.sample_ordinal=boundary.sample_ordinal;out.time_known=field.time_known;out.ordinal_known=field.ordinal_known;out.simulated=simulated;
+        out.status=rules_[field_index(field.id)].completion;
+        if(out.status==FieldStatus::failed)out.diagnostics.errors=device_failure|not_executed;
+        if(out.status==FieldStatus::unknown_effect){out.validity=Validity::unknown;out.diagnostics.errors=device_failure|state_indeterminate|not_executed;}
+        return out;
+    }
+public:
+    Backend binding() noexcept {return {this,validate_thunk,nullptr,begin_thunk,simulate_thunk,disarm_thunk};}
+    Result<void> set_rule(FieldId id,VirtualRule rule) noexcept {
+        const auto index=field_index(id);if(index==4||(rule.diagnostics.warnings&rule.diagnostics.errors)||(rule.dependencies&0xf0))return std::unexpected(Error{ErrorCode::invalid_argument});
+        if(rule.completion!=FieldStatus::executed&&rule.completion!=FieldStatus::failed&&rule.completion!=FieldStatus::unknown_effect)return std::unexpected(Error{ErrorCode::invalid_argument});
+        rules_[index]=rule;return {};
+    }
+    void set_reversible(bool value) noexcept {reversible_=value;}
+    std::size_t begins() const noexcept{return begins_;}
+    std::size_t writes() const noexcept{return writes_;}
+    std::size_t pending() const noexcept {std::size_t n=0;for(const auto& p:pending_)if(p)++n;return n;}
+    Result<bool> complete_next(std::optional<FieldOutcome> override={}) noexcept {
+        for(auto& work:pending_)if(work){auto value=override.value_or(outcome(work->field,work->boundary,false));
+            // Effect modeling occurs only for this explicit backend completion, never on send/admission.
+            if(value.status==FieldStatus::executed||value.status==FieldStatus::unknown_effect)++writes_;
+            const bool published=work->completion.complete(value);
+            work.reset();return published;
+        }
+        return false;
+    }
+    std::optional<AsyncResult> pending_capability() const noexcept {for(const auto& work:pending_)if(work)return work->completion;return {};}
+};
+} // namespace vita::runtime::transaction

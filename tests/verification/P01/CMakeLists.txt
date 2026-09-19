@@ -1,0 +1,5 @@
+vita_add_test(p01_verify_core core_contract.cpp)
+vita_add_test(p01_verify_semantics semantic_contract.cpp)
+set_tests_properties(p01_verify_core p01_verify_semantics PROPERTIES LABELS "compile;codec")
+vita_add_test(p01_verify_allocations allocation_contract.cpp)
+set_tests_properties(p01_verify_allocations PROPERTIES LABELS "codec;budget")

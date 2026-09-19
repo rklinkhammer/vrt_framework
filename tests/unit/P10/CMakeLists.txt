@@ -1,0 +1,8 @@
+vita_add_test(p10_source ${CMAKE_CURRENT_SOURCE_DIR}/source.cpp)
+set_tests_properties(p10_source PROPERTIES LABELS "profile;codec")
+vita_add_test(p10_lab ${CMAKE_CURRENT_SOURCE_DIR}/lab.cpp)
+set_tests_properties(p10_lab PROPERTIES LABELS "profile;budget;ownership")
+vita_add_test(p10_runtime ${CMAKE_CURRENT_SOURCE_DIR}/runtime.cpp)
+set_tests_properties(p10_runtime PROPERTIES LABELS "profile;integration;timing;budget")
+vita_add_test(p10_budget ${CMAKE_CURRENT_SOURCE_DIR}/budget.cpp)
+set_tests_properties(p10_budget PROPERTIES LABELS "budget;integration")

@@ -1,0 +1,11 @@
+#include "runtime_fixture.hpp"
+using namespace vita;using namespace vita::runtime;using namespace vita::runtime::context;using namespace vita::runtime::transaction;using namespace verify_p10;
+struct Received{unsigned count=0;std::array<timing::ProtocolTime,8> time;std::array<Hertz,8> rate;std::array<std::uint32_t,8> first;static void sample(void*p,const BorrowedSignalRx&s)noexcept{auto&r=*static_cast<Received*>(p);auto i=r.count++;if(i>=8)std::abort();r.time[i]=s.sample_time;r.rate[i]=std::get<Hertz>(s.metadata.state.fields[1].value);auto b=s.fragment(0);if(!b)std::abort();r.first[i]=(std::uint32_t((*b)[0])<<24)|(std::uint32_t((*b)[1])<<16)|(std::uint32_t((*b)[2])<<8)|std::uint32_t((*b)[3]);}};
+struct Ack{bool validation=false,executed=false;static void receive(void*p,const Observation&o)noexcept{auto&a=*static_cast<Ack*>(p);a.validation|=o.response_kind==ObservationKind::validation;a.executed|=o.confirms_execution;}};
+int main(){using Runtime=VitaRuntime<1,4,32,65536>;auto instance=Runtime::create(runtime_config(),external_pools());if(!instance)return 1;auto&r=**instance;Received received;auto config=stream_config();config.ip_mtu=100;config.receiver={&received,Received::sample,nullptr};auto device=r.add_controllee(config);if(!device)return 2;auto controller=r.add_controller(*device);if(!controller||!r.observe_pps({0},{1000,0})||!device->start()||!r.progress({0})||received.count!=1)return 3;
+ CommandOptions options;options.timing_mode=1;options.execute_at=timing::ProtocolTime{1000,10241000000ULL};auto transaction=controller->set_sample_rate(*Hertz::from_integer(2000000),options);Ack ack;if(!transaction||!controller->observe(*transaction,&ack,Ack::receive)||!r.progress({0})||!ack.validation||ack.executed)return 4;
+ if(!r.progress({10241000})||!ack.executed||received.count!=2)return 5;
+ if(received.time[1]!=timing::ProtocolTime{1000,10241000000ULL}||received.rate[0]!=*Hertz::from_integer(1000000)||received.rate[1]!=*Hertz::from_integer(2000000)||received.first[1]!=0x3b21187e)return 6;
+ if(device->timeline().ordinal()!=10252||device->timeline().time()!=timing::ProtocolTime{1000,10246500000ULL}||device->metrics().skipped_samples!=10230)return 7;
+ if(!r.progress({10246500})||received.count!=3||received.time[2]!=timing::ProtocolTime{1000,10246500000ULL}||device->timeline().ordinal()!=10263)return 8;
+ return 0;}

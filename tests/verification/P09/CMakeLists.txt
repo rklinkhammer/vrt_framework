@@ -1,0 +1,8 @@
+vita_add_test(p09_verify_history history_contract.cpp)
+vita_add_test(p09_verify_revisions revision_contract.cpp)
+vita_add_test(p09_verify_receiver receiver_contract.cpp)
+vita_add_test(p09_verify_publisher publisher_contract.cpp)
+vita_add_test(p09_verify_effects effects_contract.cpp)
+vita_add_test(p09_verify_allocation allocation_contract.cpp)
+vita_add_test(p09_verify_context_wire context_wire.cpp)
+vita_add_test(p09_verify_budget budget_contract.cpp)

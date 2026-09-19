@@ -1,0 +1,6 @@
+vita_add_test(p02_codec ${CMAKE_CURRENT_SOURCE_DIR}/codec.cpp ${CMAKE_CURRENT_SOURCE_DIR}/other_tu.cpp)
+set_tests_properties(p02_codec PROPERTIES LABELS "codec;compile")
+vita_add_test(p02_prologue ${CMAKE_CURRENT_SOURCE_DIR}/prologue.cpp)
+set_tests_properties(p02_prologue PROPERTIES LABELS "codec")
+vita_add_test(p02_ack_timing ${CMAKE_CURRENT_SOURCE_DIR}/ack_timing.cpp)
+set_tests_properties(p02_ack_timing PROPERTIES LABELS "codec")

@@ -1,0 +1,8 @@
+vita_add_test(p04_verify_tickets ticket_contract.cpp)
+vita_add_test(p04_verify_admission_executor admission_executor_contract.cpp)
+vita_add_test(p04_verify_quiescence_budget quiescence_budget_contract.cpp)
+set_tests_properties(p04_verify_tickets PROPERTIES LABELS "concurrency;ownership" TIMEOUT 30)
+set_tests_properties(p04_verify_admission_executor PROPERTIES LABELS "concurrency;ownership" TIMEOUT 20)
+set_tests_properties(p04_verify_quiescence_budget PROPERTIES LABELS "ownership;budget" TIMEOUT 20)
+vita_add_test(p04_verify_coupled_admission coupled_admission_contract.cpp)
+set_tests_properties(p04_verify_coupled_admission PROPERTIES LABELS "ownership;budget" TIMEOUT 20)

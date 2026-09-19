@@ -1,0 +1,4 @@
+vita_add_test(p08_verify_timeline timeline_contract.cpp)
+vita_add_test(p08_verify_clock clock_contract.cpp)
+vita_add_test(p08_verify_scheduling scheduling_contract.cpp)
+set_tests_properties(p08_verify_timeline p08_verify_clock p08_verify_scheduling PROPERTIES LABELS "timing")
