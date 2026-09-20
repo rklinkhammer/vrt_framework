@@ -51,10 +51,12 @@ public:
         else if(elapsed>1000000000ULL && state_==ClockState::locked) state_=ClockState::holdover;
         auto time=add(origin_,from_nanoseconds(elapsed)); if(!time) return std::unexpected(time.error());
         // ceil(elapsed_ns * ppb / 1e6) picoseconds; checked decomposition avoids wide products.
-        auto whole=elapsed/1000000ULL,remainder=elapsed%1000000ULL,drift=binding_.holdover_drift_ppb;
+        const std::uint64_t whole=elapsed/1000000ULL,remainder=elapsed%1000000ULL,
+                    drift=binding_.holdover_drift_ppb;
         if((whole && drift>std::numeric_limits<std::uint64_t>::max()/whole) || (remainder && drift>std::numeric_limits<std::uint64_t>::max()/remainder))
             return std::unexpected(Error{ErrorCode::overflow});
-        auto product=remainder*drift,extra=product/1000000ULL+(product%1000000ULL!=0);
+        const std::uint64_t product=remainder*drift;
+        const std::uint64_t extra=product/1000000ULL+(product%1000000ULL!=0);
         auto base=binding_.calibration_uncertainty_ps+pulse_uncertainty_;
         if(whole*drift>std::numeric_limits<std::uint64_t>::max()-base || extra>std::numeric_limits<std::uint64_t>::max()-base-whole*drift)
             return std::unexpected(Error{ErrorCode::overflow});

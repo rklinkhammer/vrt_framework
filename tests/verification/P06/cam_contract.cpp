@@ -33,7 +33,7 @@ int main(){
     for(auto [raw,expected]:{std::pair{2*u+u/2,2*u},std::pair{3*u+u/2,4*u},std::pair{2*u+u/2+1,3*u},std::pair{2*u+u/2-1,2*u}}){
         auto v=iq_validate(SampleRate::id,Hertz{raw});if(!v.resolvable||!v.diagnostics.warnings||v.diagnostics.errors||std::get<Hertz>(v.adjusted).q20!=expected)return 7;
     }
-    for(auto raw:{-u,0ll,u-1,100000000ll*u+1}){auto v=iq_validate(SampleRate::id,Hertz{raw});if(v.resolvable||!v.diagnostics.errors)return 8;}
-    for(auto raw:{u,100000000ll*u}){auto v=iq_validate(SampleRate::id,Hertz{raw});if(!v.resolvable||v.diagnostics.errors||v.diagnostics.warnings)return 9;}
+    for(std::int64_t raw:{-u,std::int64_t{0},u-1,100000000*u+1}){auto v=iq_validate(SampleRate::id,Hertz{raw});if(v.resolvable||!v.diagnostics.errors)return 8;}
+    for(std::int64_t raw:{u,100000000*u}){auto v=iq_validate(SampleRate::id,Hertz{raw});if(!v.resolvable||v.diagnostics.errors||v.diagnostics.warnings)return 9;}
     return 0;
 }

@@ -111,7 +111,7 @@ endif()
 # Each implementation package owns its test subdirectory; the coordinator
 # integrates registration without coupling package production headers.
 if(BUILD_TESTING)
-  foreach(package P01 P02 P03 P04 P05 P06 P07 P08 P09 P10 P11 P12 P13 P14 P16)
+  foreach(package P01 P02 P03 P04 P05 P06 P07 P08 P09 P10 P11 P12 P13 P14 P16 P17)
     foreach(kind unit verification integration)
       if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests/${kind}/${package}/CMakeLists.txt")
         add_subdirectory("tests/${kind}/${package}")

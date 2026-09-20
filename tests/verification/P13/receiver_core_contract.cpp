@@ -14,6 +14,9 @@ int main(){verify_p12::Peer peer;vita::bench::receiver::Config config;config.str
  auto bad=data;bad[30]^=std::byte{1};if(!peer.send_to(bad,false,r.adapter().local_address(Lane::data).port)||!pump([&]{return rows.size==2;}))return 6;if(rows.rows[1].status!=2||r.stats(0).invalid!=1||r.stats(0).delivered!=1)return 7;
  // A separate receiver with no Context holds exactly64 payloads; the next
  // checked packet is an explicit pending overflow, then all64 expire at10ms.
- Rows stalled_rows;auto stalled=Receiver::create(config,pools,&stalled_rows,Rows::emit);if(!stalled)return 8;auto& s=**stalled;for(unsigned n=0;n<65;++n){auto b=data_wire(n*256);if(!peer.send_to(b,false,s.adapter().local_address(Lane::data).port))return 9;auto until=now()+100000000;while(s.stats(0).checked<n+1&&now()<until)s.progress(now());if(s.stats(0).checked!=n+1)return 10;}
+ Rows stalled_rows;auto stalled=Receiver::create(config,pools,&stalled_rows,Rows::emit);if(!stalled)return 8;auto& s=**stalled;
+ // Capacity and expiry are separate contracts. Freeze the expiry clock while
+ // filling the queue so sanitizer/host throughput cannot expire earlier entries.
+ const auto held_clock=now();for(unsigned n=0;n<65;++n){auto b=data_wire(n*256);if(!peer.send_to(b,false,s.adapter().local_address(Lane::data).port))return 9;auto until=now()+100000000;while(s.stats(0).checked<n+1&&now()<until)s.progress(held_clock);if(s.stats(0).checked!=n+1)return 10;}
  if(s.stats(0).pending_overflow!=1||stalled_rows.size!=1||stalled_rows.rows[0].status!=3)return 11;s.progress(now()+10000000);if(stalled_rows.size!=65||s.stats(0).metadata_drops!=64)return 12;for(unsigned n=1;n<65;++n)if(stalled_rows.rows[n].status!=1||stalled_rows.rows[n].app_ns||stalled_rows.rows[n].consumed_ns)return 13;
  return 0;}

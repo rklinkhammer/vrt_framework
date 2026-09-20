@@ -1,0 +1,72 @@
+{
+  "recorded_utc": "2026-09-20T00:04:16.175163+00:00",
+  "source_manifest": "source.json",
+  "source_files": 412,
+  "source_unchanged": true,
+  "macos_compiler": "Apple clang 21.0.0 (clang-2100.3.34.2), libc++",
+  "linux_compiler": "GCC 15.2.0, libstdc++",
+  "linux_image": "sha256:e590ad0533b735bf7bd8555830c0416f4451e4bf5c74244df08ef7bc89eef5d6",
+  "gates": [
+    {
+      "platform": "macos-arm64",
+      "mode": "Debug",
+      "passed": 235,
+      "failed": 0,
+      "build_exit": 0,
+      "test_exit": 0,
+      "test_log": "macos-arm64-debug-test.log",
+      "build_log": "macos-arm64-debug-build.log"
+    },
+    {
+      "platform": "macos-arm64",
+      "mode": "Release",
+      "passed": 239,
+      "failed": 0,
+      "build_exit": 0,
+      "test_exit": 0,
+      "test_log": "macos-arm64-release-test.log",
+      "build_log": "macos-arm64-release-build.log"
+    },
+    {
+      "platform": "macos-arm64",
+      "mode": "ASan-UBSan",
+      "passed": 235,
+      "failed": 0,
+      "build_exit": 0,
+      "test_exit": 0,
+      "test_log": "macos-arm64-asan-ubsan-test.log",
+      "build_log": "macos-arm64-asan-ubsan-build.log"
+    },
+    {
+      "platform": "macos-arm64",
+      "mode": "TSan",
+      "passed": 235,
+      "failed": 0,
+      "build_exit": 0,
+      "test_exit": 0,
+      "test_log": "macos-arm64-tsan-test.log",
+      "build_log": "macos-arm64-tsan-build.log"
+    },
+    {
+      "platform": "linux-arm64",
+      "mode": "Debug",
+      "passed": 235,
+      "failed": 0,
+      "build_exit": 0,
+      "test_exit": 0,
+      "test_log": "linux-arm64-debug-test.log",
+      "build_log": "linux-arm64-debug-build.log"
+    },
+    {
+      "platform": "linux-arm64",
+      "mode": "Release",
+      "passed": 235,
+      "failed": 0,
+      "build_exit": 0,
+      "test_exit": 0,
+      "test_log": "linux-arm64-release-test.log",
+      "build_log": "linux-arm64-release-build.log"
+    }
+  ],
+  "scope": "Library only; GraphX executable/Soapy/mTLS and privileged OVS integration are not qualified by these gates."
+}

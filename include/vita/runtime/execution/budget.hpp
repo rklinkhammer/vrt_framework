@@ -8,12 +8,13 @@ enum class BudgetCategory : std::size_t { raw_blocks, providers, duplicate_value
 inline constexpr std::size_t budget_category_count=static_cast<std::size_t>(BudgetCategory::count);
 inline constexpr std::size_t framework_budget=67108864;
 inline constexpr std::size_t retention_headroom_transfer=704512;
+inline constexpr std::size_t graphx_state_headroom_transfer=50560;
 struct BudgetRow { std::size_t reserved{},charged{}; };
 class BudgetLedger {
     std::array<BudgetRow,budget_category_count> rows_{};
 public:
     BudgetLedger() noexcept {
-        constexpr std::array<std::size_t,budget_category_count> reserve={30998528,2621440,8388608,524288,2097152,1048576,1048576,1048576,3145728,524288,1048576,262144+retention_headroom_transfer,1048576,4194304,9109504-retention_headroom_transfer};
+        constexpr std::array<std::size_t,budget_category_count> reserve={30998528,2621440,8388608,524288,2097152,1048576,1114112+graphx_state_headroom_transfer,1048576,3145728,524288,1048576,262144+retention_headroom_transfer,1048576,4194304,9043968-retention_headroom_transfer-graphx_state_headroom_transfer};
         for(std::size_t i=0;i<rows_.size();++i) rows_[i].reserved=reserve[i];
     }
     Result<void> charge(BudgetCategory category,std::size_t bytes) noexcept {

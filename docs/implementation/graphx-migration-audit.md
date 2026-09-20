@@ -1,10 +1,12 @@
 # GraphX migration audit at the Release baseline
 
-Status: **implementation paused for an acknowledgment-semantics decision**.
+Status: **D-GX-ACK migration approved by the user**. See the
+[implementation and verification contract](P17-graphx-profile.md).
 This is a compatibility audit and proposed implementation contract, not a GraphX
-implementation release or a declaration of P1 acceptance. No production code or
-GraphX files were changed. Do not use this document's commit as a working GraphX
-library dependency pin.
+implementation release or a declaration of P1 acceptance. At audit commit
+`002fcea3fdcd124edf3a6ae6ed8f93784ea0698c`, no production code or GraphX files
+were changed. That audit-only commit is not a working GraphX dependency pin.
+Use the implementation contract above for current APIs and verification.
 
 ## Frozen inputs and precedence
 
@@ -69,7 +71,7 @@ Section 5.1.3, Table 5.1.3-2 (p55), permits unknown OUI `FF-FF-FF`; zero class
 codes denote unspecified classes. No proprietary encoding is necessary for
 these requirements after the user's OUI correction.
 
-## Decision required before implementation
+## Approved acknowledgment migration
 
 ### D-GX-ACK: scheduling acceptance versus execution evidence
 
@@ -99,7 +101,7 @@ combinations, but Rule 8.3.1.5-7 specifically requires ReqX with post-execution
 ReqS. The library records this tension as I8 and rejects EXECUTE+ReqS without
 ReqX. NO_ACTION+ReqS status queries are unaffected.
 
-**Recommended concrete migration contract, not yet applied:**
+**Approved migration contract:**
 
 1. Use requested AckV for early validation/scheduling acceptance, with its
    scheduled-time timestamp. Request AckX when execution evidence is needed.
@@ -111,12 +113,11 @@ ReqX. NO_ACTION+ReqS status queries are unaffected.
 4. Update GraphX's client, service migration, docs and independent vectors to this
    contract. Retain the existing generator/frequency-tunable interpretation.
 
-This decision changes the GraphX acknowledgment timing and accepted request
-combinations. The user's instruction to stop on unresolved normative semantics
-therefore prevents silently choosing either the early-AckX compatibility behavior
-or this migration contract. If early AckX must remain, obtain an explicit peer
-profile interpretation and add separate scheduled-versus-executed Controller
-observations; do not claim the current observer is compatible.
+This changes GraphX acknowledgment timing and accepted request combinations.
+The user approved this migration after reviewing the audit. The framework retains
+its existing execution-evidence interpretation; GraphX client/service adapters must
+adopt the approved contract. Application acceptance remains separate from library
+tests, and the original Release-baseline matrix below remains a baseline assessment.
 
 The existing GraphX identity helper also copies request timestamps into all
 responses. In contrast, Rule 8.4.1.5-5 (p118) requires AckS observation time.

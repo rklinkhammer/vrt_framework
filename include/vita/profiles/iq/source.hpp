@@ -65,7 +65,7 @@ class SampleWriteWindow {
     std::uint64_t first_ordinal_;
     std::size_t count_;
     const runtime::StateSnapshot& config_;
-    std::array<std::uint64_t, 4> written_{};
+    std::array<std::uint64_t, 16> written_{};
 
     SampleWriteWindow(MutableBytes wire, SampleFormat format, std::uint64_t ordinal,
                       std::size_t count, const runtime::StateSnapshot& config) noexcept
@@ -79,7 +79,7 @@ public:
                                             std::uint64_t first_ordinal, std::size_t count,
                                             const runtime::StateSnapshot& config) noexcept {
         const auto width = bytes_per_pair(format);
-        if (!width || !count || count > 256)
+        if (!width || !count || count > 1024)
             return std::unexpected(Error{ErrorCode::invalid_argument});
         if (count - 1 > UINT64_MAX - first_ordinal)
             return std::unexpected(Error{ErrorCode::overflow});
@@ -92,6 +92,15 @@ public:
     std::uint64_t first_ordinal() const noexcept { return first_ordinal_; }
     std::size_t count() const noexcept { return count_; }
     const runtime::StateSnapshot& config() const noexcept { return config_; }
+
+    // Preserve device CS16 codes without a floating-point normalization step.
+    Result<void> write_iq16(std::size_t index,std::int16_t i,std::int16_t q) noexcept {
+        if(format_!=SampleFormat::iq16||index>=count_)
+            return std::unexpected(Error{ErrorCode::invalid_argument,index});
+        codec::detail::store32(wire_,index*4,(std::uint32_t{std::bit_cast<std::uint16_t>(i)}<<16)|std::bit_cast<std::uint16_t>(q));
+        written_[index/64]|=std::uint64_t{1}<<(index%64);
+        return {};
+    }
 
     Result<void> write(std::size_t index, double i, double q) noexcept {
         if (index >= count_ || !std::isfinite(i) || !std::isfinite(q))

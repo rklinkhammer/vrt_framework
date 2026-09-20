@@ -8,7 +8,10 @@ inline bool same_state(const StateSnapshot& a,const StateSnapshot& b) noexcept {
     for(std::size_t i=0;i<active_state_fields(a.profile);++i)if(a.fields[i].id!=b.fields[i].id||a.fields[i].validity!=b.fields[i].validity||(a.fields[i].validity==Validity::known&&a.fields[i].value!=b.fields[i].value))return false;return true;
 }
 inline bool required_known(const StateSnapshot& state) noexcept {
-    return state.fields[1].validity==Validity::known && state.fields[3].validity==Validity::known && (state.profile!=profiles::iq::Profile::frequency_tunable||state.fields[4].validity==Validity::known);
+    return state.fields[1].validity==Validity::known && state.fields[3].validity==Validity::known &&
+           (state.profile==profiles::iq::Profile::generator_v1||state.fields[4].validity==Validity::known) &&
+           (state.profile!=profiles::iq::Profile::graphx_radio||
+            (state.fields[5].validity==Validity::known&&state.fields[6].validity==Validity::known));
 }
 enum class Publication : std::uint8_t { pending,accepted,failed };
 struct Revision {
@@ -16,7 +19,7 @@ struct Revision {
     std::uint64_t id{},reservation{};std::atomic<std::size_t> references{0};
     Publication publication=Publication::pending;bool occupied{},committed{},detached{},data_dependency{};
 };
-static_assert(sizeof(Revision)<=512);
+static_assert(sizeof(Revision)<=576);
 class RevisionHandle {
     template<std::size_t> friend class RevisionStore;
     std::shared_ptr<void> owner_;Revision* revision_=nullptr;

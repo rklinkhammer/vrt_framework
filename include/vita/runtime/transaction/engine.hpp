@@ -24,16 +24,25 @@ struct Handle {
 struct Request {
   codec::Envelope envelope{};
   Cam cam{};
-  std::array<FieldId, 4> fields{};
-  std::array<SemanticValue, 4> values{};
-  std::array<bool, 4> unsupported_attributes{};
+  std::array<FieldId, 5> fields{};
+  std::array<SemanticValue, 5> values{};
+  std::array<bool, 5> unsupported_attributes{};
+  std::array<std::uint32_t, 5> attributes{};
   std::size_t count = 0;
+  bool capability_query = false;
 };
 inline Result<Request> request_from(const codec::PacketView &packet,
                                     Profile profile) noexcept {
   auto cam = Cam::parse(packet.envelope.envelope, profile);
   if (!cam)
     return std::unexpected(cam.error());
+  if(profile==Profile::graphx_radio){
+    const auto& e=packet.envelope.envelope;
+    if(e.class_id||!e.stream_id||*e.stream_id<1||*e.stream_id>4||
+       e.timestamp.tsi!=codec::Tsi::utc||e.timestamp.tsf!=codec::Tsf::picoseconds||
+       !e.command->message_id||packet.envelope.wire.size()>1024)
+      return std::unexpected(Error{ErrorCode::unsupported_capability});
+  }
   Request request;
   request.envelope = packet.envelope.envelope;
   request.cam = *cam;
@@ -44,13 +53,26 @@ inline Result<Request> request_from(const codec::PacketView &packet,
     while (index < request.count && request.fields[index] != view.id)
       ++index;
     if (index == request.count) {
-      if (request.count == 4)
+      if (request.count == (profile==Profile::graphx_radio && request.cam.action==0?5u:4u))
         return std::unexpected(Error{ErrorCode::resource_limit});
       request.fields[index] = view.id;
       request.values[index] = codec::placeholder(view.id);
       ++request.count;
     }
-    if (view.attribute != Attribute::current || (view.id==RFReferenceFrequency::id&&profile!=Profile::iq_frequency_tunable))
+    request.attributes[index] |= attribute_bit(view.attribute);
+    if(profile==Profile::graphx_radio&&!profiles::iq::graphx_capability_field(view.id)&&view.id!=DiscreteIO32::id)request.unsupported_attributes[index]=true;
+    const bool capability_attribute =
+        view.attribute == Attribute::minimum ||
+        view.attribute == Attribute::maximum;
+    if (profile == Profile::graphx_radio && request.cam.action == 0 &&
+        view.kind == BodyKind::selectors && capability_attribute) {
+      request.capability_query = true;
+      if (!profiles::iq::graphx_capability_field(view.id))
+        request.unsupported_attributes[index] = true;
+    } else if (view.attribute != Attribute::current ||
+               (view.id == RFReferenceFrequency::id &&
+                profile != Profile::iq_frequency_tunable &&
+                profile != Profile::graphx_radio))
       request.unsupported_attributes[index] = true;
     else if (view.kind == BodyKind::values) {
       auto value = view.value();
@@ -58,6 +80,14 @@ inline Result<Request> request_from(const codec::PacketView &packet,
         return std::unexpected(value.error());
       request.values[index] = *value;
     }
+  }
+  if(profile==Profile::graphx_radio&&!request.count)return std::unexpected(Error{ErrorCode::invalid_argument});
+  if (request.capability_query) {
+    const auto required = attribute_bit(Attribute::minimum) |
+                          attribute_bit(Attribute::maximum);
+    for (std::size_t i = 0; i < request.count; ++i)
+      if (request.attributes[i] != required)
+        request.unsupported_attributes[i] = true;
   }
   return request;
 }
@@ -77,6 +107,7 @@ struct EngineOptions {
                            const OperationContext &) noexcept = nullptr;
   TraceBinding trace{};
   std::shared_ptr<void> backend_owner{};
+  const profiles::iq::GraphxCapabilities *graphx_capabilities = nullptr;
 };
 struct PendingEffectBoundary { timing::Boundary boundary{};bool ordinal_known=false; };
 struct EngineDrainStatus {
@@ -92,13 +123,13 @@ template <std::size_t Transactions = 8> class Engine {
     Request request{};
     ExecutionPlan execution{};
     TraceKey trace_key{};
-    std::array<FieldOutcome, 4> outcomes{};
+    std::array<FieldOutcome, 5> outcomes{};
     std::array<CompletionToken, 4> tokens{};
     std::array<std::uint64_t, 4> ticket_operations{};
     timing::TimingCapabilities timing{};
     timing::ProtocolTime requested_time{};
     bool time_known = false, data_running = false, schedule_valid = true;
-    std::array<bool, 4> cancelled{};
+    std::array<bool, 5> cancelled{};
     RevisionReservation revisions;
   };
   struct TransactionRecord {
@@ -148,12 +179,24 @@ template <std::size_t Transactions = 8> class Engine {
     plan.count = request.count;
     plan.expected_state_version = state.version;
     bool all = true;
-    bool has_rate=false,has_rf=false;
-    for(std::size_t i=0;i<request.count;++i){has_rate|=request.fields[i]==SampleRate::id;has_rf|=request.fields[i]==RFReferenceFrequency::id;}
+    bool has_rate=false,has_rf=false,has_bandwidth=false,has_gain=false,has_discrete=false;
+    const Hertz* requested_rate=nullptr;const Hertz* requested_bandwidth=nullptr;
+    for(std::size_t i=0;i<request.count;++i){has_rate|=request.fields[i]==SampleRate::id;has_rf|=request.fields[i]==RFReferenceFrequency::id;has_bandwidth|=request.fields[i]==Bandwidth::id;has_gain|=request.fields[i]==Gain::id;has_discrete|=request.fields[i]==DiscreteIO32::id;if(request.fields[i]==SampleRate::id)requested_rate=std::get_if<Hertz>(&request.values[i]);if(request.fields[i]==Bandwidth::id)requested_bandwidth=std::get_if<Hertz>(&request.values[i]);}
     const bool mixed=options_.profile==Profile::iq_frequency_tunable&&request.cam.action!=0&&has_rate&&has_rf;
+    const bool graphx_configuration=request.count==4&&has_rate&&has_rf&&has_bandwidth&&has_gain;
+    const bool graphx_lifecycle=request.count==1&&has_discrete;
+    bool armed=false;
+    for(const auto& other:slots_)if(&other!=&slot&&other.record.active&&!other.record.complete&&other.plan.request.cam.action==2&&other.plan.request.count==1&&other.plan.request.fields[0]==DiscreteIO32::id){
+      const auto* value=std::get_if<std::uint32_t>(&other.plan.request.values[0]);
+      armed|=value&&*value==3&&other.plan.execution.fields[0].eligible&&!other.plan.cancelled[0];
+    }
+    const bool configured=state.fields[1].validity==Validity::known&&state.fields[4].validity==Validity::known&&state.fields[5].validity==Validity::known&&state.fields[6].validity==Validity::known;
+    const bool incomplete_graphx=options_.profile==Profile::graphx_radio&&request.cam.action!=0&&
+      (!(graphx_configuration||graphx_lifecycle)||(graphx_configuration&&(slot.plan.data_running||armed)));
+    const bool incompatible_graphx=requested_rate&&requested_bandwidth&&requested_bandwidth->q20>requested_rate->q20;
     for (std::size_t i = 0; i < request.count; ++i) {
       Validation v{request.values[i]};
-      if (request.unsupported_attributes[i]) {
+      if (request.unsupported_attributes[i] || (options_.profile==Profile::graphx_radio&&!profiles::iq::graphx_capability_field(request.fields[i])&&request.fields[i]!=DiscreteIO32::id)) {
         v.diagnostics.errors = unsupported;
         v.resolvable = false;
       } else if (request.cam.action != 0) {
@@ -161,9 +204,18 @@ template <std::size_t Transactions = 8> class Engine {
           v = iq_validate(request.fields[i], request.values[i]);
         else if(options_.profile==Profile::iq_frequency_tunable)
           v=tunable_validate(request.fields[i],request.values[i]);
+        else if(options_.profile==Profile::graphx_radio)
+          v=graphx_validate(request.fields[i],request.values[i]);
+        if(v.resolvable&&options_.profile==Profile::graphx_radio&&options_.graphx_capabilities){const auto& capabilities=*options_.graphx_capabilities;bool supported=true;
+          if(request.fields[i]==RFReferenceFrequency::id){const auto* value=std::get_if<Hertz>(&request.values[i]);supported=value&&capabilities.center_values.accepts(value->q20)&&value->q20>=capabilities.center_frequency.minimum.q20&&value->q20<=capabilities.center_frequency.maximum.q20;}
+          else if(request.fields[i]==SampleRate::id){const auto* value=std::get_if<Hertz>(&request.values[i]);supported=value&&capabilities.sample_rate_values.accepts(value->q20)&&value->q20>=capabilities.sample_rate.minimum.q20&&value->q20<=capabilities.sample_rate.maximum.q20;}
+          else if(request.fields[i]==Bandwidth::id){const auto* value=std::get_if<Hertz>(&request.values[i]);supported=value&&capabilities.bandwidth_values.accepts(value->q20)&&value->q20>=capabilities.bandwidth.minimum.q20&&value->q20<=capabilities.bandwidth.maximum.q20;}
+          else if(request.fields[i]==Gain::id){const auto* value=std::get_if<GainStages>(&request.values[i]);supported=value&&capabilities.gain_values.accepts(value->stage1_q7)&&value->stage1_q7>=capabilities.gain.minimum.stage1_q7&&value->stage1_q7<=capabilities.gain.maximum.stage1_q7&&value->stage2_q7>=capabilities.gain.minimum.stage2_q7&&value->stage2_q7<=capabilities.gain.maximum.stage2_q7;}
+          if(!supported){v.resolvable=false;v.diagnostics.errors|=range_error;}}
         if (v.resolvable && backend_.validate) {
           auto extra = backend_.validate(backend_.context, request.fields[i],
                                          v.adjusted, state);
+          if(options_.profile==Profile::graphx_radio&&extra.adjusted!=v.adjusted){extra.resolvable=false;extra.diagnostics.errors|=precision;}
           v.adjusted = extra.adjusted;
           v.diagnostics.warnings |= extra.diagnostics.warnings;
           v.diagnostics.errors |= extra.diagnostics.errors;
@@ -173,6 +225,7 @@ template <std::size_t Transactions = 8> class Engine {
         if (v.resolvable) {
           auto native = validate_value(request.fields[i], v.adjusted);
           if(options_.profile==Profile::iq_frequency_tunable&&!tunable_validate(request.fields[i],v.adjusted).resolvable)native=std::unexpected(Error{ErrorCode::invalid_argument});
+          if(options_.profile==Profile::graphx_radio&&!graphx_validate(request.fields[i],v.adjusted).resolvable)native=std::unexpected(Error{ErrorCode::invalid_argument});
           if (!native) {
             v.diagnostics.errors |= invalid_value;
             v.resolvable = false;
@@ -180,6 +233,12 @@ template <std::size_t Transactions = 8> class Engine {
         }
       }
       if(mixed){v.resolvable=false;v.diagnostics.errors|=unsupported;}
+      if(options_.profile==Profile::graphx_radio&&request.cam.action!=0&&request.cam.partial){v.resolvable=false;v.diagnostics.errors|=unsupported;}
+      if(options_.profile==Profile::graphx_radio&&graphx_configuration&&request.cam.action==2&&!backend_.commit){v.resolvable=false;v.diagnostics.errors|=unsupported;}
+      if(incomplete_graphx){v.resolvable=false;v.diagnostics.errors|=unsupported;}
+      if(options_.profile==Profile::graphx_radio&&request.cam.action!=0&&request.fields[i]==DiscreteIO32::id){const auto* discrete=std::get_if<std::uint32_t>(&request.values[i]);const bool start=discrete&&*discrete==3;if(!discrete||(start&&(slot.plan.data_running||armed||!configured))||(start&&request.cam.timing!=1)||(!start&&request.cam.timing!=0)){v.resolvable=false;v.diagnostics.errors|=timing_error;}}
+      if(incompatible_graphx&&request.fields[i]==Bandwidth::id){v.resolvable=false;v.diagnostics.errors|=range_error;}
+      if(options_.profile==Profile::graphx_radio&&graphx_configuration&&requested_rate&&requested_bandwidth&&options_.graphx_capabilities&&!options_.graphx_capabilities->supports(*requested_bandwidth,*requested_rate)&&request.fields[i]==Bandwidth::id){v.resolvable=false;v.diagnostics.errors|=range_error;}
       plan.fields[i] = {request.fields[i],
                         request.values[i],
                         v.adjusted,
@@ -227,7 +286,7 @@ template <std::size_t Transactions = 8> class Engine {
         }
       all = all && field.eligible;
     }
-    if (backend_.validate_plan) {
+    if (request.cam.action != 0 && backend_.validate_plan) {
       auto whole = backend_.validate_plan(backend_.context, plan, state);
       if (!whole) {
         all = false;
@@ -237,7 +296,7 @@ template <std::size_t Transactions = 8> class Engine {
         }
       }
     }
-    if (!request.cam.partial && !all)
+    if ((!request.cam.partial || options_.profile==Profile::graphx_radio) && !all)
       for (std::size_t i = 0; i < plan.count; ++i)
         plan.fields[i].eligible = false;
     for (std::size_t i = 0; i < plan.count; ++i)
@@ -285,7 +344,7 @@ template <std::size_t Transactions = 8> class Engine {
         }
       all = all && field.eligible;
     }
-    if (!slot.plan.request.cam.partial && !all)
+    if ((!slot.plan.request.cam.partial || options_.profile==Profile::graphx_radio) && !all)
       for (std::size_t i = 0; i < slot.plan.execution.count; ++i) {
         slot.plan.execution.fields[i].eligible = false;
         mark_not_executed(slot.plan.execution.fields[i].diagnostics);
@@ -325,11 +384,14 @@ template <std::size_t Transactions = 8> class Engine {
           ack.time_known = true;
         }
       } else if (!slot.plan.request.unsupported_attributes[i] &&
-                 observed.fields[index].validity == Validity::known) {
+                 (slot.plan.request.capability_query || observed.fields[index].validity == Validity::known)) {
         ack.selected_mask |= 1u << index;
         ++successful;
       }
     }
+    if (kind == AckKind::state && ack.selected_mask &&
+        slot.plan.request.capability_query)
+      ack.graphx_capabilities = options_.graphx_capabilities;
     const auto count = slot.plan.execution.count;
     ack.partial = successful != count || timing_failure;
     if (kind == AckKind::state)
@@ -350,6 +412,12 @@ template <std::size_t Transactions = 8> class Engine {
          now.clock.state == timing::ClockState::holdover)) {
       ack.time = now.clock.time;
       ack.time_known = true;
+    }
+    // A rejected GraphX operation has no effective time. Preserve the profile's
+    // UTC/picosecond envelope using diagnostic observation time, without SchX.
+    if(options_.profile==Profile::graphx_radio&&!ack.time_known&&
+       (now.clock.state==timing::ClockState::locked||now.clock.state==timing::ClockState::holdover)){
+      ack.time=now.clock.time;ack.time_known=true;
     }
     ack.timing = timing_failure ? 7 : ack.cam.timing;
     if (should_emit(ack.cam, kind, summary(ack))) {
@@ -782,7 +850,8 @@ public:
     slot.plan.execution.operation = now.operation;
     slot.plan.execution.association_generation = now.association_generation;
     slot.plan.timing = now.timing;
-    slot.plan.data_running = now.data_running;
+    const bool immediate_stop=options_.profile==Profile::graphx_radio&&request->count==1&&request->fields[0]==DiscreteIO32::id&&request->values[0]==SemanticValue{std::uint32_t{2}};
+    slot.plan.data_running = now.data_running&&!immediate_stop;
     slot.plan.time_known = now.clock.state == timing::ClockState::locked ||
                            now.clock.state == timing::ClockState::holdover;
     slot.plan.requested_time = {request->envelope.timestamp.integer,
@@ -794,10 +863,21 @@ public:
     }
     slot.plan.execution.boundary = {
         now.clock.time, 0, now.clock.mapping_generation, false, true, 0};
-    if (now.data_running || request->cam.timing) {
-      auto chosen =
-          timing::choose_boundary(request->cam.timing, slot.plan.requested_time,
-                                  now.clock, now.boundaries, now.timing);
+    if (request->cam.action!=0 && (slot.plan.data_running || request->cam.timing)) {
+      const auto *discrete = request->count == 1 &&
+                     request->fields[0] == DiscreteIO32::id
+                   ? std::get_if<std::uint32_t>(&request->values[0])
+                   : nullptr;
+      const bool graphx_start = options_.profile == Profile::graphx_radio &&
+                  !now.data_running && discrete && *discrete == 3;
+      const std::array requested_boundary{timing::Boundary{
+        slot.plan.requested_time, 0, now.clock.mapping_generation, false,
+        true, 0}};
+      const std::span<const timing::Boundary> boundaries =
+        graphx_start ? requested_boundary : now.boundaries;
+      auto chosen = timing::choose_boundary(
+        request->cam.timing, slot.plan.requested_time, now.clock, boundaries,
+        now.timing);
       if (chosen)
         slot.plan.execution.boundary = *chosen;
       else {
@@ -807,6 +887,21 @@ public:
           slot.plan.execution.fields[i].diagnostics.errors |=
               timing_error | not_executed;
         }
+      }
+    }
+    if(options_.profile==Profile::graphx_radio&&request->cam.action!=0&&request->cam.timing){
+      auto earliest=timing::add(now.clock.time,timing::Duration{0,20'000'000'000});
+      auto latest=timing::add(now.clock.time,timing::Duration{10,0});
+      if(!earliest||!latest||slot.plan.requested_time < *earliest || slot.plan.requested_time > *latest){
+        slot.plan.schedule_valid=false;
+        for(std::size_t i=0;i<slot.plan.execution.count;++i){slot.plan.execution.fields[i].eligible=false;slot.plan.execution.fields[i].diagnostics.errors|=timing_error|not_executed;}
+      }
+    }
+    // Stop disarms scheduled starts in this serialized domain before they can
+    // reach the physical backend. Cancellation uses the ordinary terminal path.
+    if(options_.profile==Profile::graphx_radio&&request->cam.action==2&&request->count==1&&request->fields[0]==DiscreteIO32::id&&request->values[0]==SemanticValue{std::uint32_t{2}}&&slot.plan.execution.fields[0].eligible){
+      for(auto& other:slots_)if(&other!=&slot&&other.record.active&&!other.record.complete&&!other.record.running&&other.plan.request.count==1&&other.plan.request.fields[0]==DiscreteIO32::id&&other.plan.request.values[0]==SemanticValue{std::uint32_t{3}}){
+        other.plan.cancelled[0]=true;other.plan.schedule_valid=false;
       }
     }
     validate_boundary_state(slot);
@@ -913,7 +1008,12 @@ public:
         continue;
       }
       if (!slot.record.revalidated) {
+        const auto admitted=slot.plan.execution;
+        const auto& request=slot.plan.request;
+        const bool immediate_stop=options_.profile==Profile::graphx_radio&&request.count==1&&request.fields[0]==DiscreteIO32::id&&request.values[0]==SemanticValue{std::uint32_t{2}};
+        slot.plan.data_running=now.data_running&&!immediate_stop;
         auto validation = validate_plan(slot, state_);
+        for(std::size_t i=0;i<slot.plan.execution.count;++i)if(!admitted.fields[i].eligible){slot.plan.execution.fields[i].eligible=false;slot.plan.execution.fields[i].diagnostics=admitted.fields[i].diagnostics;}
         if (!validation)
           for (std::size_t i = 0; i < slot.plan.execution.count; ++i) {
             slot.plan.execution.fields[i].eligible = false;
@@ -930,6 +1030,15 @@ public:
         slot.record.revalidated = true;
       }
       if (slot.plan.request.cam.timing || slot.plan.data_running) {
+        const auto *discrete = slot.plan.request.count == 1 &&
+                   slot.plan.request.fields[0] ==
+                   DiscreteIO32::id
+                   ? std::get_if<std::uint32_t>(
+                     &slot.plan.request.values[0])
+                   : nullptr;
+        const bool graphx_start = options_.profile == Profile::graphx_radio &&
+                  !slot.plan.data_running && discrete &&
+                  *discrete == 3;
         const bool qualified =
             (slot.plan.request.cam.timing == 0 && !slot.plan.data_running) ||
             ((now.clock.state == timing::ClockState::locked ||
@@ -937,21 +1046,33 @@ public:
              (slot.plan.request.cam.timing == 0 || slot.plan.timing.qualified ||
               slot.plan.timing.injected));
         bool boundary_available = false;
-        for (const auto &boundary : now.boundaries)
-          if (boundary.sample_ordinal ==
-                  slot.plan.execution.boundary.sample_ordinal &&
-              boundary.time == slot.plan.execution.boundary.time &&
-              boundary.mapping_generation == now.clock.mapping_generation &&
-              !boundary.committed && boundary.backend_ready)
-            boundary_available = true;
+        if (graphx_start) {
+          boundary_available = slot.plan.execution.boundary.time ==
+                                   slot.plan.requested_time &&
+                               slot.plan.execution.boundary.mapping_generation ==
+                                   now.clock.mapping_generation;
+        } else {
+          for (const auto &boundary : now.boundaries)
+            if (boundary.sample_ordinal ==
+                    slot.plan.execution.boundary.sample_ordinal &&
+                boundary.time == slot.plan.execution.boundary.time &&
+                boundary.mapping_generation == now.clock.mapping_generation &&
+                !boundary.committed && boundary.backend_ready)
+              boundary_available = true;
+        }
         if (!boundary_available)
           slot.plan.schedule_valid = false;
         if (!slot.plan.schedule_valid ||
             slot.plan.execution.boundary.mapping_generation !=
                 now.clock.mapping_generation) {
-          auto chosen = timing::choose_boundary(
+            const std::array requested_boundary{timing::Boundary{
+              slot.plan.requested_time, 0, now.clock.mapping_generation, false,
+              true, 0}};
+            const std::span<const timing::Boundary> boundaries =
+              graphx_start ? requested_boundary : now.boundaries;
+            auto chosen = timing::choose_boundary(
               slot.plan.request.cam.timing, slot.plan.requested_time, now.clock,
-              now.boundaries, slot.plan.timing);
+              boundaries, slot.plan.timing);
           slot.plan.schedule_valid = bool(chosen);
           if (chosen)
             slot.plan.execution.boundary = *chosen;
@@ -959,7 +1080,8 @@ public:
         if (!qualified)
           slot.plan.schedule_valid = false;
         if (slot.plan.schedule_valid && action == 2 &&
-            slot.plan.execution.boundary.time > now.clock.time) {
+            slot.plan.execution.boundary.time > now.clock.time &&
+            [&]{for(std::size_t i=0;i<slot.plan.execution.count;++i)if(slot.plan.execution.fields[i].eligible&&!slot.plan.cancelled[i])return true;return false;}()) {
           effect_owner_.reset();
           continue;
         }
@@ -987,6 +1109,47 @@ public:
           }
       }
       validate_boundary_state(slot);
+      if(options_.profile==Profile::graphx_radio&&slot.plan.execution.count==4&&action==2){
+        bool ready=backend_.commit!=nullptr;
+        for(std::size_t i=0;i<4;++i)ready&=slot.plan.execution.fields[i].eligible&&!slot.plan.cancelled[i];
+        if(ready){
+          // Admission may precede dispatch by seconds. Recheck the complete
+          // operation against the live lifecycle before any physical effect.
+          slot.plan.data_running=now.data_running;
+          auto current=validate_plan(slot,state_);ready=bool(current);
+          for(std::size_t i=0;i<4;++i)ready&=slot.plan.execution.fields[i].eligible;
+        }
+        if(ready){
+          auto boundary=slot.plan.execution.boundary;boundary.time=now.clock.time;
+          auto batch=backend_.commit(backend_.context,slot.plan.execution,boundary);
+          if(batch.status!=FieldStatus::executed&&batch.status!=FieldStatus::failed&&batch.status!=FieldStatus::unknown_effect)
+            batch.status=FieldStatus::unknown_effect;
+          const auto previous=state_;
+          // apply_outcome performs the usual validation and diagnostics; suppress
+          // intermediate publication until the complete batch has been recorded.
+          auto effects=options_.effects;options_.effects={};
+          for(std::size_t i=0;i<4;++i){
+            FieldOutcome out;out.id=slot.plan.execution.fields[i].id;
+            out.value=slot.plan.execution.fields[i].adjusted;out.status=batch.status;
+            out.validity=batch.status==FieldStatus::executed?Validity::known:batch.status==FieldStatus::unknown_effect?Validity::unknown:Validity::absent;
+            out.actual_time=batch.actual_time;out.time_known=batch.time_known;out.uncertainty_ps=batch.uncertainty_ps;
+            if(batch.status!=FieldStatus::executed)out.diagnostics.errors=device_failure|(batch.status==FieldStatus::unknown_effect?state_indeterminate:0);
+            apply_outcome(slot,i,out,now);
+          }
+          options_.effects=effects;
+          if(state_.version!=previous.version){
+            state_.version=previous.version+1;
+            if(effects.record){
+              EffectiveEvent event{state_,batch.actual_time,0,slot.plan.execution.operation,slot.plan.execution.association_generation,0x72,batch.time_known,false,slot.plan.outcomes[0]};
+              AdmissionRequest need;need.need(Resource::revision).need(Resource::context_publication);
+              auto credit=slot.credits.transfer(need);
+              if(credit)effects.record(effects.context,event,slot.plan.revisions,std::move(*credit));
+            }
+          }
+          finish(slot,now);continue;
+        }
+        for(std::size_t i=0;i<4;++i){slot.plan.execution.fields[i].eligible=false;mark_not_executed(slot.plan.execution.fields[i].diagnostics);}
+      }
       while (slot.record.step < slot.plan.execution.count) {
         const auto field = slot.plan.execution.order[slot.record.step];
         auto &plan = slot.plan.execution.fields[field];
@@ -1230,7 +1393,7 @@ public:
     if (handle.slot >= Transactions || !slots_[handle.slot].record.active ||
         slots_[handle.slot].record.generation != handle.generation)
       return std::unexpected(Error{ErrorCode::stale_generation});
-    return slots_[handle.slot].plan.outcomes;
+    std::array<FieldOutcome,4> result;std::copy_n(slots_[handle.slot].plan.outcomes.begin(),4,result.begin());return result;
   }
   Result<void> release(Handle handle) noexcept {
     if (handle.slot >= Transactions)

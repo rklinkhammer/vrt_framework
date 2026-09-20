@@ -129,6 +129,15 @@ struct BackendQuiescence {
   bool known = false, quiescent = false;
   std::size_t pending = 0;
 };
+// Bounded synchronous commit on the serialized execution domain. `failed` means
+// no physical effects; uncertain effects MUST return unknown_effect. Success
+// applies every adjusted field exactly. Drivers must not block for hardware I/O.
+struct BatchOutcome {
+  FieldStatus status=FieldStatus::failed;
+  timing::ProtocolTime actual_time{};
+  bool time_known=false;
+  std::uint64_t uncertainty_ps=0;
+};
 struct Backend {
   void *context = nullptr;
   Validation (*validate)(void *, FieldId, SemanticValue,
@@ -141,6 +150,7 @@ struct Backend {
                            timing::Boundary) noexcept = nullptr;
   DisarmResult (*disarm)(void *, const AsyncResult &) noexcept = nullptr;
   BackendQuiescence (*quiescence)(void *) noexcept = nullptr;
+  BatchOutcome (*commit)(void *,const ExecutionPlan &,timing::Boundary) noexcept=nullptr;
 };
 struct VirtualRule {
   bool supported = true, resolvable = true;
@@ -271,6 +281,16 @@ public:
             disarm_thunk,
             [](void *p) noexcept {
               return static_cast<VirtualBackend *>(p)->quiescence();
+            },
+            [](void* p,const ExecutionPlan& plan,timing::Boundary boundary) noexcept {
+              auto& self=*static_cast<VirtualBackend*>(p);
+              for(std::size_t i=0;i<plan.count;++i)
+                if(self.rules_[field_index(plan.fields[i].id)].completion!=FieldStatus::executed)
+                  return BatchOutcome{self.rules_[field_index(plan.fields[i].id)].completion,boundary.time,true};
+              ++self.begins_;self.writes_+=plan.count;
+              for(std::size_t i=0;i<plan.count;++i){auto index=field_index(plan.fields[i].id);self.model_.fields[index]={plan.fields[i].id,plan.fields[i].adjusted,Validity::known};}
+              ++self.model_.version;
+              return BatchOutcome{FieldStatus::executed,boundary.time,true};
             }};
   }
   BackendQuiescence quiescence() const noexcept {

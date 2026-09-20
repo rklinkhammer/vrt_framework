@@ -16,6 +16,15 @@ inline Result<std::size_t> encode_context(const ContextFrame& frame,codec::Envel
     if(frame.time_known){if(!timing::valid(frame.time)||frame.time.seconds>UINT32_MAX||frame.epoch==codec::Tsi::none)return std::unexpected(Error{ErrorCode::invalid_argument});envelope.timestamp={frame.epoch,codec::Tsf::picoseconds,static_cast<std::uint32_t>(frame.time.seconds),frame.time.picoseconds};}
     else envelope.timestamp={};
     ContextPacket packet;
+    if(frame.state.profile==profiles::iq::Profile::graphx_radio){
+        if(envelope.class_id||frame.epoch!=codec::Tsi::utc||!frame.time_known||!frame.valid)
+            return std::unexpected(Error{ErrorCode::invalid_argument});
+        for(auto i:{5u,4u,6u,1u}){
+            if(frame.state.fields[i].validity!=Validity::known)return std::unexpected(Error{ErrorCode::invalid_state});
+            auto set=packet.set_value(frame.state.fields[i].id,frame.state.fields[i].value);if(!set)return std::unexpected(set.error());
+        }
+        return codec::encode_packet(envelope,packet.freeze(),output,frame.change);
+    }
     for(std::size_t i=0;i<active_state_fields(frame.state.profile);++i)if(i!=2&&frame.state.fields[i].validity==Validity::known){auto set=packet.set_value(frame.state.fields[i].id,frame.state.fields[i].value);if(!set)return std::unexpected(set.error());}
     std::uint32_t indicators=0;
     if(frame.state.fields[2].validity==Validity::known){const auto* value=std::get_if<std::uint32_t>(&frame.state.fields[2].value);if(!value)return std::unexpected(Error{ErrorCode::invalid_argument});indicators=*value;}

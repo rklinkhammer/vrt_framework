@@ -112,3 +112,7 @@ Start with the [framework architecture](docs/vita49_framework_architecture.md), 
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
+
+The explicitly configured [GraphX radio profile](docs/implementation/P17-graphx-profile.md)
+adds atomic four-setting control, supported-limit queries, burst packetization and
+bounded TCP framing. Its device and mutual-TLS transport adapters remain host-owned.

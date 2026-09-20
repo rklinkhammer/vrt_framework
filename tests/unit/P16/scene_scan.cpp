@@ -12,7 +12,7 @@ void operator delete(void*p,std::size_t)noexcept{std::free(p);}
 static runtime::StateSnapshot state(std::uint64_t hz){
     runtime::StateSnapshot s;
     s.fields[1]={SampleRate::id,*Hertz::from_integer(100'000),runtime::Validity::known};
-    s.fields.back()={RFReferenceFrequency::id,*Hertz::from_integer(hz),runtime::Validity::known};return s;
+    s.fields[runtime::field_index(RFReferenceFrequency::id)]={RFReferenceFrequency::id,*Hertz::from_integer(hz),runtime::Validity::known};return s;
 }
 static runtime::EffectiveEvent event(std::uint64_t hz,std::uint64_t ordinal){
     runtime::EffectiveEvent e;e.state=state(hz);e.sample_ordinal=ordinal;e.ordinal_known=true;return e;

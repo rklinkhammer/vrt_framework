@@ -28,6 +28,7 @@ class TransactionManager {
   std::array<std::optional<PendingCancel>, CancelSlots> cancellations_{};
   bool progressing_ = false,closed_=false,quiescing_=false;
   std::uint64_t closed_generation_=0;
+  bool monotonic_ids_=false;std::uint32_t highwater_id_=0;
 
   Result<void> finish_cancel(PendingCancel &pending,
                              const OperationContext &now) noexcept {
@@ -97,8 +98,8 @@ class TransactionManager {
 public:
   TransactionManager(Engine<Transactions> &engine,
                      RetentionStore<Entries, BytesCapacity> &retention,
-                     AdmissionPool &admission) noexcept
-      : engine_(engine), retention_(retention), admission_(admission) {}
+                     AdmissionPool &admission,bool monotonic_ids=false) noexcept
+      : engine_(engine), retention_(retention), admission_(admission),monotonic_ids_(monotonic_ids) {}
 
   void close_admission() noexcept {if(!closed_)closed_generation_=engine_.association_generation();closed_=true;}
   ManagerDrainStatus drain_status() const noexcept {
@@ -124,6 +125,9 @@ public:
       return std::unexpected(key.error());
     if(closed_)return retention_.replay_existing(*key,packet);
     const bool cancellation = packet.envelope.envelope.cancel;
+    const auto mid=packet.envelope.envelope.command->message_id;
+    if(monotonic_ids_&&!mid)return std::unexpected(Error{ErrorCode::invalid_argument});
+    if(monotonic_ids_&&!cancellation&&mid<=highwater_id_)return retention_.replay_existing(*key,packet);
     auto reserved = retention_.reserve(*key, packet, cancellation ? 2 : 3);
     if (!reserved)
       return std::unexpected(reserved.error());
@@ -148,6 +152,7 @@ public:
       retention_.bind(reserved->token, *admitted);
       retention_.retain(reserved->token);
       active_[slot] = Active{reserved->token, *admitted};
+      if(monotonic_ids_)highwater_id_=mid;
       return *reserved;
     }
     auto selectors = cancellation_selectors(packet);
