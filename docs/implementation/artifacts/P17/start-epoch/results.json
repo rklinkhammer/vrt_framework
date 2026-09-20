@@ -1,0 +1,66 @@
+{
+  "base_commit": "60a290c9b1da2396d3d704ebe52ea6cbcf2fa398",
+  "recorded_utc": "2026-09-20T00:39:25.918819+00:00",
+  "source_manifest": "source.json",
+  "source_files": 413,
+  "source_unchanged": true,
+  "macos_compiler": "Apple clang 21.0.0 (clang-2100.3.34.2), libc++",
+  "linux_compiler": "GCC 15.2.0, libstdc++",
+  "linux_image": "sha256:e590ad0533b735bf7bd8555830c0416f4451e4bf5c74244df08ef7bc89eef5d6",
+  "gates": [
+    {
+      "platform": "macos-arm64",
+      "mode": "Debug",
+      "passed": 236,
+      "failed": 0,
+      "test_log": "macos-arm64-debug-test.log",
+      "build_log": "macos-arm64-debug-build.log.gz"
+    },
+    {
+      "platform": "macos-arm64",
+      "mode": "Release",
+      "passed": 240,
+      "failed": 0,
+      "test_log": "macos-arm64-release-test.log",
+      "build_log": "macos-arm64-release-build.log.gz"
+    },
+    {
+      "platform": "macos-arm64",
+      "mode": "ASan-UBSan",
+      "passed": 236,
+      "failed": 0,
+      "test_log": "macos-arm64-asan-ubsan-test.log",
+      "build_log": "macos-arm64-asan-ubsan-build.log.gz"
+    },
+    {
+      "platform": "macos-arm64",
+      "mode": "TSan",
+      "passed": 236,
+      "failed": 0,
+      "test_log": "macos-arm64-tsan-test.log",
+      "build_log": "macos-arm64-tsan-build.log.gz"
+    },
+    {
+      "platform": "linux-arm64",
+      "mode": "Debug",
+      "passed": 236,
+      "failed": 0,
+      "test_log": "linux-arm64-debug-test.log",
+      "build_log": "linux-arm64-debug-build.log.gz"
+    },
+    {
+      "platform": "linux-arm64",
+      "mode": "Release",
+      "passed": 236,
+      "failed": 0,
+      "test_log": "linux-arm64-release-test.log",
+      "build_log": "linux-arm64-release-build.log.gz"
+    }
+  ],
+  "reproducer_sha256": "0875fc82c0cf4c7c55f96da64b8cdcfc55b9bf2a3c64bff9a2368258445e9fb7",
+  "reproducer_exit_codes": {
+    "on-time": 0,
+    "delayed": 0
+  },
+  "scope": "Library qualification only; GraphX executable/Soapy/mTLS and privileged OVS application acceptance remain pending. Linux sanitizers were not run."
+}

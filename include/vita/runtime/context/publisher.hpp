@@ -51,7 +51,7 @@ template<std::size_t Revisions=128,std::size_t Held=64> class ContextPublisher {
     std::optional<StateSnapshot> fault_snapshot_{},highwater_state_{};
     void stop(StreamStatus status) noexcept {status_=status;for(auto& held:held_)held.reset();held_count_=0;}
     ContextFrame frame(const RevisionHandle& revision,codec::Tsi epoch,bool refresh,timing::ProtocolTime now={}) const noexcept {
-        auto const& event=revision.event();ContextFrame result{event.state,refresh?now:event.actual_time,epoch,refresh||event.time_known,!refresh,refresh,required_known(event.state),revision.id(),event.association_generation};
+        auto const& event=revision.event();ContextFrame result{event.state,refresh?now:event.context_time(),epoch,refresh||event.time_known,!refresh,refresh,required_known(event.state),revision.id(),event.association_generation};
         std::uint32_t indicators=0;if(auto* value=std::get_if<std::uint32_t>(&result.state.fields[2].value);value&&result.state.fields[2].validity==Validity::known)indicators=*value;
         indicators|=(1u<<31)|valid_data_enable;if(calibrated_)indicators|=1u<<19;else indicators&=~(1u<<19);
         if(result.valid)indicators|=valid_data_indicator;else indicators&=~valid_data_indicator;

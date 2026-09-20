@@ -8,7 +8,7 @@ enum class BudgetCategory : std::size_t { raw_blocks, providers, duplicate_value
 inline constexpr std::size_t budget_category_count=static_cast<std::size_t>(BudgetCategory::count);
 inline constexpr std::size_t framework_budget=67108864;
 inline constexpr std::size_t retention_headroom_transfer=704512;
-inline constexpr std::size_t graphx_state_headroom_transfer=50560;
+inline constexpr std::size_t graphx_state_headroom_transfer=99712;
 struct BudgetRow { std::size_t reserved{},charged{}; };
 class BudgetLedger {
     std::array<BudgetRow,budget_category_count> rows_{};

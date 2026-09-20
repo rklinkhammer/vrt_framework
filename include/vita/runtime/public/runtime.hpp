@@ -304,8 +304,41 @@ private:
       auto sink=revisions.binding();sink.context=this;
       sink.reserve=[](void* context,std::size_t count) noexcept ->Result<runtime::RevisionReservation>{auto& stream=*static_cast<Stream*>(context);auto binding=stream.revisions.binding();return binding.reserve(binding.context,count);};
       sink.record=[](void* context,const runtime::EffectiveEvent& event,runtime::RevisionReservation& reservation,runtime::AdmissionBundle credits) noexcept {
-        auto& stream=*static_cast<Stream*>(context);auto binding=stream.revisions.binding();binding.record(binding.context,event,reservation,std::move(credits));
-        if(stream.config.profile==profiles::iq::Profile::graphx_radio&&event.outcome.id==DiscreteIO32::id&&event.outcome.status==runtime::FieldStatus::executed){const auto* discrete=std::get_if<std::uint32_t>(&event.outcome.value);if(discrete&&*discrete==3){const auto rate=std::get<Hertz>(event.state.fields[1].value).q20>>20;auto timeline=runtime::timing::SampleTimeline::create(event.actual_time,static_cast<std::uint64_t>(rate));auto pacing=runtime::timing::SampleTimeline::create(mono_protocol(stream.owner->now_),static_cast<std::uint64_t>(rate));stream.pending_loss=false;if(!timeline||!pacing||!stream.publisher.start(stream.owner->now_)){stream.status=SourceStatus::faulted;stream.publisher.backend_fault(event.state);}else{stream.timeline=*timeline;stream.pacing=*pacing;stream.coverage_floor=event.actual_time;stream.status=SourceStatus::running;}}else if(discrete&&*discrete==2){stream.publisher.pause();for(auto& stamp:stream.stamps)stamp.header=nullptr;stream.status=SourceStatus::stopped;}}
+        auto& stream=*static_cast<Stream*>(context);auto binding=stream.revisions.binding();
+        binding.record(binding.context,event,reservation,std::move(credits));
+        if (stream.config.profile == profiles::iq::Profile::graphx_radio &&
+            event.outcome.id == DiscreteIO32::id &&
+            event.outcome.status == runtime::FieldStatus::executed) {
+          const auto* discrete = std::get_if<std::uint32_t>(&event.outcome.value);
+          if (discrete && *discrete == 3) {
+            if (event.outcome.diagnostics.errors & runtime::transaction::timing_error) {
+              stream.status = SourceStatus::faulted;
+              stream.publisher.backend_fault(event.state);
+              return;
+            }
+            const auto rate = std::get<Hertz>(event.state.fields[1].value).q20 >> 20;
+            const auto epoch = event.sample_epoch.value_or(event.actual_time);
+            auto timeline = runtime::timing::SampleTimeline::create(epoch, static_cast<std::uint64_t>(rate));
+            // Host pacing starts at activation, not the simulated epoch: a late
+            // activation must not trigger catch-up skips of the first samples.
+            auto pacing = runtime::timing::SampleTimeline::create(
+                mono_protocol(stream.owner->now_), static_cast<std::uint64_t>(rate));
+            stream.pending_loss = false;
+            if (!timeline || !pacing || !stream.publisher.start(stream.owner->now_)) {
+              stream.status = SourceStatus::faulted;
+              stream.publisher.backend_fault(event.state);
+            } else {
+              stream.timeline = *timeline;
+              stream.pacing = *pacing;
+              stream.coverage_floor = epoch;
+              stream.status = SourceStatus::running;
+            }
+          } else if (discrete && *discrete == 2) {
+            stream.publisher.pause();
+            for (auto& stamp : stream.stamps) stamp.header = nullptr;
+            stream.status = SourceStatus::stopped;
+          }
+        }
         if(stream.config.source.effective&&stream.status==SourceStatus::running){auto observed=stream.config.source.effective(stream.config.source.context,event);if(!observed){stream.status=SourceStatus::faulted;stream.publisher.backend_fault(event.state);}}
       };return sink;
     }
@@ -835,6 +868,12 @@ private:
     const auto pending=stream.engine.pending_effect_boundary();
     return pending&&(!pending->ordinal_known||stream.timeline.ordinal()>=pending->boundary.sample_ordinal);
   }
+  runtime::timing::ClockSnapshot publication_clock(const Stream &s) const noexcept {
+    auto clock = *clock_snapshot_;
+    if (s.config.profile == profiles::iq::Profile::graphx_radio)
+      clock.time = s.timeline.time();
+    return clock;
+  }
   Result<void> generate(Stream &s) noexcept {
     if (!clock_snapshot_ || s.status != SourceStatus::running)
       return {};
@@ -906,9 +945,13 @@ private:
       // must retry. The publisher retains the Context-before-Data gate.
       s.pending_loss = false;
       if(pending_effect_gate(s))return {};
-      auto published = s.publisher.progress(now_, *clock_snapshot_);
+      auto published = s.publisher.progress(now_, publication_clock(s));
       if (!published)
         return std::unexpected(resource_backpressure(published.error()));
+    }
+    if (s.config.profile == profiles::iq::Profile::graphx_radio) {
+      auto published = s.publisher.progress(now_, publication_clock(s));
+      if (!published) return std::unexpected(resource_backpressure(published.error()));
     }
     auto current = s.revisions.current();
     if (!current)
@@ -1147,7 +1190,7 @@ private:
       }
       if (pending && pending->ordinal_known && !catch_up &&
           clock_snapshot_->time < pending->boundary.time) {
-        auto before_generation = s.publisher.progress(now_, *clock_snapshot_);
+        auto before_generation = s.publisher.progress(now_, publication_clock(s));
         if (!before_generation) {
           if (s.publisher.status() != runtime::context::StreamStatus::active)
             s.status = publication_status(s);
@@ -1165,7 +1208,7 @@ private:
         return generated;
       }
       if(pending_effect_gate(s))return {};
-      auto published = s.publisher.progress(now_, *clock_snapshot_);
+      auto published = s.publisher.progress(now_, publication_clock(s));
       if (!published) {
         if (s.publisher.status() != runtime::context::StreamStatus::active)
           s.status = publication_status(s);

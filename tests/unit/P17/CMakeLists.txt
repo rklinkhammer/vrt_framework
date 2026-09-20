@@ -13,3 +13,6 @@ vita_add_test(p17_remote remote.cpp)
 vita_add_test(p17_bursts bursts.cpp)
 vita_add_test(p17_replay replay.cpp)
 set_tests_properties(p17_atomic p17_remote p17_bursts p17_replay PROPERTIES LABELS "P17;profile;graphx")
+
+vita_add_test(p17_start_epoch start_epoch.cpp)
+set_tests_properties(p17_start_epoch PROPERTIES LABELS "P17;profile;graphx;timing")

@@ -63,6 +63,9 @@ struct EffectiveEvent {
     StateSnapshot state{};timing::ProtocolTime actual_time{};
     std::uint64_t sample_ordinal=0,source_operation=0,association_generation=0;
     std::uint8_t changed_mask=0;bool time_known=false,ordinal_known=false;FieldOutcome outcome{};
+    // GraphX simulated sample epoch; actual_time remains device execution time.
+    std::optional<timing::ProtocolTime> sample_epoch{};
+    timing::ProtocolTime context_time() const noexcept { return sample_epoch.value_or(actual_time); }
 };
 class RevisionReservation {
     std::shared_ptr<void> owner_;

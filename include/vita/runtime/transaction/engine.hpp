@@ -529,6 +529,12 @@ template <std::size_t Transactions = 8> class Engine {
                                outcome.time_known,
                                outcome.ordinal_known,
                                outcome};
+          if (state.profile == profiles::iq::Profile::graphx_radio &&
+              planned.id == DiscreteIO32::id &&
+              outcome.status == FieldStatus::executed &&
+              std::get_if<std::uint32_t>(&outcome.value) &&
+              std::get<std::uint32_t>(outcome.value) == 3)
+            event.sample_epoch = slot.plan.requested_time;
           AdmissionRequest allocation;
           allocation.need(Resource::revision)
               .need(Resource::context_publication);

@@ -101,6 +101,42 @@ callback must fill the requested bounded extent; partial device reads need a
 bounded staging buffer in the adapter. Do not use an independent GraphX VITA
 encoder. GraphX owns device lifetime, phase, passband/gain behavior and clipping.
 
+## Scheduled sample epoch and host activation
+
+For `graphx_radio`, a successful scheduled start establishes sample ordinal zero
+at the requested UTC timestamp, even when device activation is late within the
+configured tolerance. AckV retains admission/scheduling semantics. The backend
+must return its actual activation time in `FieldOutcome::actual_time`; terminal
+AckX retains that time, and AckS retains the current observation time. No backend
+or host adapter should substitute the scheduled timestamp for actual execution.
+
+`EffectiveEvent::sample_epoch` carries the requested timestamp for a GraphX start.
+`EffectiveEvent::actual_time` and `outcome.actual_time` remain the actual device
+effect time, including in `SourceProvider::effective`. A source adapter can use
+`sample_epoch` to establish its simulated signal epoch and use
+`SampleWriteWindow::first_ordinal()` for continuous phase. The library owns all
+wire timestamp encoding. `EffectiveEvent::context_time()` selects this sample
+association time when present, otherwise the ordinary actual effect time.
+Revision ordering and Context publication use that association time. The start
+Context therefore precedes Data at the scheduled epoch; subsequent burst Context
+and sample timestamps follow cumulative rational sample time, including rates
+that do not divide one trillion picoseconds evenly.
+
+Monotonic host pacing starts when activation completes. Accepted activation
+jitter does not create an initial catch-up burst or skip the first samples.
+Later missed host deadlines retain the existing bounded skip behavior and source
+ordinal accounting. Context refreshes follow the sample timeline rather than
+advancing metadata past delayed simulated samples. No new clock or transport
+binding is required. Existing non-GraphX profiles retain their timing policy.
+
+Cancellation before execution creates no sample epoch. Stop followed by a new
+successful start resets the sample ordinal and selects the new requested epoch;
+idempotent retries neither reactivate the device nor reset the timeline. Dispatch
+outside tolerance is rejected without activation. If a backend reports that an
+activation physically occurred outside tolerance, AckX retains its actual time
+with timing diagnostics; the stream faults and emits no samples for that start.
+The host must handle that physical outcome through the existing fault/stop policy.
+
 ## Capabilities and diagnostics
 
 `StreamConfig::graphx_capabilities` is copied at endpoint construction and supplies
@@ -192,6 +228,7 @@ not claim its current executable has already been converted.
 | Capabilities distinct from current status | `p17_capabilities`, `p17_capability_duplicates`, `p17_graphx_runtime`, literal AckS in `p17_verify_wire` | Device-supported bounds and pure constraint binding |
 | Full five-field current query | `p17_graphx_runtime` | Controller UI interpretation |
 | Start/stop, timing, cancellation, armed rejection | `p17_graphx_runtime`; injected UTC | Host UTC-to-steady mapping and measured activation tolerance |
+| Common scheduled epoch, independent actual AckX, Context association, rational bursts, replay/cancel/restart and deadline failure | `p17_start_epoch`: four radio identities at 0/0.1/0.5/5 ms delay; unchanged GraphX reproducer in both modes | Soapy/mTLS application migration and independent acceptance pending |
 | Exact 52-byte Context, unknown OUI, absent class rules | `p17_verify_wire` literal comparison, profile-aware receiver | Update independent GraphX fixtures |
 | Packets 1/2/1023/1024; short/full/max bursts, continuous rational time | `p17_verify_wire`, `p17_bursts` at 1000003 Hz for two consecutive bursts | Same Soapy source acquisition, phase/skip policy |
 | SSI 0/1/2/3 and independent family counters | `p17_graphx_profile`, `p17_verify_wire` | End-to-end packet capture |
@@ -201,6 +238,9 @@ not claim its current executable has already been converted.
 | Build/platform/sanitizer gates | Verification record below | GraphX portable/Soapy/mTLS and privileged OVS gates remain separate |
 
 ## Verification
+
+The table and artifacts below record the original `60a290c9` profile qualification.
+The scheduled-epoch correction has a separate verification record below.
 
 Run on macOS arm64:
 
@@ -261,3 +301,84 @@ The final full TSan gate passed. The earlier failure log is retained as
 The 16-stream charged memory is 53,452,064 bytes with libc++ and 53,446,224 bytes
 with libstdc++, within the existing 64 MiB budget. These gates qualify the library;
 GraphX executable, SoapySDR, mTLS and privileged OVS integration remain pending.
+
+### Scheduled-epoch correction verification
+
+The correction starts from `60a290c9b1da2396d3d704ebe52ea6cbcf2fa398`.
+`p17_start_epoch` independently checks four radio identities with a common
+scheduled epoch and 0/0.1/0.5/5 ms activation delays. It checks AckV/AckX/AckS
+wire timestamps, the source effect callback's distinct epoch/actual times,
+Context-before-Data and Context association, three 2050-pair bursts at 1000003 Hz,
+IQ sample ordinals, duplicate and retained-replay starts, cancellation, stop/start,
+bounded post-activation deadline skipping, late dispatch rejection and an
+out-of-tolerance reported device effect. The latter retains its actual AckX time
+and faults the stream without emitting samples.
+
+Exact macOS arm64 gate commands (from the library root):
+
+```sh
+for preset in udp-dev udp-release udp-asan-ubsan udp-tsan; do
+  cmake --preset "$preset" && cmake --build --preset "$preset" -j3 &&
+    ctest --preset "$preset" --output-on-failure || exit 1
+done
+```
+
+The final Debug build used `-j4`; all other final builds used `-j3`.
+Linux arm64 used the same local compiler image identified above:
+
+```sh
+for mode in Debug Release; do
+  directory=$(printf '%s' "$mode" | tr '[:upper:]' '[:lower:]')
+  docker run --rm --entrypoint sh \
+    -v "$PWD:/src:ro" -v /tmp/vrt-graphx-linux:/evidence \
+    graphx-linux-verifier:local -c \
+    "cmake -S /src -B /evidence/$directory -G Ninja -DCMAKE_BUILD_TYPE=$mode -DBUILD_TESTING=ON -DVITA_BUILD_POSIX_UDP=ON && cmake --build /evidence/$directory -j3" || exit 1
+  docker run --rm --entrypoint sh \
+    -v "$PWD:/src:ro" -v /tmp/vrt-graphx-linux:/evidence \
+    graphx-linux-verifier:local -c \
+    "ctest --test-dir /evidence/$directory --output-on-failure" || exit 1
+done
+```
+
+The GraphX reproducer is compiled unchanged from the library root:
+
+```sh
+c++ -std=c++23 -O0 -fno-rtti -I include \
+  /Users/rklinkhammer/workspace/graphx-docker/tests/repro_vita_start_epoch.cpp \
+  -o /tmp/start-epoch
+/tmp/start-epoch --on-time
+/tmp/start-epoch
+```
+
+Both modes exit 0. Their output is:
+
+```text
+scheduled=1000:50000000000 actual=1000:50000000000 first_sample=1000:50000000000
+scheduled=1000:50000000000 actual=1000:50500000000 first_sample=1000:50000000000
+```
+
+The bounded optional epoch increases the measured 16-stream charge to 53,550,368
+bytes with libc++ and 53,544,528 bytes with libstdc++. The fixed reservation remains
+67,108,864 bytes (64 MiB); the budget oracle checks both the total charge and the
+remaining plan reservation. No additional host resource or timing binding is
+required. GraphX should update its immutable library pin, keep returning honest
+backend execution times, and use the scheduled epoch for its simulated source
+initialization. Its executable/Soapy/mTLS migration and application acceptance
+remain separate and pending; no GraphX privileged gates were run here.
+
+Final correction results (all build and test commands exited 0):
+
+| Platform | Gate | Passed | Failed |
+|---|---|---:|---:|
+| macOS arm64 | Debug | 236 | 0 |
+| macOS arm64 | Release | 240 | 0 |
+| macOS arm64 | ASan/UBSan | 236 | 0 |
+| macOS arm64 | TSan | 236 | 0 |
+| Linux arm64 | Debug | 236 | 0 |
+| Linux arm64 | Release | 236 | 0 |
+
+The [correction results](artifacts/P17/start-epoch/results.json) identify full test
+logs, compressed build logs, the unchanged GraphX reproducer's hash and outputs,
+and the [413-file source manifest](artifacts/P17/start-epoch/source.json). Source
+hashes were verified unchanged across the final gates. Linux sanitizer gates were
+not run; ASan/UBSan and TSan qualification above is on macOS arm64.

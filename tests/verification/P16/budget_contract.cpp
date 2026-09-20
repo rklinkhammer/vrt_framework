@@ -5,11 +5,11 @@ using namespace vita;using namespace vita::runtime;
 // Measured 16-stream projection: five query selectors, atomic commit binding,
 // replay high-water and bounded supported-value domains; total reservation stays64MiB.
 #if defined(__GLIBCXX__)
-constexpr std::size_t expected_runtime_charge=53'446'224;
-constexpr std::size_t expected_plans_reservation=496'240;
+constexpr std::size_t expected_runtime_charge=53'544'528;
+constexpr std::size_t expected_plans_reservation=348'784;
 #else
-constexpr std::size_t expected_runtime_charge=53'452'064;
-constexpr std::size_t expected_plans_reservation=495'728;
+constexpr std::size_t expected_runtime_charge=53'550'368;
+constexpr std::size_t expected_plans_reservation=348'272;
 #endif
 int main(){BudgetLedger ledger;assert(ledger.reserved_bytes()==67108864);assert(ledger.charge(BudgetCategory::plans,100));auto before=ledger;auto donor=ledger.row(BudgetCategory::plans);assert(!ledger.transfer_unused(BudgetCategory::plans,BudgetCategory::headroom,donor.reserved-99));for(std::size_t i=0;i<budget_category_count;++i){auto c=static_cast<BudgetCategory>(i);assert(ledger.row(c).reserved==before.row(c).reserved&&ledger.row(c).charged==before.row(c).charged);}assert(!ledger.transfer_unused(BudgetCategory::plans,BudgetCategory::plans,0));assert(!ledger.transfer_unused(BudgetCategory::count,BudgetCategory::headroom,0));assert(ledger.transfer_unused(BudgetCategory::plans,BudgetCategory::headroom,317456));assert(ledger.row(BudgetCategory::plans).reserved==donor.reserved-317456&&ledger.row(BudgetCategory::plans).charged==100&&ledger.reserved_bytes()==67108864);
  auto projection=reference_budget();assert(projection&&projection->row(BudgetCategory::plans).charged>2'000'000);
