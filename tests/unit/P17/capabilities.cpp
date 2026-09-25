@@ -1,6 +1,6 @@
 #include <cassert>
 #include <vita/codec/packet.hpp>
-#include <vita/profiles/iq/Sdr.hpp>
+#include <vita/profiles/iq/sdr.hpp>
 using namespace vita;
 using namespace vita::codec;
 using namespace vita::profiles::iq;

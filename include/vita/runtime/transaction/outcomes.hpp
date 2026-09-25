@@ -1,7 +1,7 @@
 #pragma once
 #include <vita/runtime/transaction/cam.hpp>
 #include <vita/codec/packet.hpp>
-#include <vita/profiles/iq/Sdr.hpp>
+#include <vita/profiles/iq/sdr.hpp>
 namespace vita::runtime::transaction {
 struct AckRecord {
     codec::Envelope request{};Cam cam{};AckKind kind=AckKind::validation;

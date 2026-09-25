@@ -1,5 +1,5 @@
 #pragma once
-#include <vita/profiles/iq/Sdr.hpp>
+#include <vita/profiles/iq/sdr.hpp>
 #include <vita/profiles/iq/source.hpp>
 #include <vita/runtime/context/receiver.hpp>
 #include <vita/runtime/execution/budget.hpp>

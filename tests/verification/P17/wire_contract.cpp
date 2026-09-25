@@ -3,7 +3,7 @@
 #include <cstring>
 #include <vita/codec/packet.hpp>
 #include <vita/codec/prologue.hpp>
-#include <vita/profiles/iq/Sdr.hpp>
+#include <vita/profiles/iq/sdr.hpp>
 #include <vita/profiles/iq/profile.hpp>
 #include <vita/runtime/context/publisher.hpp>
 #include <vita/runtime/stream/counters.hpp>
