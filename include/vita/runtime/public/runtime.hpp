@@ -2361,6 +2361,8 @@ public:
     } guard{progressing_};
     progressing_ = true;
     now_ = now;
+    retention_.expire(now);
+    controllers_.expire(now);
     if (transport_.begin_cycle)
       transport_.begin_cycle(transport_.context);
     freeze();

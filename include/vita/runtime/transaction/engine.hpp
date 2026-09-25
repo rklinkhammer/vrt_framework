@@ -1051,6 +1051,13 @@ public:
               now.clock.state == timing::ClockState::holdover) &&
              (slot.plan.request.cam.timing == 0 || slot.plan.timing.qualified ||
               slot.plan.timing.injected));
+        // A stopped SDR starts at an absolute protocol epoch, not an existing
+        // sample boundary. PPS updates may remap the clock while it waits.
+        // Preserve the admitted epoch; the qualified-clock and actual-effect
+        // interval checks below still reject early/late execution.
+        if (sdr_start && slot.plan.schedule_valid && qualified)
+          slot.plan.execution.boundary.mapping_generation =
+              now.clock.mapping_generation;
         bool boundary_available = false;
         if (sdr_start) {
           boundary_available = slot.plan.execution.boundary.time ==
