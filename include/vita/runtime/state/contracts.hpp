@@ -18,19 +18,19 @@ struct StateSnapshot {
     std::array<FieldState,state_field_capacity> fields{{{ReferencePoint::id},{SampleRate::id,Hertz{}},{StateEvent::id},{DataPayloadFormat::id,PayloadFormat{}},{RFReferenceFrequency::id,Hertz{}},{Bandwidth::id,Hertz{}},{Gain::id,GainStages{}},{DiscreteIO32::id}}};
     profiles::iq::Profile profile=profiles::iq::Profile::generator_v1;
 };
-inline constexpr std::size_t active_state_fields(profiles::iq::Profile profile) noexcept {return profile==profiles::iq::Profile::graphx_radio?8:profile==profiles::iq::Profile::frequency_tunable?5:4;}
+inline constexpr std::size_t active_state_fields(profiles::iq::Profile profile) noexcept {return profile==profiles::iq::Profile::sdr_radio?8:profile==profiles::iq::Profile::frequency_tunable?5:4;}
 inline bool profile_field(profiles::iq::Profile profile,FieldId id) noexcept {
-    const auto index=field_index(id);return index<4 || (index==4&&profile!=profiles::iq::Profile::generator_v1) || (index<8&&profile==profiles::iq::Profile::graphx_radio);
+    const auto index=field_index(id);return index<4 || (index==4&&profile!=profiles::iq::Profile::generator_v1) || (index<8&&profile==profiles::iq::Profile::sdr_radio);
 }
 inline Result<void> validate_snapshot(const StateSnapshot& state) noexcept {
-    if(state.profile!=profiles::iq::Profile::generator_v1&&state.profile!=profiles::iq::Profile::frequency_tunable&&state.profile!=profiles::iq::Profile::graphx_radio)return std::unexpected(Error{ErrorCode::invalid_argument});
+    if(state.profile!=profiles::iq::Profile::generator_v1&&state.profile!=profiles::iq::Profile::frequency_tunable&&state.profile!=profiles::iq::Profile::sdr_radio)return std::unexpected(Error{ErrorCode::invalid_argument});
     for(std::size_t i=0;i<state_field_capacity;++i){const auto& field=state.fields[i];
       if(i>=active_state_fields(state.profile)){if(field.validity!=Validity::absent)return std::unexpected(Error{ErrorCode::unsupported_capability});continue;}
       if(field.id!=state_fields[i]||static_cast<unsigned>(field.validity)>static_cast<unsigned>(Validity::unknown))return std::unexpected(Error{ErrorCode::invalid_argument});
       if(field.validity==Validity::known){auto valid=validate_value(field.id,field.value);if(!valid)return valid;}
       if(i==4&&field.validity==Validity::known){const auto* value=std::get_if<Hertz>(&field.value);constexpr std::int64_t unit=1ll<<20;if(!value||value->q20<static_cast<std::int64_t>(profiles::iq::minimum_center_hz)*unit||value->q20>static_cast<std::int64_t>(profiles::iq::maximum_center_hz)*unit||(state.profile==profiles::iq::Profile::frequency_tunable&&value->q20%unit))return std::unexpected(Error{ErrorCode::invalid_argument});}
     }
-    if(state.profile==profiles::iq::Profile::graphx_radio){
+    if(state.profile==profiles::iq::Profile::sdr_radio){
       if(state.fields[0].validity==Validity::known){const auto* sid=std::get_if<std::uint32_t>(&state.fields[0].value);if(!sid||*sid<1||*sid>4)return std::unexpected(Error{ErrorCode::invalid_argument});}
       if(state.fields[3].validity==Validity::known){const auto* format=std::get_if<PayloadFormat>(&state.fields[3].value);if(!format||*format!=PayloadFormat{0x200003cf00000000})return std::unexpected(Error{ErrorCode::invalid_argument});}
       constexpr std::int64_t unit=1ll<<20;
@@ -63,7 +63,7 @@ struct EffectiveEvent {
     StateSnapshot state{};timing::ProtocolTime actual_time{};
     std::uint64_t sample_ordinal=0,source_operation=0,association_generation=0;
     std::uint8_t changed_mask=0;bool time_known=false,ordinal_known=false;FieldOutcome outcome{};
-    // GraphX simulated sample epoch; actual_time remains device execution time.
+    // Sdr simulated sample epoch; actual_time remains device execution time.
     std::optional<timing::ProtocolTime> sample_epoch{};
     timing::ProtocolTime context_time() const noexcept { return sample_epoch.value_or(actual_time); }
 };

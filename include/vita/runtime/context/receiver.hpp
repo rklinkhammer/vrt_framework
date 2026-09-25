@@ -34,7 +34,7 @@ public:
         if(envelope.type!=codec::PacketType::context||packet.opaque||envelope.tsm||envelope.timestamp.tsi==codec::Tsi::none||envelope.timestamp.tsf!=codec::Tsf::picoseconds||(epoch_!=codec::Tsi::none&&envelope.timestamp.tsi!=epoch_))return std::unexpected(Error{ErrorCode::unsupported_capability});
         StateSnapshot snapshot;snapshot.profile=profile_;
         for(std::size_t i=0;i<packet.fields.size();++i){const auto& field=packet.fields[i];auto index=field_index(field.id);if(!profile_field(profile_,field.id)||index==state_field_capacity||field.kind!=BodyKind::values||field.attribute!=Attribute::current)return std::unexpected(Error{ErrorCode::unsupported_capability});auto value=field.value();if(!value)return std::unexpected(value.error());snapshot.fields[index]={field.id,*value,Validity::known};}
-        if(profile_==profiles::iq::Profile::graphx_radio){
+        if(profile_==profiles::iq::Profile::sdr_radio){
             if(envelope.class_id||envelope.timestamp.tsi!=codec::Tsi::utc||packet.fields.size()!=4)
                 return std::unexpected(Error{ErrorCode::invalid_argument});
             for(auto i:{1u,4u,5u,6u})if(snapshot.fields[i].validity!=Validity::known)

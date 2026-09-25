@@ -243,7 +243,7 @@ static tx::TransportFactory transport(Probe &probe) {
 }
 int main() {
   for (unsigned sid = 1; sid <= 4; ++sid) {
-    auto config = profiles::iq::lab::config(profiles::iq::graphx_unknown_oui);
+    auto config = profiles::iq::lab::config(profiles::iq::sdr_unknown_oui);
     require(config);
     config->clock.epoch = rt::timing::Epoch::utc;
     config->timing.device_early_ps = 0;
@@ -263,7 +263,7 @@ int main() {
     Capture capture;
     StreamConfig stream;
     stream.sid = stream.controller_id = stream.controllee_id = sid;
-    stream.profile = profiles::iq::Profile::graphx_radio;
+    stream.profile = profiles::iq::Profile::sdr_radio;
     stream.trailer = true;
     stream.ip_mtu = 9000;
     stream.maximum_samples_per_packet = 1024;
@@ -276,7 +276,7 @@ int main() {
     auto controller = runtime.add_controller(*radio);
     require(controller);
     require(runtime.observe_pps({0}, {1000, 0}));
-    GraphxRadioSettings settings;
+    SdrRadioSettings settings;
     settings.sample_rate = *Hertz::from_integer(1'000'003);
     auto configured = controller->configure(settings);
     require(configured);

@@ -1,6 +1,6 @@
 #include <cassert>
 #include <vita/codec/packet.hpp>
-#include <vita/profiles/iq/graphx.hpp>
+#include <vita/profiles/iq/Sdr.hpp>
 using namespace vita;
 using namespace vita::codec;
 using namespace vita::profiles::iq;
@@ -8,7 +8,7 @@ static bool bandwidth_rule(void *, Hertz bandwidth, Hertz rate) noexcept {
   return bandwidth.q20 <= rate.q20;
 }
 int main() {
-  GraphxCapabilities capabilities;
+  SdrCapabilities capabilities;
   capabilities.sample_rate_values.step = 1'000ll << 20;
   assert(!capabilities.supports(*Hertz::from_integer(500),
                                 *Hertz::from_integer(1'001)));
@@ -35,7 +35,7 @@ int main() {
                                 *Hertz::from_integer(1'000'000)));
   constexpr std::array selectors{Bandwidth::id, RFReferenceFrequency::id,
                                  Gain::id, SampleRate::id};
-  auto response = graphx_capability_response(capabilities, selectors);
+  auto response = sdr_capability_response(capabilities, selectors);
   assert(response);
   Envelope envelope;
   envelope.type = PacketType::context;
@@ -58,7 +58,7 @@ int main() {
     assert(minimum && maximum);
   }
   constexpr std::array unknown{StateEvent::id};
-  auto rejected = graphx_capability_response(capabilities, unknown);
+  auto rejected = sdr_capability_response(capabilities, unknown);
   assert(!rejected &&
          rejected.error().code == ErrorCode::unsupported_capability);
 }

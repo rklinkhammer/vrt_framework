@@ -16,7 +16,7 @@ struct Capture {
     }
     assert(payload_bytes == 4096);
     assert(signal.metadata.state.profile ==
-           profiles::iq::Profile::graphx_radio);
+           profiles::iq::Profile::sdr_radio);
     assert(signal.sample_time.picoseconds <
            runtime::timing::picoseconds_per_second);
     ++capture.packets;
@@ -37,7 +37,7 @@ int main() {
   stream.sid = 1;
   stream.controller_id = 2;
   stream.controllee_id = 3;
-  stream.profile = profiles::iq::Profile::graphx_radio;
+  stream.profile = profiles::iq::Profile::sdr_radio;
   stream.sample_rate = 1'000'000;
   stream.bandwidth = 800'000;
   stream.ip_mtu = 4200;
@@ -58,12 +58,12 @@ int main() {
     auto observed = controller->capabilities(*requested);
     assert(observed && *observed);
     assert((**observed).range<RFReferenceFrequency>() ==
-           stream.graphx_capabilities.center_frequency);
+           stream.sdr_capabilities.center_frequency);
     assert((**observed).range<SampleRate>() ==
-           stream.graphx_capabilities.sample_rate);
+           stream.sdr_capabilities.sample_rate);
     assert((**observed).range<Bandwidth>() ==
-           stream.graphx_capabilities.bandwidth);
-    assert((**observed).range<Gain>() == stream.graphx_capabilities.gain);
+           stream.sdr_capabilities.bandwidth);
+    assert((**observed).range<Gain>() == stream.sdr_capabilities.gain);
     const auto after = controllee->confirmed_state();
     assert(after.version == before.version);
     for (std::size_t i = 0; i < runtime::state_field_capacity; ++i) {
@@ -75,7 +75,7 @@ int main() {
   };
   verify_capabilities();
 
-  GraphxRadioSettings settings;
+  SdrRadioSettings settings;
   settings.bandwidth = *Hertz::from_integer(900'000);
   settings.center_frequency = *Hertz::from_integer(101'000'000);
   settings.gain = GainStages{10 * 128, 0};

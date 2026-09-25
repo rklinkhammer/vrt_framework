@@ -21,7 +21,7 @@ int main() {
       for (bool invalid : {false, true})
         for (bool started_before_commit : {false, true}) {
           StateSnapshot initial;
-          initial.profile = profiles::iq::Profile::graphx_radio;
+          initial.profile = profiles::iq::Profile::sdr_radio;
           initial.fields[3] = {DataPayloadFormat::id,
                                PayloadFormat{0x200003cf00000000},
                                Validity::known};
@@ -37,7 +37,7 @@ int main() {
             return {};
           };
           EngineOptions options;
-          options.profile = Profile::graphx_radio;
+          options.profile = Profile::sdr_radio;
           Engine<2> engine(admission, backend, initial, options);
           codec::Envelope envelope;
           envelope.type = codec::PacketType::command;

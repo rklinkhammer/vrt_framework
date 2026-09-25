@@ -33,14 +33,14 @@ int main() {
   auto tracked = registry.track(*relationship, *packet, {0}, 1'000'000);
   assert(tracked);
 
-  profiles::iq::GraphxCapabilities capabilities;
+  profiles::iq::SdrCapabilities capabilities;
   AckRecord response;
   response.request = tracked->envelope;
   response.cam = *Cam::parse(response.request,
-                             runtime::transaction::Profile::graphx_radio);
+                             runtime::transaction::Profile::sdr_radio);
   response.kind = AckKind::state;
   response.selected_mask = (1u << 1) | (1u << 4) | (1u << 5) | (1u << 6);
-  response.graphx_capabilities = &capabilities;
+  response.sdr_capabilities = &capabilities;
   auto response_size = encode_response(response, wire);
   assert(response_size);
   assert(registry.receive(1, {7, 1}, Bytes{wire}.first(*response_size), {1}));

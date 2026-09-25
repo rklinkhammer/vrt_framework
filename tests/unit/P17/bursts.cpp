@@ -69,7 +69,7 @@ int main() {
     stream.sid = 1;
     stream.controller_id = 2;
     stream.controllee_id = 3;
-    stream.profile = profiles::iq::Profile::graphx_radio;
+    stream.profile = profiles::iq::Profile::sdr_radio;
     stream.trailer = true;
     stream.ip_mtu = 4200;
     stream.maximum_samples_per_packet = maximum;
@@ -81,7 +81,7 @@ int main() {
     auto controller = (*made)->add_controller(*radio);
     assert(controller);
     assert((*made)->observe_pps({0}, {1000, 0}));
-    GraphxRadioSettings settings;
+    SdrRadioSettings settings;
     settings.sample_rate = *Hertz::from_integer(1'000'003);
     auto configured = controller->configure(settings);
     assert(configured);

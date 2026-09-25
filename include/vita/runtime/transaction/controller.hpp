@@ -34,9 +34,9 @@ enum class CancelRegistration { fresh,retry };
 template<std::size_t Records=256,std::size_t MaxCancelBytes=512,std::size_t Relationships=64>
 class ControllerRegistry {
     static_assert(Records && MaxCancelBytes>=4 && Relationships);
-    struct Relationship {bool used{},graphx_profile{};TransactionKey identity{};std::uint64_t next_mid{1};};
+    struct Relationship {bool used{},sdr_profile{};TransactionKey identity{};std::uint64_t next_mid{1};};
     struct Record {
-        bool used{},ordinary_active{},cancel_registered{},cancel_active{},capability_query{},graphx_profile{};
+        bool used{},ordinary_active{},cancel_registered{},cancel_active{},capability_query{},sdr_profile{};
         std::uint64_t generation{1};std::size_t references{};
         TransactionKey key{};codec::Envelope request{};std::uint32_t cancel_cam{};
         std::uint8_t requested_fields{},cancel_fields{},seen_ordinary{},seen_cancel{};
@@ -69,7 +69,7 @@ class ControllerRegistry {
     }
     static Result<StateObservation> capture_state(const codec::PacketView& packet,const Record& record,bool cancellation) noexcept {
         StateObservation out;out.timestamp=packet.envelope.envelope.timestamp;
-        if(record.graphx_profile)out.state.profile=profiles::iq::Profile::graphx_radio;
+        if(record.sdr_profile)out.state.profile=profiles::iq::Profile::sdr_radio;
         else if(record.request.class_id&&record.request.class_id->information_class==2&&record.request.class_id->packet_class==0x120)out.state.profile=profiles::iq::Profile::frequency_tunable;
         if(out.timestamp.tsf==codec::Tsf::picoseconds && out.timestamp.fractional>=timing::picoseconds_per_second)return std::unexpected(Error{ErrorCode::invalid_argument});
         out.hypothetical=((packet.envelope.envelope.command->cam>>23)&3)==1;
@@ -115,11 +115,11 @@ public:
     Result<RelationshipHandle> register_relationship(TransactionKey identity,std::uint32_t next_mid=1,profiles::iq::Profile profile=profiles::iq::Profile::generator_v1) noexcept {
         if(!identity.binding_generation||!identity.peer.generation)return std::unexpected(Error{ErrorCode::invalid_argument});identity.message_id=0;
         for(std::size_t i=0;i<Relationships;++i)if(storage_->relationships[i].used){auto const& existing=storage_->relationships[i];
-            if(same_key(existing.identity,identity)){if(existing.graphx_profile!=(profile==profiles::iq::Profile::graphx_radio))return std::unexpected(Error{ErrorCode::identity_conflict});return RelationshipHandle{i};}
+            if(same_key(existing.identity,identity)){if(existing.sdr_profile!=(profile==profiles::iq::Profile::sdr_radio))return std::unexpected(Error{ErrorCode::identity_conflict});return RelationshipHandle{i};}
             // Local generation changes do not disambiguate old UDP wire identities.
             if(same_wire_relationship(existing.identity,identity))return std::unexpected(Error{ErrorCode::identity_conflict});
         }
-        for(std::size_t i=0;i<Relationships;++i)if(!storage_->relationships[i].used){storage_->relationships[i]={true,profile==profiles::iq::Profile::graphx_radio,identity,next_mid};return RelationshipHandle{i};}
+        for(std::size_t i=0;i<Relationships;++i)if(!storage_->relationships[i].used){storage_->relationships[i]={true,profile==profiles::iq::Profile::sdr_radio,identity,next_mid};return RelationshipHandle{i};}
         return std::unexpected(Error{ErrorCode::capacity_exhausted});
     }
     Result<TrackedRequest> track(RelationshipHandle relationship,const codec::PacketView& request,timing::MonoTime now,std::uint64_t timeout_ns) noexcept {
@@ -135,7 +135,7 @@ public:
         for(std::size_t i=0;i<Records;++i){auto& r=storage_->records[i];if(r.used||r.generation==UINT64_MAX)continue;
             auto generation=r.generation;r=Record{};r.generation=generation;r.used=r.ordinary_active=true;r.references=1;
             r.key=rel.identity;r.key.message_id=static_cast<std::uint32_t>(rel.next_mid++);r.request=e;r.request.command->message_id=r.key.message_id;
-            r.requested_fields=selected;r.capability_query=capability_query;r.graphx_profile=rel.graphx_profile;r.deadline=*limit;r.observer=ControllerObserver(r.key.message_id);
+            r.requested_fields=selected;r.capability_query=capability_query;r.sdr_profile=rel.sdr_profile;r.deadline=*limit;r.observer=ControllerObserver(r.key.message_id);
             return TrackedRequest{{i,r.generation},r.request};
         }return std::unexpected(Error{ErrorCode::capacity_exhausted});
     }

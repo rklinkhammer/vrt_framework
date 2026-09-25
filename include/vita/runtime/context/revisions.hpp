@@ -10,7 +10,7 @@ inline bool same_state(const StateSnapshot& a,const StateSnapshot& b) noexcept {
 inline bool required_known(const StateSnapshot& state) noexcept {
     return state.fields[1].validity==Validity::known && state.fields[3].validity==Validity::known &&
            (state.profile==profiles::iq::Profile::generator_v1||state.fields[4].validity==Validity::known) &&
-           (state.profile!=profiles::iq::Profile::graphx_radio||
+           (state.profile!=profiles::iq::Profile::sdr_radio||
             (state.fields[5].validity==Validity::known&&state.fields[6].validity==Validity::known));
 }
 enum class Publication : std::uint8_t { pending,accepted,failed };

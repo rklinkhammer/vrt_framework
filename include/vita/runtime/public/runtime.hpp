@@ -86,7 +86,7 @@ public:
     Result<TransactionHandle> set_center_frequency(Hertz frequency,CommandOptions options={}) {
       return runtime_->command(index_,frequency,1u<<4,options,false);
     }
-    Result<TransactionHandle> configure(GraphxRadioSettings settings,
+    Result<TransactionHandle> configure(SdrRadioSettings settings,
                                         CommandOptions options = {}) {
       options.partial = false;
       return runtime_->command(index_, settings.sample_rate,
@@ -292,11 +292,11 @@ private:
           pacing(timeline),revisions(c.association_generation),
           engine(r->admission_, c.device.enabled()?c.device.backend:backend.binding(), initial(c),
                  runtime::transaction::EngineOptions{
-                     c.kind==ControlleeKind::virtual_register?runtime::transaction::Profile::generic_virtual_test:c.profile==profiles::iq::Profile::graphx_radio?runtime::transaction::Profile::graphx_radio:c.profile==profiles::iq::Profile::frequency_tunable?runtime::transaction::Profile::iq_frequency_tunable:runtime::transaction::Profile::iq_generator_v1,
+                     c.kind==ControlleeKind::virtual_register?runtime::transaction::Profile::generic_virtual_test:c.profile==profiles::iq::Profile::sdr_radio?runtime::transaction::Profile::sdr_radio:c.profile==profiles::iq::Profile::frequency_tunable?runtime::transaction::Profile::iq_frequency_tunable:runtime::transaction::Profile::iq_generator_v1,
                      c.kind==ControlleeKind::virtual_register?runtime::EffectSink{}:effect_binding(), &timeline, true, this,
                      c.kind==ControlleeKind::virtual_register?nullptr:project_observation,c.trace,c.device.owner,
-                     c.profile==profiles::iq::Profile::graphx_radio?&config.graphx_capabilities:nullptr}),
-          manager(engine, r->retention_, r->admission_,c.profile==profiles::iq::Profile::graphx_radio),
+                     c.profile==profiles::iq::Profile::sdr_radio?&config.sdr_capabilities:nullptr}),
+          manager(engine, r->retention_, r->admission_,c.profile==profiles::iq::Profile::sdr_radio),
           publisher(revisions, {this, send_context, send_data}),
           receiver(r->receive_quota_, {this, deliver, drop}, c.association_generation, r->epoch(),
                    false, c.sid,{},c.profile) {if(c.kind==ControlleeKind::virtual_register)backend.set_inline_completion(true);}
@@ -306,7 +306,7 @@ private:
       sink.record=[](void* context,const runtime::EffectiveEvent& event,runtime::RevisionReservation& reservation,runtime::AdmissionBundle credits) noexcept {
         auto& stream=*static_cast<Stream*>(context);auto binding=stream.revisions.binding();
         binding.record(binding.context,event,reservation,std::move(credits));
-        if (stream.config.profile == profiles::iq::Profile::graphx_radio &&
+        if (stream.config.profile == profiles::iq::Profile::sdr_radio &&
             event.outcome.id == DiscreteIO32::id &&
             event.outcome.status == runtime::FieldStatus::executed) {
           const auto* discrete = std::get_if<std::uint32_t>(&event.outcome.value);
@@ -352,7 +352,7 @@ private:
       state.fields[2].value = std::uint32_t{0};
       state.fields[3].value = profiles::iq::payload_format(c.format);
       if(c.profile!=profiles::iq::Profile::generator_v1)state.fields[4].value=*Hertz::from_integer(c.center_frequency);
-      if(c.profile==profiles::iq::Profile::graphx_radio){state.fields[5].value=*Hertz::from_integer(c.bandwidth);state.fields[6].value=c.gain;state.fields[7].value=std::uint32_t{2};for(auto i:{1u,4u,5u,6u})state.fields[i].validity=runtime::Validity::absent;}
+      if(c.profile==profiles::iq::Profile::sdr_radio){state.fields[5].value=*Hertz::from_integer(c.bandwidth);state.fields[6].value=c.gain;state.fields[7].value=std::uint32_t{2};for(auto i:{1u,4u,5u,6u})state.fields[i].validity=runtime::Validity::absent;}
       return state;
     }
     static runtime::StateSnapshot project_observation(
@@ -524,7 +524,7 @@ private:
           s.owner->lifecycle_[s.index].status.phase ==
               LifecyclePhase::quarantined)
         return;
-      if(s.config.profile==profiles::iq::Profile::graphx_radio&&
+      if(s.config.profile==profiles::iq::Profile::sdr_radio&&
           (!packet.envelope.trailer||(*packet.envelope.trailer&0xfffff3ffu)!=0x00c00000u||packet.envelope.payload.empty()||packet.envelope.payload.size()>4096)){
         ++s.metrics.receive_drops;return;
       }
@@ -609,16 +609,16 @@ private:
     codec::Envelope e;
     e.type = type;
     e.stream_id = s.config.sid;
-    if (s.config.profile != profiles::iq::Profile::graphx_radio ||
+    if (s.config.profile != profiles::iq::Profile::sdr_radio ||
       type == codec::PacketType::signal) {
-      const auto oui = s.config.profile == profiles::iq::Profile::graphx_radio
-                 ? profiles::iq::graphx_unknown_oui
+      const auto oui = s.config.profile == profiles::iq::Profile::sdr_radio
+                 ? profiles::iq::sdr_unknown_oui
                  : *config_.oui;
       e.class_id = codec::ClassId{
         oui, profiles::iq::information_class(s.config.profile),
         static_cast<std::uint16_t>(
           type == codec::PacketType::signal
-            ? (s.config.profile == profiles::iq::Profile::graphx_radio
+            ? (s.config.profile == profiles::iq::Profile::sdr_radio
                ? 0
                : s.config.trailer
                    ? *s.config.trailer_packet_class
@@ -636,7 +636,7 @@ private:
       e.command = codec::Command{
           0, 0, codec::Identifier::short_id(s.config.controllee_id),
           codec::Identifier::short_id(s.config.controller_id)};
-    if(s.config.profile==profiles::iq::Profile::graphx_radio&&clock_snapshot_)
+    if(s.config.profile==profiles::iq::Profile::sdr_radio&&clock_snapshot_)
       e.timestamp={codec::Tsi::utc,codec::Tsf::picoseconds,static_cast<std::uint32_t>(clock_snapshot_->time.seconds),clock_snapshot_->time.picoseconds};
     return e;
   }
@@ -870,7 +870,7 @@ private:
   }
   runtime::timing::ClockSnapshot publication_clock(const Stream &s) const noexcept {
     auto clock = *clock_snapshot_;
-    if (s.config.profile == profiles::iq::Profile::graphx_radio)
+    if (s.config.profile == profiles::iq::Profile::sdr_radio)
       clock.time = s.timeline.time();
     return clock;
   }
@@ -911,9 +911,9 @@ private:
     if (s.pacing.time() > mono_protocol(now_))
       return {};
     if(pending_effect_gate(s))return {};
-    if(s.config.profile==profiles::iq::Profile::graphx_radio)
-      *pairs=profiles::iq::graphx_packet_pairs(s.timeline.ordinal(),*pairs,s.config.burst_pairs);
-    if(s.config.profile==profiles::iq::Profile::graphx_radio&&s.timeline.ordinal()%s.config.burst_pairs==0&&s.timeline.ordinal()!=0){
+    if(s.config.profile==profiles::iq::Profile::sdr_radio)
+      *pairs=profiles::iq::sdr_packet_pairs(s.timeline.ordinal(),*pairs,s.config.burst_pairs);
+    if(s.config.profile==profiles::iq::Profile::sdr_radio&&s.timeline.ordinal()%s.config.burst_pairs==0&&s.timeline.ordinal()!=0){
       auto latest=s.revisions.current();if(!latest)return std::unexpected(latest.error());
       runtime::context::ContextFrame frame{latest->event().state,s.timeline.time(),codec::Tsi::utc,true,false,true,true,latest->id(),s.generation,true};
       auto sent=Stream::send_context(&s,frame);if(!sent)return sent;
@@ -949,7 +949,7 @@ private:
       if (!published)
         return std::unexpected(resource_backpressure(published.error()));
     }
-    if (s.config.profile == profiles::iq::Profile::graphx_radio) {
+    if (s.config.profile == profiles::iq::Profile::sdr_radio) {
       auto published = s.publisher.progress(now_, publication_clock(s));
       if (!published) return std::unexpected(resource_backpressure(published.error()));
     }
@@ -1030,8 +1030,8 @@ private:
       if (!bytes)
         return std::unexpected(bytes.error());
       const auto trailer_word =
-          s.config.profile == profiles::iq::Profile::graphx_radio
-              ? profiles::iq::graphx_trailer(profiles::iq::graphx_sample_frame(
+          s.config.profile == profiles::iq::Profile::sdr_radio
+              ? profiles::iq::sdr_trailer(profiles::iq::sdr_sample_frame(
                     s.timeline.ordinal(), *pairs,s.config.burst_pairs))
               : 0u;
       auto encoded = codec::encode_trailer(trailer_word, *bytes);
@@ -1220,15 +1220,15 @@ private:
   Result<TransactionHandle> command(std::size_t index, Hertz rate,
                                     std::uint8_t fields, CommandOptions options,
                                     bool query,
-                                    std::optional<GraphxRadioSettings> graphx = {},
+                                    std::optional<SdrRadioSettings> Sdr = {},
                                     std::optional<std::uint32_t> discrete = {},
                                     bool capabilities = false) {
     if (index >= count_ || !fields || options.timing_mode > 4)
       return std::unexpected(Error{ErrorCode::invalid_argument});
     freeze();
     auto &s = *streams_[index];
-    if(s.config.role==EndpointRole::controllee_only||std::popcount(fields)>(query&&s.config.profile==profiles::iq::Profile::graphx_radio?5:4))return std::unexpected(Error{ErrorCode::unsupported_capability});
-    if(capabilities&&(!query||s.config.profile!=profiles::iq::Profile::graphx_radio))return std::unexpected(Error{ErrorCode::unsupported_capability});
+    if(s.config.role==EndpointRole::controllee_only||std::popcount(fields)>(query&&s.config.profile==profiles::iq::Profile::sdr_radio?5:4))return std::unexpected(Error{ErrorCode::unsupported_capability});
+    if(capabilities&&(!query||s.config.profile!=profiles::iq::Profile::sdr_radio))return std::unexpected(Error{ErrorCode::unsupported_capability});
     if (shutdown_requested_ || lifecycle_[index].active || s.retired)
       return std::unexpected(Error{ErrorCode::invalid_state});
     auto e = envelope(s, codec::PacketType::command, true);
@@ -1267,15 +1267,15 @@ private:
       if(capabilities){auto attributed=packet.with_attributes(attribute_bit(Attribute::minimum)|attribute_bit(Attribute::maximum));if(!attributed)return std::unexpected(attributed.error());}
       encoded = codec::encode_packet(e, packet.freeze(), *bytes);
     } else {
-      const auto graphx_fields=static_cast<std::uint8_t>((1u<<1)|(1u<<4)|(1u<<5)|(1u<<6));
+      const auto sdr_fields=static_cast<std::uint8_t>((1u<<1)|(1u<<4)|(1u<<5)|(1u<<6));
         if (fields != (1u << 1) && fields != (1u << 4) &&
-          !(graphx&&s.config.profile==profiles::iq::Profile::graphx_radio&&fields==graphx_fields) &&
-          !(discrete&&s.config.profile==profiles::iq::Profile::graphx_radio&&fields==(1u<<7)))
+          !(Sdr&&s.config.profile==profiles::iq::Profile::sdr_radio&&fields==sdr_fields) &&
+          !(discrete&&s.config.profile==profiles::iq::Profile::sdr_radio&&fields==(1u<<7)))
         return std::unexpected(Error{ErrorCode::unsupported_capability});
       ControlPacket packet;
       packet.configure(profiles::iq::command_class(s.config.profile), action);
-      if(graphx){
-        for(const auto& setting:std::array<std::pair<FieldId,SemanticValue>,4>{{{Bandwidth::id,graphx->bandwidth},{RFReferenceFrequency::id,graphx->center_frequency},{Gain::id,graphx->gain},{SampleRate::id,graphx->sample_rate}}}){auto set=packet.set_value(setting.first,setting.second);if(!set)return std::unexpected(set.error());}
+      if(Sdr){
+        for(const auto& setting:std::array<std::pair<FieldId,SemanticValue>,4>{{{Bandwidth::id,Sdr->bandwidth},{RFReferenceFrequency::id,Sdr->center_frequency},{Gain::id,Sdr->gain},{SampleRate::id,Sdr->sample_rate}}}){auto set=packet.set_value(setting.first,setting.second);if(!set)return std::unexpected(set.error());}
       }else if(discrete){auto set=packet.set<DiscreteIO32>(*discrete);if(!set)return std::unexpected(set.error());}
       else{auto set = packet.set_value(fields==(1u<<4)?RFReferenceFrequency::id:SampleRate::id,rate);if (!set)return std::unexpected(set.error());}
       encoded = codec::encode_packet(e, packet.freeze(), *bytes);
@@ -1302,7 +1302,7 @@ private:
     } else {
       ControlPacket packet;
       packet.configure(profiles::iq::command_class(s.config.profile), action);
-      if(graphx){for(const auto& setting:std::array<std::pair<FieldId,SemanticValue>,4>{{{Bandwidth::id,graphx->bandwidth},{RFReferenceFrequency::id,graphx->center_frequency},{Gain::id,graphx->gain},{SampleRate::id,graphx->sample_rate}}})packet.set_value(setting.first,setting.second);}
+      if(Sdr){for(const auto& setting:std::array<std::pair<FieldId,SemanticValue>,4>{{{Bandwidth::id,Sdr->bandwidth},{RFReferenceFrequency::id,Sdr->center_frequency},{Gain::id,Sdr->gain},{SampleRate::id,Sdr->sample_rate}}})packet.set_value(setting.first,setting.second);}
       else if(discrete)packet.set<DiscreteIO32>(*discrete);
       else packet.set_value(fields==(1u<<4)?RFReferenceFrequency::id:SampleRate::id,rate);
       encoded = codec::encode_packet(e, packet.freeze(), *bytes);
@@ -1709,7 +1709,7 @@ private:
     return {};
   }
   Result<void> start(std::size_t index) {
-    if(index<count_&&streams_[index]->config.profile==profiles::iq::Profile::graphx_radio)
+    if(index<count_&&streams_[index]->config.profile==profiles::iq::Profile::sdr_radio)
       return std::unexpected(Error{ErrorCode::unsupported_capability});
     if (index >= count_)
       return std::unexpected(Error{ErrorCode::invalid_argument});
@@ -1750,7 +1750,7 @@ private:
       // Recovery may skip samples before this fresh association starts. Report
       // that event in its first immutable snapshot, before any Context escapes.
       // A second event at the same already-published boundary is ambiguous.
-      if(s.config.profile==profiles::iq::Profile::graphx_radio&&s.timeline.ordinal()%s.config.burst_pairs==0&&s.timeline.ordinal()!=0){
+      if(s.config.profile==profiles::iq::Profile::sdr_radio&&s.timeline.ordinal()%s.config.burst_pairs==0&&s.timeline.ordinal()!=0){
       auto latest=s.revisions.current();if(!latest)return std::unexpected(latest.error());
       runtime::context::ContextFrame frame{latest->event().state,s.timeline.time(),codec::Tsi::utc,true,false,true,true,latest->id(),s.generation,true};
       auto sent=Stream::send_context(&s,frame);if(!sent)return sent;
@@ -1998,21 +1998,21 @@ public:
         config.controller_peer == config.controllee_peer)
       return std::unexpected(Error{ErrorCode::invalid_argument});
     if((config.role!=EndpointRole::combined&&config.role!=EndpointRole::controller_only&&config.role!=EndpointRole::controllee_only)||!config.association_generation||!config.device.valid()||(config.kind==ControlleeKind::virtual_register&&config.profile!=profiles::iq::Profile::generator_v1)||
-      (config.profile!=profiles::iq::Profile::generator_v1&&config.profile!=profiles::iq::Profile::frequency_tunable&&config.profile!=profiles::iq::Profile::graphx_radio)||
+      (config.profile!=profiles::iq::Profile::generator_v1&&config.profile!=profiles::iq::Profile::frequency_tunable&&config.profile!=profiles::iq::Profile::sdr_radio)||
       (config.profile!=profiles::iq::Profile::generator_v1&&(config.center_frequency<profiles::iq::minimum_center_hz||config.center_frequency>profiles::iq::maximum_center_hz))||
-         (config.profile==profiles::iq::Profile::graphx_radio&&
+         (config.profile==profiles::iq::Profile::sdr_radio&&
         (config_.clock.epoch!=runtime::timing::Epoch::utc||config.sid>4||
          config.format!=profiles::iq::SampleFormat::iq16||!config.trailer||
          !config.bandwidth||config.bandwidth>config.sample_rate||
-         !config.graphx_capabilities.validate())))return std::unexpected(Error{ErrorCode::invalid_argument});
+         !config.sdr_capabilities.validate())))return std::unexpected(Error{ErrorCode::invalid_argument});
     if (config.trailer &&
-        config.profile!=profiles::iq::Profile::graphx_radio&&
+        config.profile!=profiles::iq::Profile::sdr_radio&&
         (!config.trailer_packet_class || *config.trailer_packet_class <= 3 ||
          *config.trailer_packet_class == 0x10 ||
          *config.trailer_packet_class == 0x20))
       return std::unexpected(Error{ErrorCode::invalid_argument});
-    if(config.profile==profiles::iq::Profile::graphx_radio&&config.role!=EndpointRole::controller_only&&!config_.isolated_lab&&!config.device.enabled())return std::unexpected(Error{ErrorCode::unsupported_capability});
-    if(config.profile==profiles::iq::Profile::graphx_radio&&config.device.enabled()&&!config.device.backend.commit)
+    if(config.profile==profiles::iq::Profile::sdr_radio&&config.role!=EndpointRole::controller_only&&!config_.isolated_lab&&!config.device.enabled())return std::unexpected(Error{ErrorCode::unsupported_capability});
+    if(config.profile==profiles::iq::Profile::sdr_radio&&config.device.enabled()&&!config.device.backend.commit)
       return std::unexpected(Error{ErrorCode::unsupported_capability});
     if(!config.trace.valid()||(config.trace.enabled()&&!config.trace.storage_bytes))return std::unexpected(Error{ErrorCode::invalid_argument});
     auto pairs = packet_samples(config);
@@ -2279,7 +2279,7 @@ public:
     return {};
   }
   Result<Controller> add_remote_controller(const RemoteTargetConfig& target) {
-    StreamConfig config;config.sid=target.sid;config.controller_id=target.controller_id;config.controllee_id=target.controllee_id;config.controller_peer=target.controller_peer;config.controllee_peer=target.controllee_peer;config.profile=target.profile;config.format=target.format;config.receiver=target.receiver;config.sample_rate=target.sample_rate;config.role=EndpointRole::controller_only;config.association_generation=target.association_generation;if(target.profile==profiles::iq::Profile::graphx_radio)config.trailer=true;
+    StreamConfig config;config.sid=target.sid;config.controller_id=target.controller_id;config.controllee_id=target.controllee_id;config.controller_peer=target.controller_peer;config.controllee_peer=target.controllee_peer;config.profile=target.profile;config.format=target.format;config.receiver=target.receiver;config.sample_rate=target.sample_rate;config.role=EndpointRole::controller_only;config.association_generation=target.association_generation;if(target.profile==profiles::iq::Profile::sdr_radio)config.trailer=true;
     auto endpoint=add_controllee(config);if(!endpoint)return std::unexpected(endpoint.error());return Controller(this,endpoint->index_);
   }
   Result<Controller> add_controller(const Controllee &target) {

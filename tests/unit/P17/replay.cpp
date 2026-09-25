@@ -7,12 +7,12 @@ int main() {
   AdmissionPool pool(AdmissionPool::reference_capacities());
   VirtualBackend<> backend;
   StateSnapshot state;
-  state.profile = profiles::iq::Profile::graphx_radio;
-  profiles::iq::GraphxCapabilities caps;
+  state.profile = profiles::iq::Profile::sdr_radio;
+  profiles::iq::SdrCapabilities caps;
   EngineOptions options;
-  options.profile = Profile::graphx_radio;
+  options.profile = Profile::sdr_radio;
   options.external_retention = true;
-  options.graphx_capabilities = &caps;
+  options.sdr_capabilities = &caps;
   Engine<2> engine(pool, backend.binding(), state, options);
   RetentionStore<2, 16384> store(pool);
   TransactionManager<2, 2, 16384> manager(engine, store, pool, true);

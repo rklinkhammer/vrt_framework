@@ -1,7 +1,7 @@
 #pragma once
 #include <vita/runtime/transaction/cam.hpp>
 #include <vita/codec/packet.hpp>
-#include <vita/profiles/iq/graphx.hpp>
+#include <vita/profiles/iq/Sdr.hpp>
 namespace vita::runtime::transaction {
 struct AckRecord {
     codec::Envelope request{};Cam cam{};AckKind kind=AckKind::validation;
@@ -9,7 +9,7 @@ struct AckRecord {
     StateSnapshot state{};std::uint8_t selected_mask=0;
     bool partial=false,scheduled_or_executed=false,hypothetical=false,time_known=false;
     unsigned timing=0;timing::ProtocolTime time{};codec::Tsi epoch=codec::Tsi::none;bool cancellation=false;
-    const profiles::iq::GraphxCapabilities* graphx_capabilities=nullptr;
+    const profiles::iq::SdrCapabilities* sdr_capabilities=nullptr;
 };
 inline Diagnostics summary(const AckRecord& ack) noexcept {Diagnostics result;for(auto d:ack.diagnostics){result.warnings|=d.warnings;result.errors|=d.errors;}return result;}
 inline Result<std::size_t> encode_response(const AckRecord& ack,MutableBytes output,unsigned outgoing_packet_count) noexcept {
@@ -31,7 +31,7 @@ inline Result<std::size_t> encode_response(const AckRecord& ack,MutableBytes out
     }else{envelope.timestamp={};}
     if(ack.kind==AckKind::state) {
         StateAck state;auto configured=state.configure(envelope.class_id?envelope.class_id->packet_class:0,ack.cam.action);if(!configured)return std::unexpected(configured.error());
-        if(ack.graphx_capabilities){std::array<FieldId,4> selectors{};std::size_t count=0;for(std::size_t i=0;i<state_field_capacity;++i)if(ack.selected_mask&(1u<<i))selectors[count++]=state_fields[i];auto populated=profiles::iq::populate_graphx_capability_response(state,*ack.graphx_capabilities,std::span<const FieldId>{selectors}.first(count));if(!populated)return std::unexpected(populated.error());return codec::encode_packet(envelope,state.freeze(),output);}
+        if(ack.sdr_capabilities){std::array<FieldId,4> selectors{};std::size_t count=0;for(std::size_t i=0;i<state_field_capacity;++i)if(ack.selected_mask&(1u<<i))selectors[count++]=state_fields[i];auto populated=profiles::iq::populate_sdr_capability_response(state,*ack.sdr_capabilities,std::span<const FieldId>{selectors}.first(count));if(!populated)return std::unexpected(populated.error());return codec::encode_packet(envelope,state.freeze(),output);}
         for(std::size_t i=0;i<state_field_capacity;++i)if((ack.selected_mask&(1u<<i))&&ack.state.fields[i].validity==Validity::known){auto added=state.set_value(ack.state.fields[i].id,ack.state.fields[i].value);if(!added)return std::unexpected(added.error());}
         return codec::encode_packet(envelope,state.freeze(),output);
     }

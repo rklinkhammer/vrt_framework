@@ -1,5 +1,5 @@
 #pragma once
-#include <vita/profiles/iq/graphx.hpp>
+#include <vita/profiles/iq/Sdr.hpp>
 #include <vita/profiles/iq/source.hpp>
 #include <vita/runtime/context/receiver.hpp>
 #include <vita/runtime/execution/budget.hpp>
@@ -47,7 +47,7 @@ struct StreamConfig {
   std::uint64_t sample_rate = 1'000'000;
   std::size_t ip_mtu = 1500;
   std::size_t maximum_samples_per_packet = 256;
-  std::size_t burst_pairs = profiles::iq::graphx_burst_pairs;
+  std::size_t burst_pairs = profiles::iq::sdr_burst_pairs;
   bool ipv6 = false, trailer = false;
   std::optional<std::uint16_t> trailer_packet_class;
   profiles::iq::SourceProvider source = profiles::iq::default_source();
@@ -58,7 +58,7 @@ struct StreamConfig {
   std::uint64_t center_frequency=100'000'000;
   std::uint64_t bandwidth=100'000;
   GainStages gain{};
-  profiles::iq::GraphxCapabilities graphx_capabilities{};
+  profiles::iq::SdrCapabilities sdr_capabilities{};
   EndpointRole role=EndpointRole::combined;
   DeviceBackendBinding device{};
   std::uint64_t association_generation=1;
@@ -80,7 +80,7 @@ struct CommandOptions {
   std::optional<runtime::timing::ProtocolTime> execute_at;
   std::uint64_t timeout_ns = 1'000'000'000;
 };
-struct GraphxRadioSettings {
+struct SdrRadioSettings {
   Hertz bandwidth = *Hertz::from_integer(100'000);
   Hertz center_frequency = *Hertz::from_integer(100'000'000);
   GainStages gain{};
@@ -165,7 +165,7 @@ inline Result<std::size_t> packet_samples(const StreamConfig &config) noexcept {
   if (config.sample_rate < 1 || config.sample_rate > 100'000'000 ||
   config.ip_mtu < 64 || !config.maximum_samples_per_packet ||
       config.maximum_samples_per_packet > 1024 ||
-      (config.profile != profiles::iq::Profile::graphx_radio &&
+      (config.profile != profiles::iq::Profile::sdr_radio &&
        config.maximum_samples_per_packet > 256))
     return std::unexpected(Error{ErrorCode::invalid_argument});
   const auto overhead =
@@ -175,8 +175,8 @@ inline Result<std::size_t> packet_samples(const StreamConfig &config) noexcept {
   const auto pair = profiles::iq::bytes_per_pair(config.format);
   if (!pair)
     return std::unexpected(Error{ErrorCode::invalid_argument});
-  if(config.profile==profiles::iq::Profile::graphx_radio){
-    if(!config.burst_pairs||config.burst_pairs>profiles::iq::graphx_burst_pairs)
+  if(config.profile==profiles::iq::Profile::sdr_radio){
+    if(!config.burst_pairs||config.burst_pairs>profiles::iq::sdr_burst_pairs)
       return std::unexpected(Error{ErrorCode::invalid_argument});
     if(config.maximum_samples_per_packet>(config.ip_mtu-overhead)/pair)
       return std::unexpected(Error{ErrorCode::short_output});

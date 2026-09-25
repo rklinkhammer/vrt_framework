@@ -14,15 +14,15 @@ int main() {
   target.sid = 1;
   target.controller_id = 1;
   target.controllee_id = 1;
-  target.profile = profiles::iq::Profile::graphx_radio;
+  target.profile = profiles::iq::Profile::sdr_radio;
   auto controller = (*runtime)->add_remote_controller(target);
   assert(controller);
   assert((*runtime)->observe_pps({0}, {1000, 0}));
   // A loopback transport has no remote peer; endpoint construction must still
-  // accept the exact GraphX profile without requiring local trailer settings.
+  // accept the exact sdr profile without requiring local trailer settings.
 
   // Class-ID absence alone must not silently opt a generic Controller into
-  // GraphX's state/range policy.
+  // sdr's state/range policy.
   using namespace vita::runtime::transaction;
   codec::Envelope request;
   request.type = codec::PacketType::command;
