@@ -48,6 +48,13 @@ public:
     std::uint32_t sid() const noexcept {
       return runtime_->streams_[index_]->config.sid;
     }
+    // Serialized runtime domain; not safe to read from an unrelated status thread.
+    std::uint32_t admitted_message_id() const noexcept {
+      return runtime_->streams_[index_]->manager.admitted_message_id();
+    }
+    std::uint64_t association_generation() const noexcept {
+      return runtime_->streams_[index_]->generation;
+    }
     runtime::StateSnapshot confirmed_state() const noexcept {
       return runtime_->streams_[index_]->engine.state();
     }
@@ -79,6 +86,10 @@ public:
     Controller(VitaRuntime *r, std::size_t i) : runtime_(r), index_(i) {}
 
   public:
+    Result<void> resume_commands_after(std::uint32_t watermark) {
+      if(runtime_->progressing_)return std::unexpected(Error{ErrorCode::would_deadlock});
+      return runtime_->controllers_.resume_after(runtime_->streams_[index_]->relationship,watermark);
+    }
     Result<TransactionHandle> set_sample_rate(Hertz rate,
                                               CommandOptions options = {}) {
       return runtime_->command(index_, rate, 1u << 1, options, false);

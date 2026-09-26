@@ -122,6 +122,16 @@ public:
         for(std::size_t i=0;i<Relationships;++i)if(!storage_->relationships[i].used){storage_->relationships[i]={true,profile==profiles::iq::Profile::sdr_radio,identity,next_mid};return RelationshipHandle{i};}
         return std::unexpected(Error{ErrorCode::capacity_exhausted});
     }
+    // Advance only: caller must supply a watermark bound to the current peer session.
+    Result<void> resume_after(RelationshipHandle relationship,std::uint32_t watermark) noexcept {
+        if(relationship.slot>=Relationships||!storage_->relationships[relationship.slot].used)
+            return std::unexpected(Error{ErrorCode::invalid_argument});
+        if(watermark==UINT32_MAX)return std::unexpected(Error{ErrorCode::resource_limit});
+        auto& rel=storage_->relationships[relationship.slot];
+        const auto next=static_cast<std::uint64_t>(watermark)+1;
+        if(next>rel.next_mid)rel.next_mid=next;
+        return {};
+    }
     Result<TrackedRequest> track(RelationshipHandle relationship,const codec::PacketView& request,timing::MonoTime now,std::uint64_t timeout_ns) noexcept {
         if(relationship.slot>=Relationships||!storage_->relationships[relationship.slot].used)return std::unexpected(Error{ErrorCode::invalid_argument});
         auto& rel=storage_->relationships[relationship.slot];auto const& e=request.envelope.envelope;

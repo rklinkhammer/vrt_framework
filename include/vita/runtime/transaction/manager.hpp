@@ -101,6 +101,8 @@ public:
                      AdmissionPool &admission,bool monotonic_ids=false) noexcept
       : engine_(engine), retention_(retention), admission_(admission),monotonic_ids_(monotonic_ids) {}
 
+  std::uint32_t admitted_message_id() const noexcept { return highwater_id_; }
+
   void close_admission() noexcept {if(!closed_)closed_generation_=engine_.association_generation();closed_=true;}
   ManagerDrainStatus drain_status() const noexcept {
     ManagerDrainStatus status;for(const auto& active:active_)status.active+=bool(active);for(const auto& pending:cancellations_)status.scheduled_cancellations+=bool(pending);return status;
